@@ -1,6 +1,7 @@
 {
   "name": "un-gout-de-liberte",
   "version": "0.0.1",
+  "description": "Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Pâtisserie sur commande au gré des saisons et de vos envies.",
   "private": true,
   "scripts": {
     "dev": "nuxt",
