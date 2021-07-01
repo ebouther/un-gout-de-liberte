@@ -9,8 +9,8 @@
     "export": "nuxt export",
     "serve": "nuxt serve",
     "generate": "nuxt build && nuxt export",
-	"lint": "",
-	"test": ""
+	"lint": "echo linting...",
+	"test": "echo testing..."
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
