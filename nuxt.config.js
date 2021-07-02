@@ -15,15 +15,24 @@ export default {
   */
   head: {
     title: 'Un Goût de Liberté',
+    //titleTemplate: '%s - Un Goût de Liberté',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
-        hid: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC',
-        name: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC',
-        content: process.env.npm_package_description || ''
+        hid: 'title',
+        name: 'title',
+        content: 'Un Goût de Liberté'
+      },
+      {
+        hid: 'description',
+        name: 'description',
+        content: process.env.npm_package_description
       }
     ],
+    htmlAttrs: {
+      lang: 'fr'
+    },
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
@@ -40,7 +49,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [{
-    src: '~/plugins/vue-stripe.js', ssr: false 
+    src: '~/plugins/vue-stripe.js', ssr: false
   }],
   /*
   ** Auto import components
@@ -58,7 +67,8 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/sitemap'
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK || "pk_test_51J84KnBVac9AX8Ww3v0D3d3ZY9KwfOykIlePV5fNI35U2M8UcoPHuvlmZQK81DIbwm3XhNGZRIKufXWtQyWgNZNc00cPuHKVTf"
