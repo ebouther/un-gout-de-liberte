@@ -3,7 +3,7 @@
         <div v-if="this.product !== null">
             <div class="flex flex-col items-center border rounded-lg bg-gray-100">
                 <div v-for="url in product.images" class="w-full bg-white rounded-lg flex justify-center">
-                    <img :src="url" width="375">
+                    <img :src="url" :alt="product.name" width="375">
                 </div>
                 <div class="w-full p-5 flex flex-col justify-between">
                     <div>
@@ -35,7 +35,7 @@ export default {
     },
   },
   head() {
-    const title = `${this.product.name} - Un Goût de Liberté`;
+    const title = `${this.product.name} - Un Goût de Liberté - Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale`;
     return {
       title: title,
       meta: [{
