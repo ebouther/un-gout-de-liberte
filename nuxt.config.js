@@ -70,6 +70,7 @@ export default {
   */
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots'
   ],
@@ -82,6 +83,9 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+  },
+  googleAnalytics: {
+    id: 'G-Y9YQ9PW0P8'
   },
   sitemap: {
     hostname: 'https://un-gout-de-liberte.fr'
