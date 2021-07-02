@@ -1,16 +1,16 @@
 <template>
   <div class="flex justify-between m-6">
-    <p class="text-xs font-semibold text-gray-600"> Un goût de liberté - Patisserie / Biscuiterie - 2021.</p>
+    <p class="text-xs font-semibold text-gray-600"> Un goût de liberté - Patisserie / Biscuiterie - 2021-2022.</p>
     <div class="flex">
-        <!-- <a href="https://twitter.com/ungoutdeliberte" class="max-w-xs ml-4">
+        <a href="https://www.facebook.com/Ungout2liberte/" class="max-w-xs ml-4">
           <Twitter />
-        </a> -->
+        </a>
         <a href="https://www.facebook.com/Ungout2liberte/" class="ml-3">
           <Facebook />
         </a>
-        <!-- <a href="https://github.com/ebouther" class="ml-3">
+        <a href="https://www.facebook.com/Ungout2liberte/" class="ml-3">
           <Github />
-        </a> -->
+        </a>
     </div>
   </div>
 </template>

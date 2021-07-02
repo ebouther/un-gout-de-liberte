@@ -68,7 +68,8 @@ export default {
   */
   modules: [
     '@nuxtjs/axios',
-    '@nuxtjs/sitemap'
+    '@nuxtjs/sitemap',
+    '@nuxtjs/robots'
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK || 'pk_test_51J84KnBVac9AX8Ww3v0D3d3ZY9KwfOykIlePV5fNI35U2M8UcoPHuvlmZQK81DIbwm3XhNGZRIKufXWtQyWgNZNc00cPuHKVTf',
@@ -83,4 +84,9 @@ export default {
   sitemap: {
     hostname: 'https://un-gout-de-liberte.fr'
   },
+  robots: {
+    UserAgent: '*',
+    Disallow: '/user',
+    Sitemap: '/sitemap.xml'
+  }
 }
