@@ -42,15 +42,13 @@ export default {
       price: this.$store.state.cart.items[k].price,
       quantity: this.$store.state.cart.items[k].quantity
     }));
-    console.log('LINE ITEMS : ', lineItems);
     return {
       lineItems,
-      successURL: 'http://localhost:3000',
-      cancelURL: 'http://localhost:3000',
+      successURL: process.env.hostname,
+      cancelURL: process.env.hostname,
     }
   },
   async asyncData({ store }) {
-
     return {
       items: store.state.cart.items,
     }
