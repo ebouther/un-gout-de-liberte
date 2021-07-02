@@ -7,7 +7,7 @@
                 </div>
                 <div class="w-full p-5 flex flex-col justify-between">
                     <div>
-                        <h4 class="mt-1 font-semibold text-lg leading-tight truncate text-gray-700">{{product.title}}</h4>
+                        <h1 class="mt-1 font-semibold text-lg leading-tight truncate text-gray-700">{{product.name}}</h1>
                         <div class="mt-1 text-gray-600">{{product.description}}</div>
                     </div>
 
@@ -34,6 +34,21 @@ export default {
       this.$store.commit('cart/add', this.$route.params.id)
     },
   },
+  head() {
+    const title = `${this.product.name} - Un Goût de Liberté`;
+    return {
+      title: title,
+      meta: [{
+        hid: 'title',
+        name: 'title',
+        content: title,
+      }, {
+        hid: 'description',
+        name: 'description',
+        content: `${this.product.name} - Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC`,
+      }]
+    }
+  }
 }
 </script>
 
