@@ -19,8 +19,8 @@
               </div>          
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
               <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
-              <div class="mt-1 text-sm text-gray-700">ID: {{id}}</div>
-              <div class="mt-1 text-sm text-gray-700">Quantity: {{i.quantity}}</div>
+              <div class="mt-1 text-sm text-gray-700">{{i.description}}</div>
+              <div class="mt-1 text-sm text-gray-700">Quantité: {{i.quantity}}</div>
               </div>
           </div>
       </div>
@@ -36,21 +36,18 @@
 
 <script>
 export default {
-  data() {
-    this.pk = process.env.STRIPE_PK;
-    const lineItems = Object.keys(this.$store.state.cart.items).map(k => ({
-      price: this.$store.state.cart.items[k].price,
-      quantity: this.$store.state.cart.items[k].quantity
+  asyncData({store, env}) {
+    const lineItems = Object.keys(store.state.cart.items).map(k => ({
+      price: store.state.cart.items[k].price,
+      quantity: store.state.cart.items[k].quantity
     }));
-    return {
-      lineItems,
-      successURL: process.env.hostname,
-      cancelURL: process.env.hostname,
-    }
-  },
-  async asyncData({ store }) {
+
     return {
       items: store.state.cart.items,
+      lineItems,
+      successURL: env.hostname,
+      cancelURL: env.hostname,
+      pk: env.STRIPE_PK
     }
   },
   methods: {

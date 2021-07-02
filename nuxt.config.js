@@ -3,7 +3,7 @@ export default {
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
   */
-  mode: 'universal',
+  mode: 'spa',
   /*
   ** Nuxt target
   ** See https://nuxtjs.org/api/configuration-target
@@ -50,6 +50,8 @@ export default {
   */
   plugins: [{
     src: '~/plugins/vue-stripe.js', ssr: false
+  }, {
+    src: '~/plugins/vuex-persist.js', ssr: false
   }],
   /*
   ** Auto import components
