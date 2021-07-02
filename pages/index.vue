@@ -9,16 +9,20 @@
       <br/>
       <br/>
       <div class="text-orange-500 font-medium text-2xl text-grey-800 font-mono">
-        <span class="">Pâtisserie</span>
-        <br/>
-        <span class="">Biscuiterie artisanale</span>
+        <h2>
+          <span class="">Pâtisserie</span>
+          <br/>
+          <span class="">Biscuiterie artisanale</span>
+        </h2>
       </div>
       <br />
       <br />
       <div class=" text-gray-800">
+        <h3>
         <span class="">Rue des Remparts</span>
         <br />
         <span>43380 CHILHAC</span>
+        </h3>
       </div>
       <br />
       <br />
