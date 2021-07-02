@@ -57,7 +57,7 @@ export default {
   },
   head() {
     return {
-      title: 'Un Goût de Liberté',
+      title: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC ',
       meta: [{
         hid: 'title',
         name: 'title',
