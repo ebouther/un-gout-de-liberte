@@ -42,13 +42,13 @@ export const mutations = {
 export const actions = {
   async fetchProducts ({ commit }) {
     commit('SET_LOADING_STATUS', true)
-    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
+    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
     commit('SET_PRODUCTS', products)
     commit('SET_LOADING_STATUS', false)
   },
   async fetchPrices ({ commit }) {
     commit('SET_LOADING_STATUS', true)
-    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
+    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
     commit('SET_PRICES', prices)
     commit('SET_LOADING_STATUS', false)
   }
