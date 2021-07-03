@@ -85,8 +85,8 @@ export default {
     src: '/sw.js',
     continue: true,
     headers: {
-      Cache-Control: 'public, max-age=0, must-revalidate',
-      Service-Worker-Allowed: '/'
+      'Cache-Control': 'public, max-age=0, must-revalidate',
+      'Service-Worker-Allowed': '/'
     }
   }],
   googleAnalytics: {
