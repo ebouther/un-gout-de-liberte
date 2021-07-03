@@ -1,5 +1,5 @@
 export default {
-  ssr: process.env.NUXT_SSR || false,
+  ssr: process.env.NUXT_SSR || false ,
   target: process.env.NUXT_TARGET || 'static',
   /*
   ** Headers of the page
@@ -74,8 +74,21 @@ export default {
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
-  build: {
-  },
+  builds: [{
+    src: 'nuxt.config.js',
+    use: '@nuxtjs/vercel-builder',
+    config: {
+      serverFiles: ['package.json']
+    }
+  }],
+  routes: [{
+    src: '/sw.js',
+    continue: true,
+    headers: {
+      Cache-Control: 'public, max-age=0, must-revalidate',
+      Service-Worker-Allowed: '/'
+    }
+  }],
   googleAnalytics: {
     id: 'UA-201172251-1' 
   },
