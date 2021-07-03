@@ -1,5 +1,4 @@
 export default {
-
   ssr: process.env.NUXT_SSR || false,
   target: process.env.NUXT_TARGET || 'static',
   /*
