@@ -74,21 +74,7 @@ export default {
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
-  builds: [{
-    src: 'nuxt.config.js',
-    use: '@nuxtjs/vercel-builder',
-    config: {
-      serverFiles: ['package.json']
-    }
-  }],
-  routes: [{
-    src: '/sw.js',
-    continue: true,
-    headers: {
-      'Cache-Control': 'public, max-age=0, must-revalidate',
-      'Service-Worker-Allowed': '/'
-    }
-  }],
+  build: {},
   googleAnalytics: {
     id: 'UA-201172251-1' 
   },
