@@ -14,6 +14,7 @@
     "test": "echo testing..."
   },
   "dependencies": {
+    "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/robots": "^2.5.0",
@@ -21,8 +22,11 @@
     "@nuxtjs/vercel-builder": "^0.21.3",
     "@vue-stripe/vue-stripe": "^4.2.5",
     "add": "^2.0.6",
+    "body-parser": "^1.19.0",
     "core-js": "^2.6.5",
+    "express": "^4.17.1",
     "nuxt": "^2.15.7",
+    "stripe": "^8.160.0",
     "vuex-persist": "^3.1.3",
     "yarn": "^1.22.10"
   },

@@ -10,8 +10,12 @@
               </div>          
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
                 <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
-                <div class="mt-1 text-sm text-gray-700">{{i.description}}</div>
-                <div class="mt-1 text-sm text-gray-700">Quantité: {{i.quantity}}</div>
+                <div  class="mt-1 text-sm text-gray-700"><span>{{i.description}}</span></div>
+                <div class="flex justify-between mt-1 text-sm text-gray-700">
+                  <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" />
+                  <button v-on:click="removeItem(id)" class="bg-red-600 rounded-full p-3">X</button>
+                </div>
+                <!-- <InputNumber v-model="i.quantity"/> -->
               </div>
           </div>
       </div>
@@ -23,7 +27,7 @@
           </button>
       </div>
       <div>
-        <stripe-checkout
+        <!-- <stripe-checkout
           ref="checkoutRef"
           mode="payment"
           :pk="pk"
@@ -31,21 +35,31 @@
           :success-url="successURL"
           :cancel-url="cancelURL"
           @loading="v => loading = v"
-        />
+        /> -->
       </div>
     </div>
 </template>
 
 <script>
+import InputNumber from './../components/inputNumber'
+
 export default {
-  asyncData({store, env}) {
+  components: {
+    InputNumber
+  },
+  async asyncData({store, env}) {
+    //await store.dispatch('cart/fetchProducts')
+    //await store.dispatch('cart/fetchPrices')
+
+    //this.$auth.loginWith('social')
+
     const lineItems = Object.keys(store.state.cart.items).map(k => ({
       price: store.state.cart.items[k].price,
       quantity: store.state.cart.items[k].quantity
     }));
 
     return {
-      items: store.state.cart.items,
+     items: store.state.cart.items,
       lineItems,
       successURL: env.hostname,
       cancelURL: env.hostname,
@@ -53,8 +67,26 @@ export default {
     }
   },
   methods: {
-    submit () {
-      this.$refs.checkoutRef.redirectToCheckout();
+    lookupItemQuantity (productId) {
+      const q = this.$store.state.cart.items[productId].quantity
+      console.log('GET ', q)
+      return q
+    },
+    updateItems (productId, q) {
+      this.$store.dispatch('cart/updateQuantity', {
+        id: productId,
+        quantity: q 
+      })
+    },
+    removeItem (productId) {
+      this.$store.dispatch('cart/removeItem', productId)
+    },
+    async submit () {
+      //this.$refs.checkoutRef.redirectToCheckout();
+      const res = await this.$axios.$post('/api/order', { items: this.lineItems });
+      console.log('RES : ', res);
+
+      window.location.href = res.url;
     },
   },
 }

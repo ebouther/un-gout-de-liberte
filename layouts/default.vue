@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500">
+  <div class="bg-indigo-100 via-red-500 to-pink-500">
     <div class="flex justify-center">
-        <div class="max-w-screen-lg flex flex-col min-h-screen w-full">
+        <div class="flex flex-col min-h-screen w-full">
             <NavBar/>
             <Nuxt class="flex-grow"/>
             <Footer />
