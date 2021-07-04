@@ -1,6 +1,13 @@
 export default {
   ssr: process.env.NUXT_SSR || false ,
   target: process.env.NUXT_TARGET || 'static',
+
+  // router: { # TODO
+  //   middleware: ['auth']
+  // },
+  serverMiddleware: [
+    '~/api/stripe.js'
+  ],
   /*
   ** Headers of the page
   ** See https://nuxtjs.org/api/configuration-head
@@ -54,13 +61,13 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
-    // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
+    //'@nuxtjs/auth-next',
     '@nuxtjs/axios',
     '@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
@@ -68,7 +75,7 @@ export default {
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK || 'pk_test_51J84KnBVac9AX8Ww3v0D3d3ZY9KwfOykIlePV5fNI35U2M8UcoPHuvlmZQK81DIbwm3XhNGZRIKufXWtQyWgNZNc00cPuHKVTf',
-    hostname: 'https://un-gout-de-liberte.fr'
+    hostname: process.env.HOST || 'https://un-gout-de-liberte.fr'
   },
   /*
   ** Build configuration

@@ -11,6 +11,13 @@ const fetchPrice = async (productId) => {
 }
 
 export const mutations = {
+  RM_ITEM(state, id) {
+    delete state.items[id]
+  },
+  SET_ITEM_QUANTITY(state, { id, quantity }) {
+    state.items[id].quantity = quantity 
+  },
+
   SET_PRICES(state, prices) {
     state.prices = prices 
   },
@@ -31,12 +38,6 @@ export const mutations = {
       state.items[productId].quantity += 1;
     }
   },
-  remove(state, { todo }) {
-    state.list.splice(state.cart.indexOf(todo), 1)
-  },
-  toggle(todo) {
-    todo.done = !todo.done
-  }
 }
 
 export const actions = {
@@ -51,6 +52,12 @@ export const actions = {
     const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
     commit('SET_PRICES', prices)
     commit('SET_LOADING_STATUS', false)
+  },
+  async updateQuantity({ commit }, { id, quantity }) {
+    commit('SET_ITEM_QUANTITY', { id, quantity });
+  },
+  async removeItem({ commit }, id) {
+    commit('RM_ITEM', id);
   }
 }
 
