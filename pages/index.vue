@@ -47,7 +47,7 @@
       </div>
     </div>
 
-    <div class="">
+    <div class="max-w-screen-lg mx-auto">
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
         <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-orange-500 hover:border-8">
           <nuxt-link :to="`/products/${p.id}`">

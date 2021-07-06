@@ -61,6 +61,7 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
+	  '@nuxtjs/pwa',
     '@nuxtjs/tailwindcss',
   ],
   /*
@@ -92,5 +93,10 @@ export default {
     UserAgent: '*',
     Disallow: '/user',
     Sitemap: '/sitemap.xml'
+  },
+  pwa: {
+    icon: {
+      source: '~/static/logo.png'
+    } 
   }
 }

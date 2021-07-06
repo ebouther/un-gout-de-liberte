@@ -1,11 +1,11 @@
 <template>
   <div class="custom-number-input h-10 w-32">
     <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
-      <button v-on:click="count--" v-bind:disabled="count<1" class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
+      <button v-on:click.prevent="decrement" v-bind:disabled="value<=1" class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
         <span class="m-auto text-2xl font-thin">−</span>
       </button>
-      <input class="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 " name="custom-input-number" v-model.number="count"></input>
-      <button v-on:click="count++" class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+      <input class="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 " name="custom-input-number" v-model.number="input"></input>
+      <button v-on:click.prevent="increment" class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
         <span class="m-auto text-2xl font-thin">+</span>
       </button>
     </div>
@@ -36,14 +36,21 @@
     name: 'inputNumber',
     props: ['value'],
     computed: {
-      count: {
+      input: {
         get() {
           return this.value
         },
         set(v) {
-          console.log('VALUE ', v)
-          this.$emit('input', v) 
+          this.$emit('input', v)
         }
+      }
+    },
+    methods: {
+      increment() {
+        this.$emit('input', this.value + 1)
+      },
+      decrement() {
+        this.$emit('input', this.value - 1)
       }
     }
   }
