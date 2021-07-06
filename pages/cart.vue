@@ -1,8 +1,9 @@
 <template>
-    <div>
+    <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
         <h1 class="font-bold text-3xl font-mono text-orange-500">Panier</h1>
       </div>
+      <!-- <div v-if="!items || !items.length" class="text-center"><br/><span class="text-gray-700">Le panier est vide.</span></div> -->
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
           <div v-for="(i, id) in items" :key="id" class="border rounded-lg bg-gray-100">
               <div class="rounded-t-lg bg-white">
@@ -12,7 +13,10 @@
                 <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
                 <div  class="mt-1 text-sm text-gray-700"><span>{{i.description}}</span></div>
                 <div class="flex justify-between mt-1 text-sm text-gray-700">
-                  <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" />
+                  <!-- <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" /> -->
+                  <label class="self-center" for="quantity">Quantity:</label>
+                  <input id="quantity" class="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
+                  name="custom-input-number" v-bind:value="lookupItemQuantity(id)" v-on:input="updateItems(id, $event.target.value)"> </input>
                   <button v-on:click="removeItem(id)" class="bg-red-600 rounded-full p-3">X</button>
                 </div>
                 <!-- <InputNumber v-model="i.quantity"/> -->
@@ -26,53 +30,40 @@
             </span>
           </button>
       </div>
-      <div>
-        <!-- <stripe-checkout
-          ref="checkoutRef"
-          mode="payment"
-          :pk="pk"
-          :line-items="lineItems"
-          :success-url="successURL"
-          :cancel-url="cancelURL"
-          @loading="v => loading = v"
-        /> -->
-      </div>
     </div>
 </template>
 
 <script>
 import InputNumber from './../components/inputNumber'
+//import { mapMutations } from 'vuex'
 
 export default {
   components: {
     InputNumber
   },
-  async asyncData({store, env}) {
-    //await store.dispatch('cart/fetchProducts')
-    //await store.dispatch('cart/fetchPrices')
-
+  async asyncData({ env }) {
     //this.$auth.loginWith('social')
 
-    const lineItems = Object.keys(store.state.cart.items).map(k => ({
-      price: store.state.cart.items[k].price,
-      quantity: store.state.cart.items[k].quantity
-    }));
-
     return {
-     items: store.state.cart.items,
-      lineItems,
+      quantity: 42,
       successURL: env.hostname,
       cancelURL: env.hostname,
       pk: env.STRIPE_PK
     }
   },
+  computed: {
+    items() {
+      return this.$store.state.cart.items
+    }
+  },
   methods: {
     lookupItemQuantity (productId) {
       const q = this.$store.state.cart.items[productId].quantity
-      console.log('GET ', q)
+      console.log('LOOKUP ', q)
       return q
     },
     updateItems (productId, q) {
+      console.log('UPDATE', q)
       this.$store.dispatch('cart/updateQuantity', {
         id: productId,
         quantity: q 
@@ -83,7 +74,13 @@ export default {
     },
     async submit () {
       //this.$refs.checkoutRef.redirectToCheckout();
-      const res = await this.$axios.$post('/api/order', { items: this.lineItems });
+      const res = await this.$axios.$post('/api/order', {
+        items: Object.keys(this.$store.state.cart.items).map(k => ({
+          price: this.$store.state.cart.items[k].price,
+          quantity: this.$store.state.cart.items[k].quantity
+        }))
+      });
+
       console.log('RES : ', res);
 
       window.location.href = res.url;

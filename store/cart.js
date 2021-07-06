@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 export const state = () => ({
   items: {},
 
@@ -6,20 +8,18 @@ export const state = () => ({
   loading: false
 })
 
-const fetchPrice = async (productId) => {
-  return 'price_1J85CPBVac9AX8WwQyJ2r9wT' // TODO
-}
-
 export const mutations = {
   RM_ITEM(state, id) {
-    delete state.items[id]
+    Vue.delete(state.items, id)
   },
   SET_ITEM_QUANTITY(state, { id, quantity }) {
-    state.items[id].quantity = quantity 
+    state.items[id].quantity = quantity
+    //const item = state.items[id]
+    //Vue.set(state.items, id, { ...item, quantity })
   },
 
   SET_PRICES(state, prices) {
-    state.prices = prices 
+    state.prices = prices
   },
   SET_PRODUCTS(state, products) {
     state.products = products
@@ -31,7 +31,7 @@ export const mutations = {
   async add(state, productId) {
     if (!state.items[productId]) {
       const product = state.products.find(p => p.id === productId);
-      const { id: price } = state.prices.find(p => p.product === productId); 
+      const { id: price } = state.prices.find(p => p.product === productId);
       if (!product || !price) throw new Error('Error with product id: ', productId)
       state.items[productId] = { ...product, quantity: 1, price};
     } else {
@@ -41,6 +41,9 @@ export const mutations = {
 }
 
 export const actions = {
+  async getItems ({ commit }) {
+
+  },
   async fetchProducts ({ commit }) {
     commit('SET_LOADING_STATUS', true)
     const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
