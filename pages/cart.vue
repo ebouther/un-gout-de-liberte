@@ -86,6 +86,21 @@ export default {
       window.location.href = res.url;
     },
   },
+  head() {
+    const title = `Commande - Pâtisseries & Biscuits - Un Goût de Liberté`;
+    return {
+      title: title,
+      meta: [{
+        hid: 'title',
+        name: 'title',
+        content: title,
+      }, {
+        hid: 'description',
+        name: 'description',
+        content: `Passer Commande - Un Goût de Liberté - Vente en Ligne de Pâtisseries et Biscuits artisanaux faits à CHILHAC (43380) par Justine DUMESNIL`,
+      }]
+    }
+  }
 }
 </script>
 
