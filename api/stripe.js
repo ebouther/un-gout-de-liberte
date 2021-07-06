@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import Stripe from 'stripe';
+import cors from 'cors'
 
 const stripe = new Stripe(process.env.STRIPE_SK, {
   apiVersion: '2020-08-27',
@@ -8,6 +9,8 @@ const stripe = new Stripe(process.env.STRIPE_SK, {
 
 
 const app = express()
+
+app.use(cors());
 app.use(bodyParser.json())
 
 
