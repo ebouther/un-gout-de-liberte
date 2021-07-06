@@ -95,7 +95,7 @@ export default {
     Sitemap: '/sitemap.xml'
   },
   axios: {
-    baseURL: process.env.VERCEL_ENV === 'production' ? 'https://un-gout-de-liberte.fr' : `https://${process.env.VERCEL_URL}`
+    baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`
   },
   pwa: {
     icon: {
