@@ -94,6 +94,9 @@ export default {
     Disallow: '/user',
     Sitemap: '/sitemap.xml'
   },
+  axios: {
+    baseURL: process.env.VERCEL_ENV === 'production' ? 'https://un-gout-de-liberte.fr' : `https://${process.env.VERCEL_URL}`
+  },
   pwa: {
     icon: {
       source: '~/static/logo.png'
