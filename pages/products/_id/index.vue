@@ -1,9 +1,9 @@
 <template>
     <div class="flex justify-center m-6">
-        <div v-if="this.product !== null">
-            <div class="flex flex-col items-center border rounded-lg bg-gray-100">
-                <div v-for="url in product.images" class="w-full bg-white rounded-lg flex justify-center">
-                  <img class="rounded-t-md" :src="url" :alt="product.name" width="375">
+        <div v-if="product !== null">
+            <div class="md:max-w-screen-md lg:max-w-screen-lg flex flex-col items-center border rounded-lg bg-gray-100">
+                <div v-for="url in product.images" :key="url" class="bg-white rounded-lg flex justify-center">
+                  <img class="rounded-t-md" :src="url" :alt="product.name">
                 </div>
                 <div class="w-full p-5 flex flex-col justify-between">
                   <div>
@@ -23,13 +23,24 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 export default {
   auth: false,
-  async asyncData({ store, route }) {
-    await store.dispatch('cart/fetchProducts')
-    await store.dispatch('cart/fetchPrices')
-    return { product: store.state.cart.products.find(p => p.id === route.params.id) }
+
+  computed: {
+    ...mapGetters({}),
+    ...mapState({
+      product: function (state) {
+        return state.cart.products.find(p => p.id === this.$nuxt.$route.params.id)
+      }
+    })
   },
+
+  mounted() {
+    this.$store.dispatch('cart/load')
+  },
+
   methods: {
     addToCart () {
       this.$store.commit('cart/add', this.$route.params.id)
