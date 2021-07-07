@@ -4,8 +4,8 @@
       <div class="hidden md:block font-bold text-5xl font-mono text-gray-700">
         <h1> <span class="text-orange-500"> Un Goût</span> <span class="text-gray-800">de  Liberté</span> </h1>
       </div>
-      <div class="md:grid md:grid-cols-2 items-center md:pt-4 lg:space-x-10 lg:mr-48 lg:ml-48">
-        <div class="mx-auto self-center sm:px-3 max-w-md">
+      <div class="md:grid md:grid-cols-2 items-center md:pt-4 lg: xl:space-x-10 xl:mx-48">
+        <div class="mx-auto self-center px-3 max-w-md">
           <img class="rounded-lg border-gray-700 border-4" src="logo.png" alt="logo">
           <!-- <div class="h-32 w-32 border-gray-800 border-4"></div> -->
         </div>
@@ -67,14 +67,23 @@
 
 <script>
 import cart from '../components/icons/cart.vue'
+import { mapState, mapGetters } from 'vuex'
+
 export default {
   auth: false,
   components: { cart },
-  async asyncData({ store }) {
-    await store.dispatch('cart/fetchProducts')
-    await store.dispatch('cart/fetchPrices')
-    return { products: store.state.cart.products }
+
+  computed: {
+    ...mapGetters({}),
+    ...mapState({
+      products: (state) => state.cart.products
+    })
   },
+
+  mounted() {
+    this.$store.dispatch('cart/load')
+  },
+
   head() {
     return {
       title: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC ',

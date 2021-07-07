@@ -5,22 +5,24 @@
       </div>
       <!-- <div v-if="!items || !items.length" class="text-center"><br/><span class="text-gray-700">Le panier est vide.</span></div> -->
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
-          <div v-for="(i, id) in items" :key="id" class="border rounded-lg bg-gray-100">
+          <div v-for="(i, id) in items" :key="id" class="overflow-hidden flex flex-col border rounded-lg bg-gray-100">
               <div class="rounded-t-lg bg-white">
                 <img class="object-cover h-48 w-full rounded-t-lg" :src="i.images[0]" :alt="i.name">
               </div>          
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
                 <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
                 <div  class="mt-1 text-sm text-gray-700"><span>{{i.description}}</span></div>
-                <div class="flex justify-between mt-1 text-sm text-gray-700">
-                  <!-- <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" /> -->
-                  <label class="self-center" for="quantity">Quantity:</label>
-                  <input id="quantity" class="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
-                  name="custom-input-number" v-bind:value="lookupItemQuantity(id)" v-on:input="updateItems(id, $event.target.value)"> </input>
-                  <button v-on:click="removeItem(id)" class="bg-red-600 rounded-full p-3">X</button>
-                </div>
-                <!-- <InputNumber v-model="i.quantity"/> -->
               </div>
+              <div class="border bg-orange-100 w-full mt-auto flex justify-between text-sm text-gray-700">
+                <!-- <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" /> -->
+                <div class="inline-flex">
+                  <label class=" ml-2 self-center" for="quantity">Quantité:</label>
+                  <input id="quantity" class="mx-2 my-4 w-16 e text-center rounded-md shadow-outline font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
+                  name="custom-input-number" v-bind:value="lookupItemQuantity(id)" v-on:input="updateItems(id, $event.target.value)"> </input>
+                </div>
+                <button v-on:click="removeItem(id)" class="m-2 bg-red-600 rounded-md p-3">X</button>
+              </div>
+              <!-- <InputNumber v-model="i.quantity"/> -->
           </div>
       </div>
       <div class="flex items-center justify-center">
@@ -35,27 +37,27 @@
 
 <script>
 import InputNumber from './../components/inputNumber'
-//import { mapMutations } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
     InputNumber
   },
-  async asyncData({ env }) {
-    //this.$auth.loginWith('social')
+  async asyncData() {
 
-    return {
-      quantity: 42,
-      successURL: env.hostname,
-      cancelURL: env.hostname,
-      pk: env.STRIPE_PK
-    }
   },
+
   computed: {
-    items() {
-      return this.$store.state.cart.items
-    }
+    ...mapGetters({}),
+    ...mapState({
+      items: (state) => state.cart.items
+    }),
   },
+
+  mounted() {
+
+  },
+
   methods: {
     lookupItemQuantity (productId) {
       const q = this.$store.state.cart.items[productId].quantity
