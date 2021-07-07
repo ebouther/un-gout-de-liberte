@@ -76,12 +76,14 @@ export default {
   computed: {
     ...mapGetters({}),
     ...mapState({
-      products: (state) => state.cart.products
+      products: function (state) {
+        return state.cart.products
+      }
     })
   },
 
-  mounted() {
-    this.$store.dispatch('cart/load')
+  async asyncData ({ store }) {
+    await store.dispatch('cart/load')
   },
 
   head() {

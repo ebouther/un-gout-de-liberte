@@ -37,8 +37,8 @@ export default {
     })
   },
 
-  mounted() {
-    this.$store.dispatch('cart/load')
+  async asyncData ({ store }) {
+    await store.dispatch('cart/load')
   },
 
   methods: {
