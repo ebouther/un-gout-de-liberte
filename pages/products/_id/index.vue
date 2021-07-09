@@ -57,7 +57,7 @@ export default {
     },
   },
   head() {
-    const title = `${this.product.name} - Pâtisseries & Biscuits - Un Goût de Liberté`;
+    const title = `${this.product.name} - Un Goût de Liberté`;
     return {
       title: title,
       meta: [{
