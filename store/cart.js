@@ -5,7 +5,6 @@ export const state = () => ({
   items: {},
 
   products: [],
-  prices: [],
   loading: false
 })
 
@@ -14,16 +13,12 @@ export const mutations = {
     Vue.delete(state.items, id)
   },
   SET_ITEM_QUANTITY(state, { id, quantity }) {
-    state.items[id].quantity = quantity
-    //const item = state.items[id]
-    //Vue.set(state.items, id, { ...item, quantity })
+    //state.items[id].quantity = quantity > 0 ? quantity : 0
+    Vue.set(state.items, id, {...state.items[id], quantity})
   },
 
-  SET_PRICES(state, prices) {
-    state.prices = prices
-  },
-  SET_PRODUCTS(state, products) {
-    state.products = products
+  SET_PRODUCTS_WITH_PRICE(state, products) {
+    Vue.set(state, 'products', products)
   },
   SET_LOADING_STATUS(state, status) {
     state.loading = status
@@ -31,14 +26,22 @@ export const mutations = {
 
   async add(state, productId) {
     if (!state.items[productId]) {
-      const product = state.products.find(p => p.id === productId);
-      const { id: price } = state.prices.find(p => p.product === productId);
-      if (!product || !price) throw new Error('Error with product id: ', productId)
-      state.items[productId] = { ...product, quantity: 1, price};
+      Vue.set(state.items, productId, { ...state.products.find(p => p.id === productId), quantity: 1}); //TODO:remove find - store products with
     } else {
-      state.items[productId].quantity += 1;
+      Vue.set(state.items, productId, {...state.items[productId], quantity: state.items[productId].quantity + 1 });
     }
   },
+}
+
+
+const findPrice = (prices, productId) => {
+  const price = prices.find(price => price.product === productId);
+
+  return ({
+    amount: price.unit_amount / 100,
+    currency: price.currency === 'eur' ? '€' : price.currency,
+    id: price.id
+  })
 }
 
 export const actions = {
@@ -46,9 +49,14 @@ export const actions = {
     commit('SET_LOADING_STATUS', true)
 
     const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
-    commit('SET_PRICES', prices)
     const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
-    commit('SET_PRODUCTS', products)
+
+    commit('SET_PRODUCTS_WITH_PRICE',
+      products.map(p => ({
+        ...p,
+        price: findPrice(prices, p.id)
+      }))
+    );
 
     commit('SET_LOADING_STATUS', false)
   },
