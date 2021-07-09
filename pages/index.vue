@@ -92,12 +92,17 @@ export default {
   },
 
   head() {
+    const title = 'Pâtisserie - Un Goût de Liberté - CHILHAC ';
     return {
-      title: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC ',
+      title,
       meta: [{
         hid: 'title',
         name: 'title',
-        content: 'Un Goût de Liberté',
+        content: title,
+      }, {
+        hid: 'description',
+        name: 'description',
+        content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
       }]
     }
   }
