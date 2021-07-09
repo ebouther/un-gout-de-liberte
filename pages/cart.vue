@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-orange-500">Panier</h1>
+        <h1 class="font-bold text-3xl font-mono text-yellow-500">Panier</h1>
       </div>
       <!-- <div v-if="!items || !items.length" class="text-center"><br/><span class="text-gray-700">Le panier est vide.</span></div> -->
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
@@ -13,7 +13,7 @@
                 <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
                 <div  class="mt-1 text-sm text-gray-700"><span>{{i.description}}</span></div>
               </div>
-              <div class="border bg-orange-100 w-full mt-auto flex justify-between text-sm text-gray-700">
+              <div class="border bg-yellow-100 w-full mt-auto flex justify-between text-sm text-gray-700">
                 <!-- <InputNumber v-bind:value="lookupItemQuantity(id)" v-on:input="q => updateItems(id, q)" /> -->
                 <div class="inline-flex">
                   <label class=" ml-2 self-center" for="quantity">Quantité:</label>
@@ -26,8 +26,8 @@
           </div>
       </div>
       <div class="flex items-center justify-center">
-          <button class="text-center shadow-md hover:shadow-none hover:border-orange-500 rounded-md border-gray-500 border-2" @click="submit">
-            <span class="m-4 font-semibold text-sm text-orange-500">
+          <button class="text-center shadow-md hover:shadow-none hover:border-yellow-500 rounded-md border-gray-500 border-2" @click="submit">
+            <span class="m-4 font-semibold text-sm text-yellow-500">
             Procéder au paiement
             </span>
           </button>
