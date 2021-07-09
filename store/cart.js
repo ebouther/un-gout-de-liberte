@@ -13,12 +13,12 @@ export const mutations = {
     Vue.delete(state.items, id)
   },
   SET_ITEM_QUANTITY(state, { id, quantity }) {
-    state.items[id].quantity = quantity
+    //state.items[id].quantity = quantity > 0 ? quantity : 0
+    Vue.set(state.items, id, {...state.items[id], quantity})
   },
 
   SET_PRODUCTS_WITH_PRICE(state, products) {
-    state.products = products
-    console.log('PRODUCTS', products)
+    Vue.set(state, 'products', products)
   },
   SET_LOADING_STATUS(state, status) {
     state.loading = status
@@ -26,9 +26,9 @@ export const mutations = {
 
   async add(state, productId) {
     if (!state.items[productId]) {
-      state.items[productId] = { ...state.products.find(p => p.id === productId), quantity: 1}; //TODO:remove find - store products with
+      Vue.set(state.items, productId, { ...state.products.find(p => p.id === productId), quantity: 1}); //TODO:remove find - store products with
     } else {
-      state.items[productId].quantity += 1;
+      Vue.set(state.items, productId, {...state.items[productId], quantity: state.items[productId].quantity + 1 });
     }
   },
 }
