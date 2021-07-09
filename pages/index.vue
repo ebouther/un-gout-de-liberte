@@ -16,9 +16,7 @@
             </h1>
           </div> -->
           <div class="text-3xl font-light font-mono text-gray-700">
-            <h1>
             <span class="hidden md:block"> Justine Dumesnil</span>
-            </h1>
           </div>
           <br/>
           <br/>
