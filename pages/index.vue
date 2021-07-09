@@ -92,8 +92,9 @@ export default {
   },
 
   head() {
+    const title = 'Pâtisserie - Un Goût de Liberté - CHILHAC ';
     return {
-      title: 'Pâtisserie - Un Goût de Liberté - CHILHAC ',
+      title,
       meta: [{
         hid: 'title',
         name: 'title',
