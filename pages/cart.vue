@@ -2,6 +2,9 @@
     <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
         <h1 class="font-bold text-3xl font-mono text-yellow-500">Panier</h1>
+        <br/>
+        <h2 class="font-bold text-xl font-mono  text-gray-700"><span>Total: {{totalPrice}} €</span></h2>
+        <span class="text-gray-500">* frais de transport non-inclus</span>
       </div>
       <!-- <div v-if="!items || !items.length" class="text-center"><br/><span class="text-gray-700">Le panier est vide.</span></div> -->
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
@@ -50,7 +53,13 @@ export default {
   computed: {
     ...mapGetters({}),
     ...mapState({
-      items: (state) => state.cart.items
+      items: (state) => state.cart.items,
+      totalPrice: (state) => {
+        if (!Object.keys(state.cart.items).length) return 0
+
+        return Object.values(state.cart.items)
+                .reduce((acc, i) => acc + i.price.amount * i.quantity, 0)
+      }
     }),
   },
 
@@ -78,7 +87,7 @@ export default {
       //this.$refs.checkoutRef.redirectToCheckout();
       const res = await this.$axios.$post('/api/order', {
         items: Object.keys(this.$store.state.cart.items).map(k => ({
-          price: this.$store.state.cart.items[k].price,
+          price: this.$store.state.cart.items[k].price.id,
           quantity: this.$store.state.cart.items[k].quantity
         }))
       });
