@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-yellow-500">Panier</h1>
+        <h1 class="font-bold text-3xl font-mono text-yellow-500">Mon Panier</h1>
         <br/>
         <h2 class="font-bold text-xl font-mono  text-gray-700"><span>Total: {{totalPrice}} €</span></h2>
         <span class="text-gray-500">* frais de transport non-inclus</span>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import InputNumber from './../components/inputNumber'
+import InputNumber from '~/components/inputNumber'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -98,17 +98,17 @@ export default {
     },
   },
   head() {
-    const title = `Commande - Pâtisseries & Biscuits - Un Goût de Liberté`;
+    const title = `Mon Panier`;
     return {
-      title: title,
+      title,
       meta: [{
         hid: 'title',
         name: 'title',
-        content: title,
+        content: `${title} - Pâtisseries & Biscuits - Un Goût de Liberté`,
       }, {
         hid: 'description',
         name: 'description',
-        content: `Passer Commande - Un Goût de Liberté - Vente en Ligne de Pâtisseries et Biscuits artisanaux faits à CHILHAC (43380) par Justine DUMESNIL`,
+        content: `Mon Panier - Un Goût de Liberté - Vente en Ligne de Pâtisseries et Biscuits artisanaux faits à CHILHAC (43380) par Justine DUMESNIL`,
       }]
     }
   }

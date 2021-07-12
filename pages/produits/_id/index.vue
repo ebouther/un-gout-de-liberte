@@ -11,7 +11,7 @@
                       <div class="mt-1 text-gray-600"><h2>{{product.description}}</h2></div>
                       <div class="mt-1 text-gray-600"><h2><span class="font-semibold">Prix: </span><span>{{product.price.amount}} {{product.price.currency}}</span></h2></div>
                       <div v-for="(meta, key) in product.metadata" :key="key" class="mt-1 text-gray-600">
-                        <span class="font-semibold">{{key}}: </span><span>{{meta}}</span>
+                        <span class="font-semibold">{{key}} : </span><span>{{meta}}</span>
                       </div>
                   </div>
 
