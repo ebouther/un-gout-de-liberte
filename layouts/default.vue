@@ -1,20 +1,24 @@
 <template>
-  <div class="bg-indigo-100 via-red-500 to-pink-500">
+  <div class="bg-indigo-100">
     <div class="flex justify-center">
-        <div class="flex flex-col min-h-screen w-full">
-            <NavBar/>
-            <Nuxt class="flex-grow"/>
-            <Footer />
+      <div class="flex flex-col min-h-screen w-full">
+        <div class="min-h-screen">
+          <NavBar class="hidden md:block"/>
+          <Nuxt class="flex-grow  pt-10 md:pt-0"/>
         </div>
+        <BottomBar class="border-t-4 border-opacity-60 border-yellow-500 shadow-xl fixed bottom-0 w-full md:hidden"/>
+        <Footer class="mb-10 md:mb-0 mt-10 " />
+      </div>
     </div>
   </div>
 </template>
 <script>
-import NavBar from './../components/navbar'
-import Footer from './../components/footer'
+import NavBar from '~/components/navbar'
+import BottomBar from '~/components/bottombar'
+import Footer from '~/components/footer'
 
 export default {
-  components: { NavBar }
+  components: { NavBar, BottomBar, Footer }
 }
 </script>
 <style>
