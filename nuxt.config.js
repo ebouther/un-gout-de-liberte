@@ -25,8 +25,6 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
-    script: [
-    ]
   },
   /*
   ** Global CSS
@@ -51,8 +49,8 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
-	  '@nuxtjs/pwa',
-    '@nuxtjs/tailwindcss',
+    '@nuxtjs/pwa',
+    '@nuxtjs/tailwindcss'
   ],
   /*
   ** Nuxt.js modules
