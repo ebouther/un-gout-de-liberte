@@ -1,24 +1,5 @@
 <template>
-  <!-- <div class="bg-gray-100 p-5">
-    <div class="w-full grid justify-items-start  mx-6 my-4 border border-red-500">
-      <nuxt-link to="/" class="flex items-center">
-        <Home class="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-125"/>
-        <span class="hidden md:block font-semibold text-sm text-grey-700">Un Goût de Liberté</span>
-      </nuxt-link>
-
-      <div class="inline-flex">
-        <nuxt-link to="/presentation" class="flex items-center">Qui suis-je ?</nuxt-link>
-        <nuxt-link to="/produits" class="flex items-center">Mes Produits</nuxt-link>
-      </div>
-
-      <nuxt-link to="/panier" class="justify-self-end flex items-center border border-green-700">
-          <Cart class="transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-125"/>
-          <span class="font-semibold text-sm text-orange-700">Mon Panier</span>
-      </nuxt-link>
-    </div>
-  </div> -->
 <div class="mb-5">
-  <!-- <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script> -->
   <div class="w-full text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800">
     <div x-data="{ open: false }" class="flex flex-col max-w-screen-xl px-4 mx-auto md:items-center md:justify-between md:flex-row md:px-6 lg:px-8">
       <div class="p-4 flex flex-row items-center justify-between">
@@ -76,9 +57,3 @@ export default {
     }
 }
 </script>
-
-<style>
-  .emoji {
-    font-size: 30px;
-  }
-</style>
