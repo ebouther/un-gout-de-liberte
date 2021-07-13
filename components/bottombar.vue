@@ -11,7 +11,7 @@
         </a>
       </div>
       <div class="flex-1 group">
-        <a href="presentation" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
+        <a href="/presentation" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
           <span class="block px-1 pt-1 pb-1">
             <About class="text-2xl pt-1 mb-1 block"/>
             <!-- <span class="block text-xs pb-2">Présentation</span> -->
@@ -20,7 +20,7 @@
         </a>
       </div>
       <div class="flex-1 group">
-        <a href="produits" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
+        <a href="/produits" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
           <span class="block px-1 pt-1 pb-1">
             <Biscuit class="text-2xl pt-1 mb-1 block"/>
             <!-- <span class="block text-xs pb-2">Réalisations</span> -->
@@ -29,7 +29,7 @@
         </a>
       </div>
       <div class="flex-1 group">
-        <a href="panier" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
+        <a href="/panier" class="flex items-end justify-center text-center mx-auto pt-2 w-full text-gray-400 group-hover:text-gray-600">
           <span class="block px-1 pt-1 pb-1">
             <Cart class="text-2xl pt-1 mb-1 block"/>
 
