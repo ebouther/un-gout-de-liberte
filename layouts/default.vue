@@ -22,8 +22,6 @@ export default {
 }
 </script>
 <style>
-@import url(https://pro.fontawesome.com/releases/v5.10.0/css/all.css);
-
 html {
   font-family:
     'Source Sans Pro',

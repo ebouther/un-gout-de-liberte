@@ -24,12 +24,6 @@
             </div>
         </div>
     </div>
-            <!-- <div class="flex flex-col h-full  max-h-screen border-2 border-pink-600 rounded-lg bg-gray-100  ">
-                <div class="border-4 border-green-800 py-auto flex-auto">
-                  <img class=" mx-auto object-cover h-full max-h-full" src='http://www.sherkspear.com/wp-content/uploads/2015/04/jsfiddle.png'/> 
-                </div> 
-                <div class="border-4 border-green-400 py-auto flex-auto"><span>TOTO</span></div> 
-            </div> -->
 </template>
 
 <script>
