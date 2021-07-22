@@ -48,8 +48,10 @@ export const actions = {
   async load({ commit }) {
     commit('SET_LOADING_STATUS', true)
 
-    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
-    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers: { 'Authorization': 'Bearer rk_test_51J84KnBVac9AX8Wws15im9jdTdzX6DyY9eu4hkIfvMt0pGeWnojrDaSOwF14yKO8AkP0XS3oBYnrlvyMDTZ2pfxD00IQGqH0sk'} })
+    const headers = { 'Authorization': `Bearer ${process.env.STRIPE_PK}`};
+
+    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers })
+    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers })
 
     commit('SET_PRODUCTS_WITH_PRICE',
       products.map(p => ({
