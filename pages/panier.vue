@@ -71,12 +71,14 @@ export default {
 
   methods: {
     lookupItemQuantity (productId) {
-      const q = this.$store.state.cart.items[productId].quantity
-      console.log('LOOKUP ', q)
-      return q
+      return this.$store.state.cart.items[productId].quantity
     },
     updateItems (productId, q) {
-      console.log('UPDATE', q)
+
+      if (q === '' || Number(q) === NaN) return;
+
+      if (q <= 0) return this.removeItem(productId)
+
       this.$store.dispatch('cart/updateQuantity', {
         id: productId,
         quantity: q 
