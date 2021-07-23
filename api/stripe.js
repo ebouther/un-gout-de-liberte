@@ -15,13 +15,13 @@ app.use(bodyParser.json())
 
 
 const shippingRates = [
-  { weightR: [5000, 9999], packagingWeight: 1000, id: 'shr_1JFMyDBVac9AX8WwdlsE8toV' },
-  { weightR: [2000, 4999], packagingWeight: 800,  id: 'shr_1JFMxHBVac9AX8WwniJEI5l6' },
-  { weightR: [1000, 1999], packagingWeight: 600,  id: 'shr_1JFMwxBVac9AX8WwXTQw4D1a' },
-  { weightR: [750, 999],   packagingWeight: 400,  id: 'shr_1JFMwcBVac9AX8WwHZpU4khT' },
-  { weightR: [500, 749],   packagingWeight: 300,  id: 'shr_1JFMvnBVac9AX8WwvVQtdm9L' },
-  { weightR: [250, 499],   packagingWeight: 150,  id: 'shr_1JFMueBVac9AX8WwIX7mlVJW' },
-  { weightR: [0, 249],     packagingWeight: 100,  id: 'shr_1JFMsIBVac9AX8WwsSDXCFmw' }
+  { weightR: [0, 249],     packagingWeight: 100,  id: 'shr_1JGPjtBVac9AX8WwYtnO1LfD' },
+  { weightR: [250, 499],   packagingWeight: 150,  id: 'shr_1JGPjcBVac9AX8WwPtJhv3Qn' },
+  { weightR: [500, 749],   packagingWeight: 300,  id: 'shr_1JGPjBBVac9AX8WwzQB9jFYT' },
+  { weightR: [750, 999],   packagingWeight: 400,  id: 'shr_1JGPisBVac9AX8WwsrJuCKpt' },
+  { weightR: [1000, 1999], packagingWeight: 600,  id: 'shr_1JGPi4BVac9AX8WwJbSkiWVa' },
+  { weightR: [2000, 4999], packagingWeight: 800,  id: 'shr_1JGPhdBVac9AX8WwenIXJNic' },
+  { weightR: [5000, 9999], packagingWeight: 1000, id: 'shr_1JGPgVBVac9AX8Ww3MJP3aVC' }
 ];
 
 
