@@ -48,6 +48,7 @@ export default {
   methods: {
     addToCart () {
       this.$store.commit('cart/add', this.$route.params.id)
+      this.$router.push('/panier')
     },
   },
   head() {
