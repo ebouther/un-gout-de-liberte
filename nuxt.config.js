@@ -63,7 +63,7 @@ export default {
     '@nuxtjs/robots'
   ],
   env: {
-    STRIPE_PK: process.env.STRIPE_PK || 'pk_test_51J84KnBVac9AX8Ww3v0D3d3ZY9KwfOykIlePV5fNI35U2M8UcoPHuvlmZQK81DIbwm3XhNGZRIKufXWtQyWgNZNc00cPuHKVTf',
+    STRIPE_PK: process.env.STRIPE_PK,
     hostname: process.env.HOST || 'https://un-gout-de-liberte.fr'
   },
   /*

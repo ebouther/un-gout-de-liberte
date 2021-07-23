@@ -6,6 +6,15 @@
         <h2 class="font-bold text-xl font-mono  text-gray-700"><span>Total: {{totalPrice}} €</span></h2>
         <span class="text-gray-500">* frais de transport non-inclus</span>
       </div>
+      <br>
+      <div class="flex items-center justify-center">
+          <button class="bg-yellow-500 text-center shadow-md hover:shadow-none hover:border-black rounded-md border-gray-500 border-2" @click="submit">
+            <span class="text-lg m-4 font-semibold text-black">
+            Procéder au paiement
+            </span>
+          </button>
+      </div>
+      <br>
       <!-- <div v-if="!items || !items.length" class="text-center"><br/><span class="text-gray-700">Le panier est vide.</span></div> -->
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
           <div v-for="(i, id) in items" :key="id" class="overflow-hidden flex flex-col border rounded-lg bg-gray-100">
@@ -21,19 +30,12 @@
                 <div class="inline-flex">
                   <label class=" ml-2 self-center" for="quantity">Quantité:</label>
                   <input id="quantity" class="mx-2 my-4 w-16 e text-center rounded-md shadow-outline font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700 "
-                  name="custom-input-number" v-bind:value="lookupItemQuantity(id)" v-on:input="updateItems(id, $event.target.value)"> </input>
+                  name="custom-input-number" v-bind:value="lookupItemQuantity(id)" v-on:input="updateItems(id, $event.target.value)" type="number"/>
                 </div>
                 <button v-on:click="removeItem(id)" class="m-2 bg-red-600 rounded-md p-3">X</button>
               </div>
               <!-- <InputNumber v-model="i.quantity"/> -->
           </div>
-      </div>
-      <div class="flex items-center justify-center">
-          <button class="text-center shadow-md hover:shadow-none hover:border-yellow-500 rounded-md border-gray-500 border-2" @click="submit">
-            <span class="m-4 font-semibold text-sm text-yellow-500">
-            Procéder au paiement
-            </span>
-          </button>
       </div>
     </div>
 </template>
@@ -69,12 +71,14 @@ export default {
 
   methods: {
     lookupItemQuantity (productId) {
-      const q = this.$store.state.cart.items[productId].quantity
-      console.log('LOOKUP ', q)
-      return q
+      return this.$store.state.cart.items[productId].quantity
     },
     updateItems (productId, q) {
-      console.log('UPDATE', q)
+
+      if (q === '' || Number(q) === NaN) return;
+
+      if (q <= 0) return this.removeItem(productId)
+
       this.$store.dispatch('cart/updateQuantity', {
         id: productId,
         quantity: q 
