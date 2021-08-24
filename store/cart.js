@@ -1,8 +1,10 @@
 //import { load } from 'dotenv'
 import Vue from 'vue'
 
+let cart = window.localStorage.getItem('cart');
+
 export const state = () => ({
-  items: {},
+  items: cart ? JSON.parse(cart) : {},
 
   products: [],
   loading: false
@@ -30,7 +32,13 @@ export const mutations = {
     } else {
       Vue.set(state.items, productId, {...state.items[productId], quantity: state.items[productId].quantity + 1 });
     }
+    this.commit('saveCart')
   },
+
+
+  saveCart(state) {
+    window.localStorage.setItem('cart', JSON.stringify(state.items));
+  }
 }
 
 

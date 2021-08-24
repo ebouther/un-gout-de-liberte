@@ -37,8 +37,6 @@ export default {
   */
   plugins: [{
     src: '~/plugins/vue-stripe.js', ssr: false
-  }, {
-    src: '~/plugins/vuex-persist.js', ssr: false
   }],
   /*
   ** Auto import components
