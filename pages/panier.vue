@@ -60,7 +60,8 @@ export default {
         if (!Object.keys(state.cart.items).length) return 0;
 
         return Object.values(state.cart.items)
-                .reduce((acc, i) => acc + i.price.amount * i.quantity, 0);
+                .reduce((acc, i) => acc + i.price.amount * i.quantity, 0)
+                .toFixed(2);
       },
     }),
   },
