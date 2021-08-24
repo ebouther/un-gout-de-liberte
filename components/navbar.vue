@@ -47,13 +47,7 @@
 </style>
 
 <script>
-import Cart from "./icons/cart.vue"
-import Home from "./icons/home.vue"
-
 export default {
-    components: {
-      Cart,
-      Home 
-    }
+  components: {}
 }
 </script>
