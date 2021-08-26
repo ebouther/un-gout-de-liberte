@@ -1,19 +1,19 @@
-//import { load } from 'dotenv'
 import Vue from 'vue'
 
-let cart = window.localStorage.getItem('cart');
+export const state = () => {
+  return {
+    items: {},
 
-export const state = () => ({
-  items: cart ? JSON.parse(cart) : {},
-
-  products: [],
-  loading: false
-})
+    products: [],
+    loading: false
+  }
+}
 
 export const mutations = {
   RM_ITEM(state, id) {
     Vue.delete(state.items, id)
   },
+
   SET_ITEM_QUANTITY(state, { id, quantity }) {
     //state.items[id].quantity = quantity > 0 ? quantity : 0
     Vue.set(state.items, id, {...state.items[id], quantity})
@@ -32,13 +32,7 @@ export const mutations = {
     } else {
       Vue.set(state.items, productId, {...state.items[productId], quantity: state.items[productId].quantity + 1 });
     }
-    this.commit('saveCart')
   },
-
-
-  saveCart(state) {
-    window.localStorage.setItem('cart', JSON.stringify(state.items));
-  }
 }
 
 
