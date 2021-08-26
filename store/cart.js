@@ -1,17 +1,19 @@
-//import { load } from 'dotenv'
 import Vue from 'vue'
 
-export const state = () => ({
-  items: {},
+export const state = () => {
+  return {
+    items: {},
 
-  products: [],
-  loading: false
-})
+    products: [],
+    loading: false
+  }
+}
 
 export const mutations = {
   RM_ITEM(state, id) {
     Vue.delete(state.items, id)
   },
+
   SET_ITEM_QUANTITY(state, { id, quantity }) {
     //state.items[id].quantity = quantity > 0 ? quantity : 0
     Vue.set(state.items, id, {...state.items[id], quantity})
