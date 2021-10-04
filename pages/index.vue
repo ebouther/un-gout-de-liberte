@@ -5,7 +5,7 @@
     </div>
     <div class="md:grid md:grid-cols-2 items-center md:pt-14 lg: xl:space-x-10 xl:mx-48">
       <div class="mx-auto self-center px-3 max-w-md">
-        <img class="rounded-lg border-gray-700 border-4" src="logo.png" alt="logo">
+        <img class="rounded-lg border-gray-700 border-4" src="logo.jpg" alt="logo">
       </div>
       <div class="p-4 self-center">
         <div class="text-3xl font-light font-mono text-gray-700">
