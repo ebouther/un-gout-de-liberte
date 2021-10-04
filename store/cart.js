@@ -52,8 +52,8 @@ export const actions = {
 
     const headers = { 'Authorization': `Bearer ${process.env.STRIPE_PK}`};
 
-    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true', { headers })
-    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true', { headers })
+    const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true&limit=100', { headers })
+    const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true&limit=100', { headers })
 
     commit('SET_PRODUCTS_WITH_PRICE',
       products.map(p => ({
