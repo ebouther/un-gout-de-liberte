@@ -1,0 +1,13 @@
+name: Cookies aux pépites de chocolat
+id: cookies_pepites_chocolat
+description: Cookies sans gluten et sans lactose
+categories:
+  - sweet
+price: 
+  id: price_1KMY5kBVac9AX8WwiKQm0xPg
+  amount: 5.6 
+  currency: '€'
+allergens: Gluten, lactose, œufs, fruits à coques, graines de sésame.
+ingredients: farine de riz*, margarine*, sucre*, pépites de chocolat noir*, œufs frais*°, poudre à lever sans gluten*.
+weight: 200
+stripe_id: prod_L2dMFrH0JeAtfW 

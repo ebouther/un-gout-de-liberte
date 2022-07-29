@@ -1,4 +1,7 @@
-export default {
+
+import { defineNuxtConfig } from 'nuxt'
+
+export default defineNuxtConfig({
   ssr: true ,
   target: 'server',
 
@@ -35,11 +38,14 @@ export default {
   ** Plugins to load before mounting the App
   ** https://nuxtjs.org/guide/plugins
   */
-  plugins: [{
-    src: '~/plugins/vue-stripe.js', ssr: false
-  }, {
-    src: '~/plugins/vuex-persist.js', ssr: false
-  }],
+  // plugins: [{
+  //   src: '~/plugins/vue-stripe.js', mode: 'client'
+  // }, {
+  //   src: '~/plugins/vuex-persist.js', mode: 'client' 
+  // },
+  // {
+  //   src: '~/plugins/swiper.client.js', mode: 'client'
+  // }],
   /*
   ** Auto import components
   ** See https://nuxtjs.org/api/configuration-components
@@ -50,17 +56,19 @@ export default {
   */
   buildModules: [
     '@nuxtjs/pwa',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt'
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
     //'@nuxtjs/auth-next',
-    '@nuxtjs/axios',
-    '@nuxtjs/google-analytics',
+    // ["@nuxtjs/axios", { proxyHeaders: false }], // TODO: proxyHeaders disabled for nuxt 3 (https://github.com/nuxt-community/axios-module/issues/560)
+    //'@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
-    '@nuxtjs/robots'
+    '@nuxtjs/robots',
+    '@nuxt/content'
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK,
@@ -83,11 +91,12 @@ export default {
     Sitemap: '/sitemap.xml'
   },
   axios: {
-    baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`
+    baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`,
+    proxy: false
   },
   pwa: {
     icon: {
       source: '~/static/logo.jpg'
     } 
   }
-}
+})

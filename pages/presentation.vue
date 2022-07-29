@@ -1,8 +1,8 @@
 <template>
     <div class="px-5 lg:max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-yellow-500">Présentation</h1>
-        <br/>
+        <!-- <h1 class="font-bold text-3xl font-mono text-yellow-500">Présentation</h1>
+        <br/> -->
         <div class="block whitespace-pre-line text-gray-700 text-justify">
           <h2 class="text-xl font-bold font-mono">Mon parcours</h2>
           <span class="">
