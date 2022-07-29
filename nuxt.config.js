@@ -8,9 +8,9 @@ export default defineNuxtConfig({
   // router: { # TODO
   //   middleware: ['auth']
   // },
-  serverMiddleware: [
-    '~/api/stripe.js'
-  ],
+  // serverMiddleware: [
+  //   '~/api/stripe.js'
+  // ],
   /*
   ** Headers of the page
   ** See https://nuxtjs.org/api/configuration-head
@@ -47,10 +47,6 @@ export default defineNuxtConfig({
   //   src: '~/plugins/swiper.client.js', mode: 'client'
   // }],
   /*
-  ** Auto import components
-  ** See https://nuxtjs.org/api/configuration-components
-  */
-  components: true,
   /*
   ** Nuxt.js dev-modules
   */
@@ -63,8 +59,6 @@ export default defineNuxtConfig({
   ** Nuxt.js modules
   */
   modules: [
-    //'@nuxtjs/auth-next',
-    // ["@nuxtjs/axios", { proxyHeaders: false }], // TODO: proxyHeaders disabled for nuxt 3 (https://github.com/nuxt-community/axios-module/issues/560)
     //'@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',

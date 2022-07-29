@@ -5,7 +5,7 @@
         <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-yellow-500 hover:border-2 flex flex-col">
           <nuxt-link :to="`/produits/${p.id}`">
               <div class=" rounded-t-lg bg-white">
-                <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${p.dir}/img/small.jpg`)" :alt="p.name">
+                <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name">
               </div>
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
               <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{p.name}}</h4>
@@ -33,34 +33,56 @@
 
 
 <script>
+  import * as path from 'path';
   import Cart from './icons/cart.vue'
+
+  import { useStore } from '~/store/cart'
+
   export default {
     name: 'products',
     components: { Cart },
+    async setup(props) {
+
+      // const store = useStore()
+      // await store.load();
+      // const products = store.products;
+
+      const products = await queryContent('products')
+      .where({
+        ...(props.categories ? {categories: {$contains: props.categories}} : {})
+      })
+      .sort('name')
+      .find()
+
+      console.log('PRODUCTS : ', products)
+
+      return { products }
+    },
     props: {
       categories: {
         type: Array,
         required: false
       }
     },
-    data: () => ({
-      products: []
-    }),
-    async fetch() {
-      this.products = await this.$content('products', { deep: true })
-      .where({
-        ...(this.categories ? {categories: {$contains: this.categories}} : {})
-      })
-      .sortBy('name')
-      .fetch()
-    },
+    // data: () => ({
+    //   products: []
+    // }),
+    // async fetch() {
+    //   this.products = await this.$content('products', { deep: true })
+    //   .where({
+    //     ...(this.categories ? {categories: {$contains: this.categories}} : {})
+    //   })
+    //   .sortBy('name')
+    //   .fetch()
+    // },
     methods: {
+      dirname(p) {
+        return path.dirname(p)
+      },
       imgSrc(src) {
-        try {
-          return require(`~/content${src}`)
-        } catch (error) {
-          return null
-        }
+        const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
+
+        return imgs[`/content${src}`].default
       },
       addToCart(productId) {
         console.log('ADD TO CART : ', productId);

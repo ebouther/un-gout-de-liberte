@@ -38,7 +38,7 @@
     </div>
     <br /> -->
     <div class="h-78">
-      <Carousel/>
+      <!-- <Carousel/> -->
     </div>
     <br/>
     <br/>
@@ -64,39 +64,47 @@
 import cart from '../components/icons/cart.vue'
 import Products from '../components/products.vue'
 import Carousel from '../components/carousel.vue'
-// import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'pinia'
+import { useStore } from '~/store/cart'
 
-export default {
-  auth: false,
-  components: { cart, Products, Carousel },
+export default defineComponent({
+  // auth: false,
+  // components: { cart, Products, Carousel },
+  // // data: () => ({
+  // //   products: []
+  // // }),
+  // // computed: {
+  // //   ...mapState({
+  // //     products: function (state) {
+  // //       return state.cart.products
+  // //     }
+  // //   })
+  // // },
 
-  computed: {
-    ...mapGetters({}),
-    ...mapState({
-      products: function (state) {
-        return state.cart.products
-      }
-    })
-  },
+  // // async asyncData ({ $pinia }) {
+  // //   //await store.dispatch('cart/load')
+  // //   const store = useStore($pinia)
+  // //   await store.load()
+  // //   console.log('STORE : ', store);
+  // //   return ({
+  // //     products: store.products
+  // //   })
+  // // },
 
-  async asyncData ({ store }) {
-    await store.dispatch('cart/load')
-  },
-
-  head() {
-    const title = 'Accueil';
-    return {
-      title,
-      meta: [{
-        hid: 'title',
-        name: 'title',
-        content: 'Pâtisserie - Un Goût de Liberté - CHILHAC',
-      }, {
-        hid: 'description',
-        name: 'description',
-        content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
-      }]
-    }
-  }
-}
+  // head() {
+  //   const title = 'Accueil';
+  //   return {
+  //     title,
+  //     meta: [{
+  //       hid: 'title',
+  //       name: 'title',
+  //       content: 'Pâtisserie - Un Goût de Liberté - CHILHAC',
+  //     }, {
+  //       hid: 'description',
+  //       name: 'description',
+  //       content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
+  //     }]
+  //   }
+  // }
+})
 </script>
