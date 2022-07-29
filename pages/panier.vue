@@ -1,8 +1,8 @@
 <template>
-    <div class="max-w-screen-lg mx-auto">
+    <div class="max-w-screen-lg mx-auto mt-5">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-yellow-500">Mon Panier</h1>
-        <br/>
+        <!-- <h1 class="font-bold text-3xl font-mono text-yellow-500">Mon Panier</h1>
+        <br/> -->
         <h2 class="font-bold text-xl font-mono  text-gray-700"><span>Total: {{totalPrice}} €</span></h2>
         <span class="text-gray-500">* frais de transport non-inclus</span>
       </div>
@@ -19,7 +19,7 @@
       <div class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
           <div v-for="(i, id) in items" :key="id" class="overflow-hidden flex flex-col border rounded-lg bg-gray-100">
               <div class="rounded-t-lg bg-white">
-                <img class="object-cover h-48 w-full rounded-t-lg" :src="i.images[0]" :alt="i.name">
+                <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${i.dir}/img/small.jpg`)" :alt="i.name">
               </div>          
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
                 <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{i.name}}</h4>
@@ -100,6 +100,13 @@ export default {
       console.log('RES : ', res);
 
       window.location.href = res.url;
+    },
+    imgSrc(src) {
+      try {
+        return require(`~/content${src}`)
+      } catch (error) {
+        return null
+      }
     },
   },
   head() {

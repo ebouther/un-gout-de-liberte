@@ -1,0 +1,13 @@
+name: Zap'oignons
+id: zap_oignons
+description:
+categories:
+  - salty
+price: 
+  id: price_1KMY2tBVac9AX8Ww3vTbTqoI
+  amount: 3.85 
+  currency: '€'
+allergens: Gluten, lactose, œufs, fruits à coques, graines de sésame.
+ingredients: farine de blé*°, vin blanc*, huile d'olive*, huile de tournesol*, oignons krispy*, sel*.
+weight: 160 
+stripe_id: prod_L2dJf82ZRX46LQ

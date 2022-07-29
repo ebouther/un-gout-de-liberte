@@ -1,6 +1,6 @@
 <template>
-  <div class="md:pt-8 text-center">
-    <div class="hidden md:block font-bold text-5xl font-mono text-gray-700">
+  <div class="text-center">
+    <!-- <div class="hidden md:block font-bold text-5xl font-mono text-gray-700">
       <h1><span class="text-yellow-500"> Un Goût</span> <span class="text-gray-800">de  Liberté</span> </h1>
     </div>
     <div class="md:grid md:grid-cols-2 items-center md:pt-14 lg: xl:space-x-10 xl:mx-48">
@@ -36,16 +36,39 @@
         </div>
       </div>
     </div>
+    <br /> -->
+    <div class="h-78">
+      <Carousel/>
+    </div>
+    <br/>
+    <br/>
+    <br/>
+    <div class="mx-auto max-w-screen-lg text-left auto-cols-auto">
+        <span class="text-gray-700 text-xl font-semibold ">Epicerie Sucrée</span>
+        <!-- <a href="/produits?categories=salty">Tout afficher</a> -->
+        <br/>
+      <Products :categories="['sweet']"/> 
+    </div>
+    <br />
+    <br/>
+    <div class="mx-auto max-w-screen-lg text-left">
+        <span class="text-gray-700 text-xl font-semibold ">Epicerie Salée</span>
+        <!-- <a href="/produits?categories=salty">Tout afficher</a> -->
+        <br/>
+      <Products :categories="['salty']"/> 
+    </div>
   </div>
 </template>
 
 <script>
 import cart from '../components/icons/cart.vue'
-import { mapState, mapGetters } from 'vuex'
+import Products from '../components/products.vue'
+import Carousel from '../components/carousel.vue'
+// import { mapState, mapGetters } from 'vuex'
 
 export default {
   auth: false,
-  components: { cart },
+  components: { cart, Products, Carousel },
 
   computed: {
     ...mapGetters({}),
