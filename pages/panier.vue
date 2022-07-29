@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-screen-lg mx-auto mt-5">
+    <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
         <!-- <h1 class="font-bold text-3xl font-mono text-yellow-500">Mon Panier</h1>
         <br/> -->
@@ -42,7 +42,7 @@
 
 <script>
 import InputNumber from '~/components/inputNumber'
-import { mapState, mapGetters } from 'vuex'
+// import { mapState, mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -52,19 +52,24 @@ export default {
 
   },
 
-  computed: {
-    ...mapGetters({}),
-    ...mapState({
-      items: (state) => state.cart.items,
-      totalPrice: (state) => {
-        if (!Object.keys(state.cart.items).length) return 0;
+  data: () => ({
+    items: [],
+    totalPrice: []
+  }),
 
-        return Object.values(state.cart.items)
-                .reduce((acc, i) => acc + i.price.amount * i.quantity, 0)
-                .toFixed(2);
-      },
-    }),
-  },
+  //computed: {
+  //  ...mapGetters({}),
+  //  ...mapState({
+  //    items: (state) => state.cart.items,
+  //    totalPrice: (state) => {
+  //      if (!Object.keys(state.cart.items).length) return 0;
+
+  //      return Object.values(state.cart.items)
+  //              .reduce((acc, i) => acc + i.price.amount * i.quantity, 0)
+  //              .toFixed(2);
+  //    },
+  //  }),
+  //},
 
   mounted() {
 
@@ -102,11 +107,9 @@ export default {
       window.location.href = res.url;
     },
     imgSrc(src) {
-      try {
-        return require(`~/content${src}`)
-      } catch (error) {
-        return null
-      }
+      const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
+
+      return imgs[`/content${src}`].default
     },
   },
   head() {

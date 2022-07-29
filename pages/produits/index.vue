@@ -47,7 +47,7 @@
 <script>
 import cart from '~/components/icons/cart.vue'
 import products from '~/components/products.vue'
-import { mapState, mapGetters } from 'vuex'
+//import { mapState, mapGetters } from 'vuex'
 
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
@@ -55,18 +55,22 @@ export default {
   auth: false,
   components: { cart, products, Menu, MenuItems, MenuButton, MenuItem },
 
-  computed: {
-    ...mapGetters({}),
-    ...mapState({
-      products: function (state) {
-        return state.cart.products
-      }
-    })
-  },
+  data: () => ({
+    products: []
+  }),
 
-  async asyncData ({ store }) {
-    await store.dispatch('cart/load')
-  },
+  // computed: {
+  //   ...mapGetters({}),
+  //   ...mapState({
+  //     products: function (state) {
+  //       return state.cart.products
+  //     }
+  //   })
+  // },
+
+  // async asyncData ({ store }) {
+  //   await store.dispatch('cart/load')
+  // },
 
   head() {
     const title = 'Mes Produits';

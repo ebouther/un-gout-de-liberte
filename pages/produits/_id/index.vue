@@ -38,23 +38,27 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+// import { mapState, mapGetters } from 'vuex'
 
 export default {
   auth: false,
 
-  computed: {
-    ...mapGetters({}),
-    ...mapState({
-      product: function (state) {
-        return state.cart.products.find(p => p.id === this.$nuxt.$route.params.id)
-      }
-    })
-  },
+  data: () => ({
+    products: []
+  }),
 
-  async asyncData ({ store }) {
-    await store.dispatch('cart/load')
-  },
+  //computed: {
+  //  ...mapGetters({}),
+  //  ...mapState({
+  //    product: function (state) {
+  //      return state.cart.products.find(p => p.id === this.$nuxt.$route.params.id)
+  //    }
+  //  })
+  //},
+
+  // async asyncData ({ store }) {
+  //   await store.dispatch('cart/load')
+  // },
 
   methods: {
     imgSrc(src) {

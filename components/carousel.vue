@@ -56,9 +56,9 @@
 </style>
 
 <script>
-  import Swiper from 'swiper/swiper-bundle.min';
-  import 'swiper/swiper-bundle.min.css';
-  import 'swiper/swiper.min.css';
+  // import Swiper from 'swiper/swiper-bundle.min.js';
+  // import 'swiper/swiper-bundle.min.css';
+  // import 'swiper/swiper.min.css';
 
 
   export default {
@@ -67,29 +67,29 @@
     props: [],
     async fetch() { },
     asyncData() {
-      console.log('SWIPER', Swiper);
+      // console.log('SWIPER', Swiper);
     },
     async mounted() {
      await this.$nextTick();
 
-      const sw = new Swiper(this.$refs.swiper, {
-        autoHeight: false,
-        spaceBetween: 30,
-        centeredSlides: true,
-        autoplay: {
-          delay: 5000,
-          disableOnInteraction: false,
-        },
-        //pagination: {
-        //  el: ".swiper-pagination",
-        //  clickable: true,
-        //},
-        //navigation: {
-        //  nextEl: ".swiper-button-next",
-        //  prevEl: ".swiper-button-prev",
-        //},
-      });
-      console.log('SWIPER : ', sw);
+      // const sw = new Swiper(this.$refs.swiper, {
+      //   autoHeight: false,
+      //   spaceBetween: 30,
+      //   centeredSlides: true,
+      //   autoplay: {
+      //     delay: 5000,
+      //     disableOnInteraction: false,
+      //   },
+      //   //pagination: {
+      //   //  el: ".swiper-pagination",
+      //   //  clickable: true,
+      //   //},
+      //   //navigation: {
+      //   //  nextEl: ".swiper-button-next",
+      //   //  prevEl: ".swiper-button-prev",
+      //   //},
+      // });
+      // console.log('SWIPER : ', sw);
     },
     methods: {
       imgSrc(src) {
