@@ -54,8 +54,6 @@
       .sort('name')
       .find()
 
-      console.log('PRODUCTS : ', products)
-
       return { products }
     },
     props: {

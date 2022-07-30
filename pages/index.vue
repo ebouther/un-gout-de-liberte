@@ -37,9 +37,7 @@
       </div>
     </div>
     <br /> -->
-    <div class="h-78">
-      <!-- <Carousel/> -->
-    </div>
+    <Carousel/>
     <br/>
     <br/>
     <br/>
@@ -60,14 +58,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import cart from '../components/icons/cart.vue'
 import Products from '../components/products.vue'
 import Carousel from '../components/carousel.vue'
 import { mapState } from 'pinia'
 import { useStore } from '~/store/cart'
 
-export default defineComponent({
+// export default defineComponent({
   // auth: false,
   // components: { cart, Products, Carousel },
   // // data: () => ({
@@ -91,20 +89,22 @@ export default defineComponent({
   // //   })
   // // },
 
-  // head() {
-  //   const title = 'Accueil';
-  //   return {
-  //     title,
-  //     meta: [{
-  //       hid: 'title',
-  //       name: 'title',
-  //       content: 'Pâtisserie - Un Goût de Liberté - CHILHAC',
-  //     }, {
-  //       hid: 'description',
-  //       name: 'description',
-  //       content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
-  //     }]
-  //   }
-  // }
-})
+  // const title = 'Accueil'
+
+  definePageMeta({
+    title: 'Accueil'
+  })
+
+  useHead({
+    title: 'Accueil',
+    meta: [{
+      hid: 'title',
+      name: 'title',
+      content: 'Pâtisserie - Un Goût de Liberté - CHILHAC',
+    }, {
+      hid: 'description',
+      name: 'description',
+      content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
+    }]
+  })
 </script>
