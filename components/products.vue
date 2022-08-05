@@ -33,7 +33,7 @@
 
 
 <script>
-  import * as path from 'path';
+  import path from 'path';
   import Cart from './icons/cart.vue'
 
   import { useStore } from '~/store/cart'
@@ -41,43 +41,116 @@
   export default {
     name: 'products',
     components: { Cart },
-    async setup(props) {
+    // async setup(props) {
+    //   console.log('PROPs : ', props.name, props.categories)
 
-      // const store = useStore()
-      // await store.load();
-      // const products = store.products;
+    //   let products = await getProducts()
 
-      const products = await queryContent('products')
-      .where({
-        ...(props.categories ? {categories: {$contains: props.categories}} : {})
-      })
-      .sort('name')
-      .find()
+    // //   // const store = useStore()
+    // //   // await store.load();
+    // //   // const products = store.products;
 
-      return { products }
+    //   // dirname(p) {
+    //   //   return path.dirname(p)
+    //   // },
+    //   // imgSrc(src) {
+    //   //   const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
+
+    //   //   return imgs[`/content${src}`].default
+    //   // },
+    //   // addToCart(productId) {
+    //   //   console.log('ADD TO CART : ', productId);
+    //   //   this.$store.commit('cart/add', productId)
+    //   // }
+
+    //    async function getProducts () {
+    //      return queryContent('products')
+    //      .where({
+    //        ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
+    //        ...(props.categories ? {categories: {$contains: props.categories}} : {})
+    //      })
+    //      .sort('name')
+    //      .find()
+    //    }
+
+    //     watch(() => props.name, async (value, oldV) => {
+    //       console.log(
+    //         "Watch props.selected function called with args:",
+    //         value,
+    //       );
+    //       // products = await getProducts()
+    //     });
+
+ 
+    //     return { products, test: props.test }
+    // },
+    // watch: {
+    //   $props: function () {
+    //     console.log('PROP updated')
+    //   },
+    //   name: async function () {
+    //     console.log('UPDATE NAME')
+    //     this.products = await getProducts()
+    //   }
+    // },
+    // methods: {
+   
+    // },
+    watch: {
+      name: {
+        handler(newV, oldV) {
+          console.log('PROPS UPDATED', newV, oldV)
+          this.getProducts()
+          // this.products = await this.getProducts()
+        },
+        deep: true,
+        immediate: true,
+      },
     },
     props: {
       categories: {
         type: Array,
         required: false
+      },
+      name: {
+        type: String,
+        required: false
       }
     },
-    // data: () => ({
-    //   products: []
-    // }),
-    // async fetch() {
-    //   this.products = await this.$content('products', { deep: true })
-    //   .where({
-    //     ...(this.categories ? {categories: {$contains: this.categories}} : {})
-    //   })
-    //   .sortBy('name')
-    //   .fetch()
-    // },
+    data: () => ({
+      products: []
+    }),
+    async created() {
+      console.log('CREATED')
+      await this.getProducts();
+      console.log('PRODUCTS : ', this.products);
+    },
+    async fetch() {
+      console.log('FETCH')
+      await this.$content('products', { deep: true })
+      .where({
+        ...(this.categories ? {categories: {$contains: this.categories}} : {})
+      })
+      .sortBy('name')
+      .fetch()
+    },
+    fetchOnServer: false,
     methods: {
+      async getProducts() {
+        this.products = await queryContent('products')
+        .where({
+          ...(this.name && this.name != "" ? {name: {$contains: this.name }} : {}),
+          ...(this.categories ? {categories: {$contains: this.categories}} : {})
+        })
+        .sort('name')
+        .find()
+      },
       dirname(p) {
-        return path.dirname(p)
+        // return path.dirname(p)
+        return p.substr(0, p.lastIndexOf("/"));
       },
       imgSrc(src) {
+        console.log('SRC : ', src)
         const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
 
         return imgs[`/content${src}`].default
@@ -87,6 +160,6 @@
         this.$store.commit('cart/add', productId)
       }
     }
-    
+  
   }
 </script>
