@@ -3,7 +3,7 @@
     <div class="max-w-screen mx-auto text-center">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-yellow-500 hover:border-2 flex flex-col">
-          <nuxt-link :to="`/produits/${p.id}`">
+          <nuxt-link :to="`/produits/${p._id}`">
               <div class=" rounded-t-lg bg-white">
                 <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name">
               </div>
@@ -31,135 +31,45 @@
 <style>
 </style>
 
+<script setup>
+  let products = ref(await getProducts())
 
-<script>
-  import path from 'path';
-  import Cart from './icons/cart.vue'
+  const props = defineProps({
+    categories: {
+      type: Array,
+      required: false
+    },
+    name: {
+      type: String,
+      required: false
+    }
+  })
 
-  import { useStore } from '~/store/cart'
+  async function getProducts () {
+     return queryContent('products')
+     .where({
+       ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
+       ...(props.categories ? {categories: {$contains: props.categories}} : {})
+     })
+     .sort('name')
+     .find()
+  }
+  function dirname(p) {
+    // return path.dirname(p)
+    return p.substr(0, p.lastIndexOf("/"));
+  }
+  function imgSrc(src) {
+    const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
 
-  export default {
-    name: 'products',
-    components: { Cart },
-    // async setup(props) {
-    //   console.log('PROPs : ', props.name, props.categories)
+    return imgs[`/content${src}`].default
+  }
+  function addToCart(productId) {
+    this.$store.commit('cart/add', productId)
+  }
 
-    //   let products = await getProducts()
-
-    // //   // const store = useStore()
-    // //   // await store.load();
-    // //   // const products = store.products;
-
-    //   // dirname(p) {
-    //   //   return path.dirname(p)
-    //   // },
-    //   // imgSrc(src) {
-    //   //   const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
-
-    //   //   return imgs[`/content${src}`].default
-    //   // },
-    //   // addToCart(productId) {
-    //   //   console.log('ADD TO CART : ', productId);
-    //   //   this.$store.commit('cart/add', productId)
-    //   // }
-
-    //    async function getProducts () {
-    //      return queryContent('products')
-    //      .where({
-    //        ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
-    //        ...(props.categories ? {categories: {$contains: props.categories}} : {})
-    //      })
-    //      .sort('name')
-    //      .find()
-    //    }
-
-    //     watch(() => props.name, async (value, oldV) => {
-    //       console.log(
-    //         "Watch props.selected function called with args:",
-    //         value,
-    //       );
-    //       // products = await getProducts()
-    //     });
+  watch(() => props.name, async (value, oldV) => {
+    products.value = await getProducts()
+  });
 
  
-    //     return { products, test: props.test }
-    // },
-    // watch: {
-    //   $props: function () {
-    //     console.log('PROP updated')
-    //   },
-    //   name: async function () {
-    //     console.log('UPDATE NAME')
-    //     this.products = await getProducts()
-    //   }
-    // },
-    // methods: {
-   
-    // },
-    watch: {
-      name: {
-        handler(newV, oldV) {
-          console.log('PROPS UPDATED', newV, oldV)
-          this.getProducts()
-          // this.products = await this.getProducts()
-        },
-        deep: true,
-        immediate: true,
-      },
-    },
-    props: {
-      categories: {
-        type: Array,
-        required: false
-      },
-      name: {
-        type: String,
-        required: false
-      }
-    },
-    data: () => ({
-      products: []
-    }),
-    async created() {
-      console.log('CREATED')
-      await this.getProducts();
-      console.log('PRODUCTS : ', this.products);
-    },
-    async fetch() {
-      console.log('FETCH')
-      await this.$content('products', { deep: true })
-      .where({
-        ...(this.categories ? {categories: {$contains: this.categories}} : {})
-      })
-      .sortBy('name')
-      .fetch()
-    },
-    fetchOnServer: false,
-    methods: {
-      async getProducts() {
-        this.products = await queryContent('products')
-        .where({
-          ...(this.name && this.name != "" ? {name: {$contains: this.name }} : {}),
-          ...(this.categories ? {categories: {$contains: this.categories}} : {})
-        })
-        .sort('name')
-        .find()
-      },
-      dirname(p) {
-        // return path.dirname(p)
-        return p.substr(0, p.lastIndexOf("/"));
-      },
-      imgSrc(src) {
-        console.log('SRC : ', src)
-        const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
-
-        return imgs[`/content${src}`].default
-      },
-      addToCart(productId) {
-        console.log('ADD TO CART : ', productId);
-        this.$store.commit('cart/add', productId)
-      }
-    }
-  
-  }
-</script>
+</script >
