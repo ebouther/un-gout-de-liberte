@@ -3,7 +3,7 @@
         <div v-if="product !== null">
             <div class="max-w-screen-xl h-full grid grid-flow-row md:grid-flow-col rounded-lg bg-gray-100 ">
                 <div class="min-w-0 min-h-0 bg-white rounded-lg  h-full w-full" >
-                  <img class="w-full object-cover min-h-0 min-w-0 rounded-t-md md:rounded-l-md md:rounded-r-none mx-auto h-full" :src="imgSrc(`${dirname(product._path)}/img/small.jpg`)" :alt="product.name">
+                  <nuxt-img class="w-full object-cover min-h-0 min-w-0 rounded-t-md md:rounded-l-md md:rounded-r-none mx-auto h-full" :src="`content/${dirname(product._path)}/img/small.jpg`" :alt="product.name"/>
                 </div>
                 <div class="w-full h-full p-5 flex flex-col justify-between mt-auto flex-auto">
                   <div>
@@ -58,14 +58,6 @@ async function getProduct () {
 function dirname(p) {
   // return path.dirname(p)
   return p.substr(0, p.lastIndexOf("/"));
-}
-function imgSrc(src) {
-  const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
-  console.log('SRC :', imgs)
-  console.log('SRC :', src)
-  console.log('SRC :', imgs[`/content${src}`])
-
-  return imgs[`/content${src}`].default
 }
 function addToCart(productId) {
   this.$store.commit('cart/add', productId)

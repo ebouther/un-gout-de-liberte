@@ -5,7 +5,7 @@
         <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-yellow-500 hover:border-2 flex flex-col">
           <nuxt-link :to="`/produits/${p._id}`">
               <div class=" rounded-t-lg bg-white">
-                <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name">
+                <nuxt-img class="object-cover h-48 w-full rounded-t-lg" :src="`content/${dirname(p._path)}/img/small.jpg`" :alt="p.name"/>
               </div>
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
               <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{p.name}}</h4>
@@ -57,11 +57,6 @@
   function dirname(p) {
     // return path.dirname(p)
     return p.substr(0, p.lastIndexOf("/"));
-  }
-  function imgSrc(src) {
-    const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
-
-    return imgs[`/content${src}`].default
   }
   function addToCart(productId) {
     this.$store.commit('cart/add', productId)

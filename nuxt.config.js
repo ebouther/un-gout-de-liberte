@@ -64,7 +64,8 @@ export default defineNuxtConfig({
     //'@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@nuxt/image-edge',
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK,
@@ -94,5 +95,6 @@ export default defineNuxtConfig({
     icon: {
       source: '~/static/logo.jpg'
     } 
-  }
+  },
+  image: {    dir: '.'  }
 })
