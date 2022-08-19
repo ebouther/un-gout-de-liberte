@@ -1,7 +1,7 @@
 <template>
 
 <div class="h-full">
-  <div id="carouselExampleIndicators" class="carousel carousel-fade relative" data-bs-ride="carousel">
+  <div id="carouselExampleIndicators" class="carousel slide relative" data-bs-ride="carousel">
     <div class="carousel-indicators absolute right-0 bottom-0 left-0 flex justify-center p-0 mb-4">
       <button
         type="button"
@@ -27,23 +27,14 @@
     <div class="carousel-inner relative w-full overflow-hidden h-72">
       <div class="carousel-item active float-left w-full">
         <img
-          src="~/assets/slide3.jpg"
-          class="block w-full"
-          alt="Wild Landscape"
-        />
-      </div>
-      <div class="carousel-item float-left w-full">
-        <img
           src="~/assets/slide2.jpg"
           class="block w-full"
-          alt="Camera"
         />
       </div>
       <div class="carousel-item float-left w-full">
         <img
           src="~/assets/slide1.jpg"
           class="block w-full"
-          alt="Exotic Fruits"
         />
       </div>
     </div>
@@ -73,6 +64,11 @@
 </template>
 
 <style>
+  body{
+     overflow-x: hidden;
+     -webkit-transform: translateZ(0); 
+    -moz-transform: translateZ(0);
+  }
 </style>
 
 <script setup>

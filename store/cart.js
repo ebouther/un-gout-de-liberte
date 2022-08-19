@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia'
-// import Vue from 'vue'
+import { useStorage } from '@vueuse/core'
+
 
 export const useStore = defineStore({
   id: 'cart-store',
-  state: () => {
-    return {
-      items: {},
-
-      products: [],
-      loading: false
-    }
-  },
+  state: () => ({
+    items: useStorage('items', {}),
+    products: useStorage('products', []),
+    loading: false
+  }),
   actions: {
     async load() {
       this.loading = true 
@@ -19,19 +17,24 @@ export const useStore = defineStore({
       // const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true&limit=100', { headers })
       // const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true&limit=100', { headers })
 
-      const products = await queryContent('products').sort('name').find()
+      this.products = await queryContent('products').sort('name').find()
+      // console.log('PRODUCTS  : ', this.products)
 
-
-      this.products = products;
-      // Vue.set(this, 'products', products)
 
       this.loading = false 
     },
-    async updateQuantity({ id, quantity }) {
-      Vue.set(this.items, id, {...this.items[id], quantity})
+    addItem(id) {
+      if (!this.items[id]) {
+        this.items[id] = { ...this.products.find(p => p.id === id), quantity: 1}
+      } else {
+        this.items[id] = {...this.items[id], quantity: this.items[id].quantity + 1 }
+      }
     },
-    async removeItem(id) {
-      Vue.delete(this.items, id)
+    updateQuantity({ id, quantity }) {
+      this.items[id] = {...this.items[id], quantity}
+    },
+    removeItem(id) {
+      delete this.items[id]
     }
   },
   getters: {

@@ -27,7 +27,7 @@
                     <span class="mx-8 inline-flex items-center text-2xl font-bold">{{product.price.amount}} {{product.price.currency}}</span>
                     <button
                         class="grow bg-white border border-gray-200 hover:shadow-none hover:border-yellow-500 font-semibold py-2 px-4 shadow-md rounded"
-                        @click="addToCart">
+                        @click="addToCart(product.id)">
                         Ajouter au panier
                     </button>
                   </div>
@@ -38,10 +38,15 @@
 </template>
 
 <script setup>
+import { useStore } from '~/store/cart'
+
 const route = useRoute()
+const router = useRouter()
+const cart = useStore()
+
+await cart.load(); // TODO rm
 
 console.log('PARAM', route.params.id)
-
 const product = await getProduct();
 
 console.log('PRODUCt', product)
@@ -67,8 +72,13 @@ function imgSrc(src) {
 
   return imgs[`/content${src}`].default
 }
-function addToCart(productId) {
-  this.$store.commit('cart/add', productId)
+function addToCart(productId) { 
+  console.log('CART : ', cart)
+  cart.addItem(productId);
+  console.log('PRODUCTS : ', cart.products)
+  console.log('ITEMS : ', cart.items)
+  // this.$store.commit('cart/add', productId)
+  router.push({ path: "/panier" })
 }
 
 // import { mapState, mapGetters } from 'vuex'
