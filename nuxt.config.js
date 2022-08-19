@@ -2,7 +2,7 @@
 import { defineNuxtConfig } from 'nuxt'
 
 export default defineNuxtConfig({
-  ssr: true ,
+  ssr: false,
   target: 'server',
 
   // router: { # TODO
@@ -64,7 +64,8 @@ export default defineNuxtConfig({
     //'@nuxtjs/google-analytics',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
-    '@nuxt/content'
+    '@nuxt/content',
+    '@vueuse/nuxt'
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK,
