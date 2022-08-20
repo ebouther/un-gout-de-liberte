@@ -1,11 +1,10 @@
 <template>
     <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-yellow-500">Me Contacter</h1>
+        <!-- <h1 class="font-bold text-3xl font-mono text-yellow-500">Me Contacter</h1> -->
         <br/>
         <div class="block whitespace-pre-line text-left text-gray-700">
-          <span class=""> Par email : </span>
-          <a href="mailto:justine@un-gout-de-liberte.fr">justine@un-gout-de-liberte.fr</a>
+          <ContentDoc />
         </div>
     </div>
   </div>

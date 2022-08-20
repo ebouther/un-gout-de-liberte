@@ -1,12 +1,10 @@
 <template>
     <div class="max-w-screen-lg mx-auto">
       <div class="text-center mb-2">
-        <h1 class="font-bold text-3xl font-mono text-yellow-500">Condition Générale de Vente</h1>
+        <!-- <h1 class="font-bold text-3xl font-mono text-yellow-500">Condition Générale de Vente</h1> -->
         <br/>
         <div class="block whitespace-pre-line text-left text-gray-700">
-          <span class="text-3xl">
-            Page en cours de construction.
-          </span>
+          <ContentDoc />
         </div>
     </div>
   </div>
