@@ -5,6 +5,7 @@ import { useStorage } from '@vueuse/core'
 export const useStore = defineStore({
   id: 'cart-store',
   state: () => ({
+    nbOfItems: useStorage('nbOfItems', 0),
     items: useStorage('items', {}),
     products: useStorage('products', []),
     loading: false
@@ -29,11 +30,14 @@ export const useStore = defineStore({
       } else {
         this.items[id] = {...this.items[id], quantity: this.items[id].quantity + 1 }
       }
+      this.nbOfItems++
     },
     updateQuantity({ id, quantity }) {
+      this.nbOfItems -= this.items[id].quantity - quantity
       this.items[id] = {...this.items[id], quantity}
     },
     removeItem(id) {
+      this.nbOfItems -= this.items[id].quantity
       delete this.items[id]
     }
   },

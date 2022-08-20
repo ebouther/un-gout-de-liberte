@@ -17,6 +17,7 @@ module.exports = {
       'layouts/**/*.vue',
       'pages/**/*.vue',
       'plugins/**/*.js',
+      'content/**/*.md',
     ],
   }
 }

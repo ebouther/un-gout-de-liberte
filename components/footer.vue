@@ -62,7 +62,7 @@
               </a>
           </div>
           <p class="mt-8 text-base leading-6 text-center text-gray-400">
-              © 2021 Un Goût de Liberté. Tout droit réservé.
+              © 2022 Un Goût de Liberté. Tout droit réservé.
           </p>
       </div>
   </section>
