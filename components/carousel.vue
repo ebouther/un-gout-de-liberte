@@ -17,23 +17,18 @@
         data-bs-slide-to="1"
         aria-label="Slide 2"
       ></button>
-      <button
-        type="button"
-        data-bs-target="#carouselExampleIndicators"
-        data-bs-slide-to="2"
-        aria-label="Slide 3"
-      ></button>
     </div>
+
     <div class="carousel-inner relative w-full overflow-hidden h-72">
       <div class="carousel-item active float-left w-full">
         <img
-          src="~/assets/slide2.jpg"
+          src="~/assets/slide1.jpg"
           class="block w-full"
         />
       </div>
       <div class="carousel-item float-left w-full">
         <img
-          src="~/assets/slide1.jpg"
+          src="~/assets/slide2.jpg"
           class="block w-full"
         />
       </div>
@@ -63,12 +58,8 @@
 
 </template>
 
-<style>
-  body{
-     overflow-x: hidden;
-     -webkit-transform: translateZ(0); 
-    -moz-transform: translateZ(0);
-  }
+<style scoped>
+@import 'tw-elements/dist/css/index.min.css'
 </style>
 
 <script setup>
