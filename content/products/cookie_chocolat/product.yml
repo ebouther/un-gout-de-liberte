@@ -2,7 +2,7 @@ name: Cookies aux pépites de chocolat
 id: cookies_pepites_chocolat
 description: Cookies sans gluten et sans lactose
 categories:
-  - sweet
+  - epicerie_sucree
 price: 
   id: price_1KMY5kBVac9AX8WwiKQm0xPg
   amount: 5.6 

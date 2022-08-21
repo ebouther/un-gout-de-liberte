@@ -1,5 +1,6 @@
 <template>
   <div class="text-center">
+    <cart/>
     <!-- <div class="hidden md:block font-bold text-5xl font-mono text-gray-700">
       <h1><span class="text-yellow-500"> Un Goût</span> <span class="text-gray-800">de  Liberté</span> </h1>
     </div>
@@ -41,25 +42,24 @@
     <br/>
     <br/>
     <br/>
-    <div class="mx-auto max-w-screen-lg text-left auto-cols-auto">
+    <div class="mx-auto max-w-screen-xl text-left auto-cols-auto px-4 md:px-0">
         <span class="text-gray-700 text-xl font-semibold ">Epicerie Sucrée</span>
-        <!-- <a href="/produits?categories=salty">Tout afficher</a> -->
+        <!-- <a href="/produits?categories=epicerie_salee">Tout afficher</a> -->
         <br/>
-      <Products :categories="['sweet']"/> 
+      <Products :categories="['epicerie_sucree']"/> 
     </div>
     <br />
     <br/>
-    <div class="mx-auto max-w-screen-lg text-left">
+    <div class="mx-auto max-w-screen-xl text-left px-4 md:px-0">
         <span class="text-gray-700 text-xl font-semibold ">Epicerie Salée</span>
-        <!-- <a href="/produits?categories=salty">Tout afficher</a> -->
+        <!-- <a href="/produits?categories=epicerie_salee">Tout afficher</a> -->
         <br/>
-      <Products :categories="['salty']"/> 
+      <Products :categories="['epicerie_salee']"/> 
     </div>
   </div>
 </template>
 
 <script setup>
-import cart from '../components/icons/cart.vue'
 import Products from '../components/products.vue'
 import Carousel from '../components/carousel.vue'
 import { mapState } from 'pinia'

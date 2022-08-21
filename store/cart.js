@@ -5,12 +5,18 @@ import { useStorage } from '@vueuse/core'
 export const useStore = defineStore({
   id: 'cart-store',
   state: () => ({
-    nbOfItems: useStorage('nbOfItems', 0),
+    isOpen: false,
     items: useStorage('items', {}),
     products: useStorage('products', []),
     loading: false
   }),
   actions: {
+    open() {
+      this.isOpen = true
+    },
+    close() {
+      this.isOpen = false 
+    },
     async load() {
       this.loading = true 
 
@@ -30,18 +36,21 @@ export const useStore = defineStore({
       } else {
         this.items[id] = {...this.items[id], quantity: this.items[id].quantity + 1 }
       }
-      this.nbOfItems++
+      // this.nbOfItems++
     },
     updateQuantity({ id, quantity }) {
-      this.nbOfItems -= this.items[id].quantity - quantity
+      // this.nbOfItems -= this.items[id].quantity - quantity
       this.items[id] = {...this.items[id], quantity}
     },
     removeItem(id) {
-      this.nbOfItems -= this.items[id].quantity
+      // this.nbOfItems -= this.items[id].quantity
       delete this.items[id]
     }
   },
   getters: {
+    nbOfItems: (state) => Object.keys(state.items).reduce(
+      (acc, curr) => acc + Number(state.items[curr].quantity)
+    , 0),
     getProduct(state, id) {
       return state.products.find(p => p.id === id)
     }

@@ -1,0 +1,13 @@
+name: Confiture de poire
+id: confiture_de_poire 
+description: Cuisson à feu doux dans une bassine en cuivre.
+categories:
+  - epicerie_sucree 
+price:
+  id: price_1KLZICBVac9AX8Ww9IGkZIau
+  amount: 4
+  currency: '€'
+allergens: Gluten, lactose, œufs, fruits à coques.
+ingredients: 76% purée de poire*, 24% sucre*.
+weight: 212
+stripe_id: prod_L1cXGJECpG7M5I

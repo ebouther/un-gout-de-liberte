@@ -2,7 +2,7 @@ name: Biscuits à l'amande
 id: biscuits_amande
 description: Biscuits sans gluten et sans lactose
 categories:
-  - sweet 
+  - epicerie_sucree 
 price: 
   id: price_1KycmPBVac9AX8WwyJ2AY6p4
   amount: 5.6 

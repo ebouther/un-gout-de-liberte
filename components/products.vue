@@ -1,9 +1,11 @@
 <template>
   <div>
+    <product :product="selectedProduct" @close="selectedProduct = null"/>
     <div class="max-w-screen mx-auto text-center">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-yellow-500 hover:border-2 flex flex-col">
-          <nuxt-link :to="`/produits/${p._id}`">
+          <!-- <nuxt-link :to="`/produits/${p._id}`"> -->
+          <button @click="openProduct(p)">
               <div class=" rounded-t-lg bg-white">
                 <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name">
               </div>
@@ -11,7 +13,8 @@
               <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{p.name}}</h4>
               <div class="mt-1 text-sm text-gray-700">{{p.description}}</div>
               </div>
-          </nuxt-link>
+          </button>
+          <!-- </nuxt-link> -->
           <!-- <div class="flex items-center justify-between mx-2 mb-2 mt-auto">
 				  	<span class="text-xl font-bold text-gray-900 dark:text-white">{{p.price.amount}} {{p.price.currency}}</span>
 				  	<button
@@ -33,6 +36,7 @@
 
 <script setup>
   let products = ref(await getProducts())
+  let selectedProduct = ref('')
 
   const props = defineProps({
     categories: {
@@ -65,6 +69,11 @@
   }
   function addToCart(productId) {
     this.$store.commit('cart/add', productId)
+  }
+
+  function openProduct(product) {
+    selectedProduct.value = product
+
   }
 
   watch(() => props.name, async (value, oldV) => {
