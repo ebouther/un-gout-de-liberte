@@ -2,7 +2,7 @@ name: Zap'oignons
 id: zap_oignons
 description:
 categories:
-  - salty
+  - epicerie_salee
 price: 
   id: price_1KMY2tBVac9AX8Ww3vTbTqoI
   amount: 3.85 

@@ -3,10 +3,11 @@
     <div class="flex justify-center">
       <div class="flex flex-col min-h-screen w-full">
         <div class="min-h-screen">
-          <NavBar class="hidden md:block"/>
+          <navbar-2/>
+          <!-- <NavBar class="hidden md:block"/> -->
           <slot class="flex-grow  pt-10 md:pt-0"/>
         </div>
-        <BottomBar class="border-t-4 border-opacity-60 border-yellow-500 shadow-xl fixed bottom-0 w-full md:hidden"/>
+        <!-- <BottomBar class="border-t-4 border-opacity-60 border-yellow-500 shadow-xl fixed bottom-0 w-full md:hidden"/> -->
         <Footer class="mb-10 md:mb-0 mt-10 " />
       </div>
     </div>

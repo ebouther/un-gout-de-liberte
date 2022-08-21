@@ -19,17 +19,17 @@
       ></button>
     </div>
 
-    <div class="carousel-inner relative w-full overflow-hidden h-72">
-      <div class="carousel-item active float-left w-full">
+    <div class="carousel-inner relative w-full overflow-hidden object-center">
+      <div class="carousel-item active float-left w-full h-96 bg-orange-300">
         <img
           src="~/assets/slide1.jpg"
-          class="block w-full"
+          class="block w-full h-full object-cover mx-auto"
         />
       </div>
-      <div class="carousel-item float-left w-full">
+      <div class="carousel-item float-left w-full h-96 bg-orange-300">
         <img
           src="~/assets/slide2.jpg"
-          class="block w-full"
+          class="block w-full h-full object-cover"
         />
       </div>
     </div>
@@ -59,7 +59,10 @@
 </template>
 
 <style scoped>
-@import 'tw-elements/dist/css/index.min.css'
+  @import 'tw-elements/dist/css/index.min.css';
+
+  
+
 </style>
 
 <script setup>
