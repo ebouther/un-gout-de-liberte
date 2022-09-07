@@ -6,7 +6,7 @@
     </div>
     <div class="md:grid md:grid-cols-2 items-center md:pt-14 lg: xl:space-x-10 xl:mx-48">
       <div class="mx-auto self-center px-3 max-w-md">
-        <img class="rounded-lg border-gray-700 border-4" src="logo.jpg" alt="logo">
+        <nuxt-img class="rounded-lg border-gray-700 border-4" src="logo.jpg" alt="logo">
       </div>
       <div class="p-4 self-center">
         <div class="text-3xl font-light font-mono text-gray-700">
@@ -41,55 +41,39 @@
     <Carousel/>
     <br/>
     <br/>
-    <br/>
-    <div class="mx-auto max-w-screen-xl text-left auto-cols-auto px-4 md:px-0">
-        <span class="text-gray-700 text-xl font-semibold ">Epicerie Sucrée</span>
-        <!-- <a href="/produits?categories=epicerie_salee">Tout afficher</a> -->
-        <br/>
-      <Products :categories="['epicerie_sucree']"/> 
-    </div>
-    <br />
-    <br/>
-    <div class="mx-auto max-w-screen-xl text-left px-4 md:px-0">
-        <span class="text-gray-700 text-xl font-semibold ">Epicerie Salée</span>
-        <!-- <a href="/produits?categories=epicerie_salee">Tout afficher</a> -->
-        <br/>
-      <Products :categories="['epicerie_salee']"/> 
+    <div id="products" class="mx-auto max-w-screen-xl text-left px-4 md:px-0">
+      <div class="flex justify-center">
+        <div class="mb-3 xl:w-96">
+          <input
+          type="search"
+          class="
+            w-full 
+            px-3
+            py-1.5
+            border rounded
+           text-gray-700 leading-tight
+            focus:outline-none focus:border-yellow-600
+            "
+            placeholder="Rechercher un produit"
+            v-model="search" />
+        </div>
+      </div>
+      <br>
+      <Products :name="search" />
     </div>
   </div>
 </template>
 
 <script setup>
-import Products from '../components/products.vue'
-import Carousel from '../components/carousel.vue'
-import { mapState } from 'pinia'
-import { useStore } from '~/store/cart'
+  import Products from '../components/products.vue'
+  import Carousel from '../components/carousel.vue'
+  import { mapState } from 'pinia'
+  import { useStore } from '~/store/cart'
+  
+  const store = useStore()
+  await store.load()
 
-// export default defineComponent({
-  // auth: false,
-  // components: { cart, Products, Carousel },
-  // // data: () => ({
-  // //   products: []
-  // // }),
-  // // computed: {
-  // //   ...mapState({
-  // //     products: function (state) {
-  // //       return state.cart.products
-  // //     }
-  // //   })
-  // // },
-
-  // // async asyncData ({ $pinia }) {
-  // //   //await store.dispatch('cart/load')
-  // //   const store = useStore($pinia)
-  // //   await store.load()
-  // //   console.log('STORE : ', store);
-  // //   return ({
-  // //     products: store.products
-  // //   })
-  // // },
-
-  // const title = 'Accueil'
+  let search = ref("")
 
   definePageMeta({
     title: 'Accueil'

@@ -24,8 +24,14 @@ export const useStore = defineStore({
       // const { data: prices } = await this.$axios.$get('https://api.stripe.com/v1/prices?active=true&limit=100', { headers })
       // const { data: products } = await this.$axios.$get('https://api.stripe.com/v1/products?active=true&limit=100', { headers })
 
-      this.products = await queryContent('products').sort('name').find()
-      // console.log('PRODUCTS  : ', this.products)
+      // const { data: prices } = await useFetch('https://api.stripe.com/v1/prices?active=true&limit=100', {
+      //   headers: { 'Authorization': `Bearer ${process.env.STRIPE_PK}`}
+      // })
+      const { data: products } = await useFetch('/api/products')
+
+      this.products = products;
+      // this.products = await queryContent('products').sort('name').find()
+      console.log('PRODUCTS  : ', this.products)
 
 
       this.loading = false 

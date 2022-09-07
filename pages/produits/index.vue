@@ -30,7 +30,7 @@
         </div>
       </div>
       <br>
-      <Products :name="search" :test="test" />
+      <Products :name="search" />
     </div>
   </div>
 </template>

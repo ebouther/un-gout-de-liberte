@@ -6,7 +6,7 @@
       <div class="">
         <!-- <a href="/" class="text-lg font-semibold tracking-wide text-gray-800 uppercase rounded-lg focus:outline-none focus:shadow-outline"><span class="text-yellow-500">Un Goût</span> de Liberté</a> -->
         <a href="/" class="text-lg font-semibold tracking-wider text-gray-800 uppercase rounded-lg focus:outline-none focus:shadow-outline">
-          <img class="w-36 h-36 rounded-lg border-gray-500" src="~/assets/logo.jpg" fixed alt="logo">  
+          <nuxt-img class="w-36 h-36 rounded-lg border-gray-500" src="logo.jpg" fixed alt="logo" />
         </a>
       </div>
       <div class="mx-5 h-28 my-auto border border-slate-100"></div>
@@ -34,7 +34,7 @@
       <div class="">
         <!-- <a href="/" class="text-lg font-semibold tracking-wide text-gray-800 uppercase rounded-lg focus:outline-none focus:shadow-outline"><span class="text-yellow-500">Un Goût</span> de Liberté</a> -->
         <a href="/" class="text-lg font-semibold tracking-wide text-gray-800 uppercase rounded-lg focus:outline-none focus:shadow-outline">
-          <img class="w-36 h-36 rounded-lg border-gray-500" src="~/assets/logo.jpg" fixed alt="logo">  
+          <nuxt-img class="w-36 h-36 rounded-lg border-gray-500" src="logo.jpg" fixed alt="logo" />
         </a>
       </div>
       <div></div>

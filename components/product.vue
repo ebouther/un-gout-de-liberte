@@ -34,7 +34,7 @@
                 <div v-if="product !== null">
                     <div class="max-w-screen-xl h-full grid grid-flow-row md:grid-flow-col rounded-lg bg-gray-100 ">
                         <div class="min-w-0 min-h-0 bg-white rounded-lg  h-full w-full" >
-                          <img class="w-full object-cover min-h-0 min-w-0 rounded-t-md md:rounded-l-md md:rounded-r-none mx-auto h-full" :src="imgSrc(`${dirname(product._path)}/img/small.jpg`)" :alt="product.name">
+                          <nuxt-img class="w-full object-cover min-h-0 min-w-0 rounded-t-md md:rounded-l-md md:rounded-r-none mx-auto h-full" :src="product.images?.[0]" />
                         </div>
                         <div class="w-full h-full p-5 flex flex-col justify-between mt-auto flex-auto">
                           <div>
@@ -42,20 +42,21 @@
                               <div class="text-gray-600"><h2>{{product.description}}</h2></div>
                               <hr class="my-5 border-yellow-400" />
                               <div class="text-gray-600">
-                                <span class="font-semibold">Ingrédients : </span><span>{{product.ingredients}}</span>
+                                <!-- {{product}} -->
+                                <span class="font-semibold">Ingrédients : </span><span>{{product.metadata?.Ingrédients}}</span>
                                 <br/>
                                 <span class="font-semibold">* : </span><span>Produits issus de l'agriculture biologique.</span>
                                 <br />
                                 <span class="font-semibold">° : </span><span>Produits locaux.</span>
                                 <br />
-                                <span class="font-semibold">Allergènes : </span><span>{{product.allergens}}</span>
+                                <span v-if="product.metadata?.Allergènes" class="font-semibold">Allergènes : </span><span>{{product.metadata?.Allergènes}}</span>
                                 <br />
-                                <span class="font-semibold">Poids : </span><span>{{product.weight}} g</span>
+                                <span class="font-semibold">Poids : </span><span>{{product.metadata.Poids}}</span>
                               </div>
                           </div>
                           <hr class="my-5 border-yellow-400" />
                           <div class="flex flex-row justify-between text-gray-700">
-                            <span class="mx-8 inline-flex items-center text-2xl font-bold">{{product.price.amount}} {{product.price.currency}}</span>
+                            <span class="mx-8 inline-flex items-center text-2xl font-bold">{{product.price.unit_amount / 100}} {{product.price.currency === 'eur' ? '€' : product.price.currency}}</span>
                             <button
                                 class="grow bg-white border border-gray-200 hover:shadow-none hover:border-yellow-500 font-semibold py-2 px-4 shadow-md rounded"
                                 @click="addToCart(product.id)">

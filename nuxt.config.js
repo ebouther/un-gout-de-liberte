@@ -62,6 +62,7 @@ export default defineNuxtConfig({
   */
   modules: [
     //'@nuxtjs/google-analytics',
+    '@nuxt/image-edge',
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
     '@nuxt/content',
@@ -95,5 +96,6 @@ export default defineNuxtConfig({
     icon: {
       source: '~/static/logo.jpg'
     } 
-  }
+  },
+  image: {    dir: 'assets'  }
 })

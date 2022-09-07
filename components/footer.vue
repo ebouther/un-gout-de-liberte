@@ -9,14 +9,14 @@
                 </a>
               </div>
               <div class="px-5 py-2">
-                <a href="/produits" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <a href="#products" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Mes produits
                 </a>
               </div>
               <div class="px-5 py-2">
-                <a href="/panier" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <button @click="openCart" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Mon Panier
-                </a>
+                </button>
               </div>
               <div class="px-5 py-2">
                 <!-- / Mon Labo ? -->
@@ -68,44 +68,25 @@
   </section>
 </template>
 
-
-
-
-
-
-
-
-  <!-- <div class="flex justify-between m-6">
-    <p class="text-xs font-semibold text-gray-600"> Un goût de liberté - Patisserie / Biscuiterie - 2021-2022.</p>
-    <div class="flex">
-        <a href="https://www.facebook.com/Ungout2liberte/" class="max-w-xs ml-4">
-          <Twitter />
-        </a>
-        <a href="https://www.facebook.com/Ungout2liberte/" class="ml-3">
-          <Facebook />
-        </a>
-        <a href="https://www.facebook.com/Ungout2liberte/" class="ml-3">
-          <Github />
-        </a>
-    </div>
-  </div> -->
 <script>
-
 import Twitter from "~/components/icons/twitter.vue"
-import Github from "~/components/icons/github.vue";
-import Facebook from "~/components/icons/facebook.vue";
+import Github from "~/components/icons/github.vue"
+import Facebook from "~/components/icons/facebook.vue"
+
+import { useStore } from '~/store/cart'
 
 export default {
   components: {
     Twitter,
     Github,
     Facebook
-  }
+  },
+  setup() {
+    const cart = useStore()
+
+    return {
+      openCart: cart.open,
+    }
+  },
 }
 </script>
-
-<style>
-  .emoji {
-    font-size: 30px;
-  }
-</style>
