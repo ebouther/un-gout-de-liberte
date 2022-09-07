@@ -3,11 +3,12 @@
     <product :product="selectedProduct" @close="selectedProduct = null"/>
     <div class="max-w-screen mx-auto text-center">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        <div v-for="p in products" :key="p.id" class="border rounded-lg bg-gray-100 shadow-lg hover:shadow-md focus:shadow-none hover:border-yellow-500 hover:border-2 flex flex-col">
+        <div v-for="p in products" :key="p.id" class="rounded-lg bg-gray-100 shadow-lg hover:shadow-none hover:border-yellow-500 border-2 border-transparent flex flex-col   transition duration-150 ease-in-out hover:scale-110">
           <!-- <nuxt-link :to="`/produits/${p._id}`"> -->
           <button @click="openProduct(p)">
               <div class=" rounded-t-lg bg-white">
-                <img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name">
+                <!-- <nuxt-img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name"> -->
+                <nuxt-img v-if="p.images?.[0]" class="object-cover h-48 w-full rounded-t-lg" :src="p.images[0]" :alt="p.name" />
               </div>
               <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
               <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{p.name}}</h4>
@@ -35,8 +36,12 @@
 </style>
 
 <script setup>
-  let products = ref(await getProducts())
+  import { useStore } from '~/store/cart'
+  const cart = useStore()
+
   let selectedProduct = ref('')
+
+  let products = ref(cart.products)
 
   const props = defineProps({
     categories: {
@@ -49,24 +54,24 @@
     }
   })
 
-  async function getProducts () {
-     return queryContent('products')
-     .where({
-       ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
-       ...(props.categories ? {categories: {$contains: props.categories}} : {})
-     })
-     .sort('name')
-     .find()
-  }
-  function dirname(p) {
-    // return path.dirname(p)
-    return p.substr(0, p.lastIndexOf("/"));
-  }
-  function imgSrc(src) {
-    const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
+  // async function getProducts () {
+  //    return queryContent('products')
+  //    .where({
+  //      ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
+  //      ...(props.categories ? {categories: {$contains: props.categories}} : {})
+  //    })
+  //    .sort('name')
+  //    .find()
+  // }
+  // function dirname(p) {
+  //   // return path.dirname(p)
+  //   return p.substr(0, p.lastIndexOf("/"));
+  // }
+  // function imgSrc(src) {
+  //   const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
 
-    return imgs[`/content${src}`].default
-  }
+  //   return imgs[`/content${src}`].default
+  // }
   function addToCart(productId) {
     this.$store.commit('cart/add', productId)
   }
@@ -77,7 +82,8 @@
   }
 
   watch(() => props.name, async (value, oldV) => {
-    products.value = await getProducts()
+    console.log('WATCHED')
+    products.value = cart.products.filter(p => p.name.toLowerCase().includes(value.toLowerCase()))
   });
 
  

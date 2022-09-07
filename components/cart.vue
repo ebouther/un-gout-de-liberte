@@ -25,7 +25,7 @@
                       <ul role="list" class="-my-6 divide-y divide-gray-200">
                         <li v-for="product in products" :key="product.id" class="py-6 flex">
                           <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                            <img :src="imgSrc(`${dirname(product._path)}/img/small.jpg`)" :alt="product.imageAlt" class="w-full h-full object-center object-cover" />
+                            <nuxt-img :src="product.images?.[0]" class="w-full h-full object-center object-cover" />
                           </div>
 
                           <div class="ml-4 flex-1 flex flex-col">
@@ -37,7 +37,7 @@
                                   </a>
                                 </h3>
                                 <p class="ml-4">
-                                  {{ product.price.amount }} {{ product.price.currency }}
+                                  {{product.price.unit_amount / 100}} {{product.price.currency === 'eur' ? '€' : product.price.currency}}
                                 </p>
                               </div>
                               <p class="mt-1 text-sm text-gray-500">
@@ -144,7 +144,7 @@ export default {
       if (!Object.keys(cart.items).length) return 0;
 
       return Object.values(cart.items)
-              .reduce((acc, i) => acc + i.price.amount * i.quantity, 0)
+              .reduce((acc, i) => acc + i.price.unit_amount / 100 * i.quantity, 0)
               .toFixed(2);
     })
 
