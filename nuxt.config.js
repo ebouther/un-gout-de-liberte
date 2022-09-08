@@ -96,6 +96,5 @@ export default defineNuxtConfig({
     icon: {
       source: '~/static/logo.jpg'
     } 
-  },
-  image: {    dir: 'assets'  }
+  }
 })
