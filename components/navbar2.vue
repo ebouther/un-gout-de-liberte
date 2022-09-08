@@ -7,7 +7,7 @@
             <!-- Logo -->
             <div class="flex-1 flex">
               <a href="/">
-                <nuxt-img class="h-12 w-auto" src="/logo.png" alt="" />
+                <img class="h-12 w-auto" src="/logo.png" alt="" />
               </a>
             </div>
 
