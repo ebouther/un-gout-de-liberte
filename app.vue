@@ -5,3 +5,11 @@
     </NuxtLayout>
   </div>
 </template>
+<style>
+html {
+  @apply scroll-smooth
+}
+</style>
+<script setup>
+import './assets/css/tailwind.css'
+</script>

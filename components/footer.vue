@@ -4,7 +4,7 @@
       <div class="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
           <nav class="flex flex-wrap justify-center -mx-5 -my-2">
               <div class="px-5 py-2">
-                <a href="/presentation" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <a href="#about" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Qui suis-je ?
                 </a>
               </div>
@@ -20,12 +20,12 @@
               </div>
               <div class="px-5 py-2">
                 <!-- / Mon Labo ? -->
-                <a href="https://g.page/r/CWHsMV4RO9KHEAE" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <a href="https://g.page/r/CWHsMV4RO9KHEAE" target="_blank" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Ma Boutique
                 </a>
               </div>
               <div class="px-5 py-2">
-                <a href="/contact" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <a href="mailto:justine@un-gout-de-liberte.fr" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Me contacter
                 </a>
               </div>

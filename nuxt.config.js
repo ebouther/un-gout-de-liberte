@@ -1,4 +1,3 @@
-
 import { defineNuxtConfig } from 'nuxt'
 
 export default defineNuxtConfig({
@@ -76,7 +75,16 @@ export default defineNuxtConfig({
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
-  build: {},
+  build: {
+    postcss: {
+      postcssOptions: {
+        plugins: {
+          tailwindcss: {},
+          autoprefixer: {},
+        },
+      },
+    },
+  },
   googleAnalytics: {
     id: 'UA-201172251-1' 
   },

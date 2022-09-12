@@ -27,10 +27,15 @@
             <div class="flex-1 flex items-center justify-end">
               <!-- Cart -->
               <div class="ml-4 flow-root lg:ml-8">
-                <button @click="openCart" class="group -m-2 p-2 flex items-center relative">
-                    <ShoppingBagIcon class="flex-shrink-0 h-8 w-8 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                <button @click="openCart" class="group -m-2 p-2 flex items-center">
+                  <div class="flex flex-col text-gray-400 group-hover:text-gray-500">
+                    <div class="mx-auto relative">
+                      <ShoppingBagIcon class="flex-shrink-0 h-8 w-8 " aria-hidden="true"></ShoppingBagIcon>
+                      <div v-if="cart.nbOfItems > 0" class="inline-flex absolute top-0 -right-4 justify-center items-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white dark:border-gray-900">{{cart.nbOfItems}}</div>
+                    </div>
+                    <span class="font-semibold">Panier</span>
                     <!-- <span class="ml-2 text-md font-medium text-gray-700 group-hover:text-gray-800">{{nbOfItems}}</span> -->
-                    <div v-if="cart.nbOfItems > 0" class="inline-flex absolute top-0 -right-2 justify-center items-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white dark:border-gray-900">{{cart.nbOfItems}}</div>
+                  </div>
                 </button>
               </div>
             </div>
