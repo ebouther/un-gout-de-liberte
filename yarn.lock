@@ -892,7 +892,7 @@
     serve-static "^1.14.1"
     workbox-cdn "^5.1.4"
 
-"@nuxtjs/robots@^3":
+"@nuxtjs/robots@3.0.0-1":
   version "3.0.0-1"
   resolved "https://registry.yarnpkg.com/@nuxtjs/robots/-/robots-3.0.0-1.tgz#69ac7c3dc750ff0df30ce8368e46b41d2388c2e1"
   integrity sha512-t83EUQ99Ac4SSUQ2ruVzGYdj5IMusEZ1hTFw3/ApVr1H1FwB2TOOZJ8MYux+R3749f7aD6w+f08vnEGlIMF8EA==
