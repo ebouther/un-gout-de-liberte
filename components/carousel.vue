@@ -31,9 +31,9 @@
           >
           <div class="flex justify-center items-center h-full">
             <div class="text-white">
-              <h2 style="font-family: 'Hay Billy', sans-serif;" class="font-semibold text-4xl mb-4">Un Goût de Libertè</h2>
-              <h4 class="font-semibold text-2xl">Pâtisserie Biscuiterie</h4>
-              <h5 class="font-semibold text-lg mb-6">43380 CHILHAC</h5>
+              <h1 style="font-family: 'Hay Billy', sans-serif;" class="font-semibold text-4xl mb-4">Un Goût de Libertè</h1>
+              <h2 class="font-semibold text-2xl">Pâtisserie Biscuiterie</h2>
+              <h3 class="font-semibold text-lg mb-6">43380 CHILHAC</h3>
               <a
                 class="mx-2 inline-block px-7 py-3 mb-1 border-2 border-gray-200 text-gray-200 font-medium text-sm leading-snug uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
                 href="#products"

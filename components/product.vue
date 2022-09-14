@@ -82,7 +82,7 @@
 <script setup>
 import { useStore } from '~/store/cart'
 
-import { XIcon } from '@heroicons/vue/outline'
+import { XIcon } from 'heroicons-vue3/outline'
 
 import {
   TransitionRoot,
