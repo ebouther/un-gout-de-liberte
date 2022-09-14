@@ -72,22 +72,21 @@
 
   let search = ref("")
 
-  definePageMeta({
-    title: 'Accueil'
-  })
+
+  const title = ref('Un Goût de Liberté')
+  const description = ref('Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.')
 
   useHead({
-    title: 'Accueil',
+    title,
     meta: [{
-      hid: 'title',
-      name: 'title',
-      content: 'Pâtisserie - Un Goût de Liberté - CHILHAC',
-    }, {
-      hid: 'description',
       name: 'description',
-      content: 'Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.',
-    }]
+      content: description
+    }],
+    htmlAttrs: {
+      lang: 'fr'
+    }
   })
+
 
   nuxtApp.hook('page:finish', () => {
 

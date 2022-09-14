@@ -31,7 +31,7 @@
           >
           <div class="flex justify-center items-center h-full">
             <div class="text-white">
-              <h1 style="font-family: 'Hay Billy', sans-serif;" class="font-semibold text-4xl mb-4">Un Goût de Libertè</h1>
+              <h1 style="font-family: 'Gout Liberte', sans-serif;" class="font-semibold text-4xl mb-4">Un Goût de Libertè</h1>
               <h2 class="font-semibold text-2xl">Pâtisserie Biscuiterie</h2>
               <h3 class="font-semibold text-lg mb-6">43380 CHILHAC</h3>
               <a
@@ -93,10 +93,11 @@
 
 <style scoped>
   @import 'tw-elements/dist/css/index.min.css';
-  @import url('http://fonts.cdnfonts.com/css/hay-billy');
 
-  
-
+  @font-face {
+    font-family: 'Gout Liberte';
+    src: url('~/assets/css/fonts/gout-liberte.ttf');
+  }
 </style>
 
 <script setup>
