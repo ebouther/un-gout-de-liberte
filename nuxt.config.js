@@ -1,7 +1,7 @@
 import { defineNuxtConfig } from 'nuxt'
 
 export default defineNuxtConfig({
-  ssr: false,
+  ssr: true,
   target: 'server',
 
   // router: { # TODO
@@ -104,5 +104,14 @@ export default defineNuxtConfig({
     icon: {
       source: '~/static/logo.jpg'
     } 
+  },
+  vite: {
+    ssr: {
+      noExternal: [
+        '@headlessui/vue',
+        '@heroicons/vue',
+        'heroicons-vue3'
+      ]
+    }
   }
 })

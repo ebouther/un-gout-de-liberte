@@ -96,7 +96,7 @@
 <script>
 import { ref } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { XIcon } from '@heroicons/vue/outline'
+import { XIcon } from 'heroicons-vue3/outline'
 
 import { useStore } from '~/store/cart'
 

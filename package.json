@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.7",
-    "@heroicons/vue": "^1.0.6",
+    "@heroicons/vue": "^2.0.11",
     "@nuxt/image-edge": "^1.0.0-27706054.395f7ae",
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/robots": "^2.5.0",
@@ -24,6 +24,7 @@
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "heroicons-vue3": "^1.0.2",
     "pinia": "^2.0.17",
     "stripe": "^8.160.0",
     "swiper": "^8.3.2",

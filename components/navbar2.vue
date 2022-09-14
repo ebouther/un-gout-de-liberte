@@ -48,7 +48,7 @@
 
 <script>
 import { Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@headlessui/vue'
-import { SearchIcon, ShoppingBagIcon } from '@heroicons/vue/outline'
+import { SearchIcon, ShoppingBagIcon } from 'heroicons-vue3/outline'
 
 import { useStore } from '~/store/cart'
 
