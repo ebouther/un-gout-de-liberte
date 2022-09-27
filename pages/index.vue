@@ -73,7 +73,7 @@
   let search = ref("")
 
 
-  const title = ref('Un Goût de Liberté')
+  const title = ref('Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale à CHILHAC')
   const description = ref('Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.')
 
   useHead({
