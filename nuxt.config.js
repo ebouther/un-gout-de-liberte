@@ -1,13 +1,15 @@
-export default {
-  ssr: true ,
+import { defineNuxtConfig } from 'nuxt'
+
+export default defineNuxtConfig({
+  ssr: true,
   target: 'server',
 
   // router: { # TODO
   //   middleware: ['auth']
   // },
-  serverMiddleware: [
-    '~/api/stripe.js'
-  ],
+  // serverMiddleware: [
+  //   '~/api/stripe.js'
+  // ],
   /*
   ** Headers of the page
   ** See https://nuxtjs.org/api/configuration-head
@@ -25,6 +27,8 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
+    // script: [{
+    // }],
   },
   /*
   ** Global CSS
@@ -35,32 +39,33 @@ export default {
   ** Plugins to load before mounting the App
   ** https://nuxtjs.org/guide/plugins
   */
-  plugins: [{
-    src: '~/plugins/vue-stripe.js', ssr: false
-  }, {
-    src: '~/plugins/vuex-persist.js', ssr: false
-  }],
+  // plugins: [{
+  //   src: '~/plugins/vue-stripe.js', mode: 'client'
+  // }, {
+  //   src: '~/plugins/vuex-persist.js', mode: 'client' 
+  // },
+  // {
+  //   src: '~/plugins/swiper.client.js', mode: 'client'
+  // }],
   /*
-  ** Auto import components
-  ** See https://nuxtjs.org/api/configuration-components
-  */
-  components: true,
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
     '@nuxtjs/pwa',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt'
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
-    //'@nuxtjs/auth-next',
-    '@nuxtjs/axios',
-    '@nuxtjs/google-analytics',
+    //'@nuxtjs/google-analytics',
+    '@nuxt/image-edge',
     '@nuxtjs/sitemap',
-    '@nuxtjs/robots'
+    '@nuxtjs/robots',
+    '@nuxt/content',
+    '@vueuse/nuxt'
   ],
   env: {
     STRIPE_PK: process.env.STRIPE_PK,
@@ -70,7 +75,16 @@ export default {
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
   */
-  build: {},
+  build: {
+    postcss: {
+      postcssOptions: {
+        plugins: {
+          tailwindcss: {},
+          autoprefixer: {},
+        },
+      },
+    },
+  },
   googleAnalytics: {
     id: 'UA-201172251-1' 
   },
@@ -83,11 +97,21 @@ export default {
     Sitemap: '/sitemap.xml'
   },
   axios: {
-    baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`
+    baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`,
+    proxy: false
   },
   pwa: {
     icon: {
       source: '~/static/logo.jpg'
     } 
+  },
+  vite: {
+    ssr: {
+      noExternal: [
+        '@headlessui/vue',
+        '@heroicons/vue',
+        'heroicons-vue3'
+      ]
+    }
   }
-}
+})
