@@ -59,7 +59,6 @@
   import Products from '../components/products.vue'
   import Carousel from '../components/carousel.vue'
   import { ShoppingBagIcon } from 'heroicons-vue3/outline'
-  import { mapState } from 'pinia'
   import { useStore } from '~/store/cart'
 
 

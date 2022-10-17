@@ -85,9 +85,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  googleAnalytics: {
-    id: 'UA-201172251-1' 
-  },
   sitemap: {
     hostname: 'https://un-gout-de-liberte.fr'
   },
