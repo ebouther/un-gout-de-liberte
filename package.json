@@ -13,7 +13,6 @@
     "@headlessui/vue": "^1.6.7",
     "@heroicons/vue": "^2.0.11",
     "@nuxt/image-edge": "^1.0.0-27706054.395f7ae",
-    "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/robots": "3.0.0-1",
     "@nuxtjs/sitemap": "^2.4.0",
     "@nuxtjs/vercel-builder": "^0.21.3",
@@ -38,6 +37,7 @@
     "@pinia/nuxt": "^0.4.2",
     "@vueuse/core": "^9.1.0",
     "@vueuse/nuxt": "^9.1.0",
-    "nuxt": "npm:nuxt3@latest"
+    "nuxt": "npm:nuxt3@latest",
+    "vue-gtag-next": "^1.14.0"
   }
 }
