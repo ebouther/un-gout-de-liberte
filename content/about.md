@@ -17,4 +17,4 @@ Je reste à l’écoute de toutes vos demandes en proposant des créations « su
     - produits allégés ou sans gluten, lactose ou allergènes ;
     - décorations personnalisées ;
     - forme, goût et couleur selon vos souhaits et les produits disponibles.<br>
-Une question ou une envie, [[contactez moi](mailto:justine@un-gout-de-liberte.fr)]{.text-blue-700} ou passez à la boutique !
+Une question ou une envie, [[contactez moi](mailto:ungoutdeliberte@protonmail.com)]{.text-blue-700} ou passez à la boutique !
