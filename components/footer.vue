@@ -25,7 +25,7 @@
                 </a>
               </div>
               <div class="px-5 py-2">
-                <a href="mailto:justine@un-gout-de-liberte.fr" class="text-base leading-6 text-gray-500 hover:text-gray-900">
+                <a href="mailto:ungoutdeliberte@protonmail.com" class="text-base leading-6 text-gray-500 hover:text-gray-900">
                   Me contacter
                 </a>
               </div>
