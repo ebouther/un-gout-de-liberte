@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <Products :name="search" :loading="searchLoading" />
+      <Products :name="search" :loading="searchLoading" @clear-search="clearSearch" />
     </section>
 
     <!-- About section -->

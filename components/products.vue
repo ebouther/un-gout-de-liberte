@@ -2,6 +2,26 @@
   <div>
     <product :product="selectedProduct" @close="selectedProduct = null"/>
 
+    <!-- Debug component for development -->
+    <CategoryDebug :products="cart.products || []" />
+
+    <!-- Category filters -->
+    <CategoryFilter 
+      :categories="availableCategories"
+      :selected-category="selectedCategory"
+      :products="cart.products || []"
+      @category-changed="selectedCategory = $event"
+    />
+
+    <!-- Product statistics -->
+    <ProductStats
+      :filtered-count="filteredProducts.length"
+      :total-count="(cart.products || []).length"
+      :selected-category="selectedCategory"
+      :search-term="props.name"
+      @clear-filters="clearAllFilters"
+    />
+
     <!-- Loading skeleton -->
     <div v-if="loading" class="max-w-screen mx-auto text-center">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -31,6 +51,13 @@
                 loading="lazy"
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <!-- Category badge -->
+              <div v-if="product.metadata?.category" class="absolute top-3 left-3">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 shadow-sm">
+                  {{ formatCategoryName(product.metadata.category) }}
+                </span>
+              </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
@@ -76,6 +103,7 @@ import { useStore } from '~/store/cart'
 
 const cart = useStore()
 const selectedProduct = ref(null)
+const selectedCategory = ref(null)
 
 // Simple props definition
 const props = defineProps({
@@ -83,23 +111,48 @@ const props = defineProps({
   loading: Boolean
 })
 
+// Computed property for available categories
+const availableCategories = computed(() => {
+  const allProducts = cart.products || []
+  const categories = new Set()
+  
+  allProducts.forEach(product => {
+    if (product?.metadata?.category) {
+      categories.add(product.metadata.category)
+    }
+  })
+  
+  return Array.from(categories).sort()
+})
+
 // Computed property for filtered products
 const filteredProducts = computed(() => {
   const allProducts = cart.products || []
 
-  if (!props.name || props.name.trim() === '') {
-    return allProducts
+  let filtered = allProducts
+
+  // Filter by search term
+  if (props.name && props.name.trim() !== '') {
+    const searchTerm = props.name.toLowerCase().trim()
+    filtered = filtered.filter(product => {
+      if (!product) return false
+
+      const nameMatch = product.name?.toLowerCase().includes(searchTerm)
+      const descMatch = product.description?.toLowerCase().includes(searchTerm)
+      const categoryMatch = product.metadata?.category?.toLowerCase().includes(searchTerm)
+
+      return nameMatch || descMatch || categoryMatch
+    })
   }
 
-  const searchTerm = props.name.toLowerCase().trim()
-  return allProducts.filter(product => {
-    if (!product) return false
+  // Filter by category
+  if (selectedCategory.value) {
+    filtered = filtered.filter(product => {
+      return product?.metadata?.category === selectedCategory.value
+    })
+  }
 
-    const nameMatch = product.name?.toLowerCase().includes(searchTerm)
-    const descMatch = product.description?.toLowerCase().includes(searchTerm)
-
-    return nameMatch || descMatch
-  })
+  return filtered
 })
 
 const formatPrice = (price) => {
@@ -109,7 +162,34 @@ const formatPrice = (price) => {
   return `${amount.toFixed(2)} ${currency}`
 }
 
+const formatCategoryName = (category) => {
+  // Convert category names to more readable format
+  const categoryMap = {
+    'confitures': 'Confitures',
+    'fruits-sirop': 'Fruits au sirop',
+    'biscuits-sucres': 'Biscuits sucrés',
+    'aperitifs': 'Apéritifs',
+    'biscottes': 'Biscottes',
+    'macarons': 'Macarons',
+    'confits-chutneys': 'Confits & Chutneys',
+    'sirops': 'Sirops',
+    'caramels': 'Caramels',
+    'autres': 'Autres'
+  }
+  
+  return categoryMap[category.toLowerCase()] || category.charAt(0).toUpperCase() + category.slice(1)
+}
+
 function openProduct(product) {
   selectedProduct.value = product
 }
+
+function clearAllFilters() {
+  selectedCategory.value = null
+  // Emit event to parent to clear search as well
+  emit('clearSearch')
+}
+
+// Define emits
+const emit = defineEmits(['clearSearch'])
 </script>
