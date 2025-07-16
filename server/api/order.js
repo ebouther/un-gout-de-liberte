@@ -1,40 +1,144 @@
-//import bodyParser from 'body-parser'
-import Stripe from 'stripe';
-//import cors from 'cors'
+import Stripe from 'stripe'
+import { defineEventHandler, createError, getRequestIP, readBody, getMethod } from 'h3'
 
 const stripe = new Stripe(process.env.STRIPE_SK, {
-  apiVersion: '2020-08-27',
-});
+  apiVersion: '2023-10-16',
+})
 
+// Rate limiting store (in production, use Redis or database)
+const rateLimitStore = new Map()
 
+const validateRequestBody = (items) => {
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid request: items array is required'
+    })
+  }
 
-//app.use(cors());
-//app.use(bodyParser.json())
+  if (items.length > 50) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Too many items in cart (max 50)'
+    })
+  }
+
+  items.forEach((item, index) => {
+    if (!item.price || typeof item.price !== 'string') {
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Invalid price for item ${index + 1}`
+      })
+    }
+    if (!item.quantity || typeof item.quantity !== 'number' || item.quantity < 1 || item.quantity > 99) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: `Invalid quantity for item ${index + 1} (must be 1-99)`
+      })
+    }
+  })
+}
+
+const checkRateLimit = (clientIP) => {
+  const now = Date.now()
+  const windowMs = 15 * 60 * 1000 // 15 minutes
+  const maxRequests = 10
+
+  if (!rateLimitStore.has(clientIP)) {
+    rateLimitStore.set(clientIP, { count: 1, resetTime: now + windowMs })
+    return true
+  }
+
+  const record = rateLimitStore.get(clientIP)
+  if (now > record.resetTime) {
+    rateLimitStore.set(clientIP, { count: 1, resetTime: now + windowMs })
+    return true
+  }
+
+  if (record.count >= maxRequests) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: 'Too many requests. Please try again later.'
+    })
+  }
+
+  record.count++
+  return true
+}
 
 export default defineEventHandler(async (event) => {
-  const { items } = await useBody(event)
+  try {
+    // Security: Check request method
+    if (getMethod(event) !== 'POST') {
+      throw createError({
+        statusCode: 405,
+        statusMessage: 'Method not allowed'
+      })
+    }
 
-  if (!items || !items.length) return res.status(400).end()
+    // Security: Rate limiting
+    const clientIP = getRequestIP(event) || 'unknown'
+    checkRateLimit(clientIP)
 
-  const session = await stripe.checkout.sessions.create({
-    success_url: 'https://un-gout-de-liberte.fr/',
-    cancel_url: 'https://un-gout-de-liberte.fr/',
-    payment_method_types: ['card'],
-    line_items: items,
-    shipping_rates: [ await shippingRate(items) ],
-    shipping_address_collection: {
-      allowed_countries: ['FR']
-    },
-    mode: 'payment',
-  });
+    // Security: Validate request body
+    const { items } = await readBody(event)
+    validateRequestBody(items)
 
-  //res
-  //  .status(200)
-  //  .json(session) // stripe checkout link
-  //  .end()
-  console.log('SESSION ', session)
+    // Security: Verify items exist in Stripe
+    const validItems = []
+    for (const item of items) {
+      try {
+        const price = await stripe.prices.retrieve(item.price)
+        if (!price.active) {
+          throw createError({
+            statusCode: 400,
+            statusMessage: `Price ${item.price} is not active`
+          })
+        }
+        validItems.push(item)
+      } catch (stripeError) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: `Invalid price ID: ${item.price}`
+        })
+      }
+    }
 
-  return session
+    const session = await stripe.checkout.sessions.create({
+      success_url: 'https://un-gout-de-liberte.fr/?success=true&session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://un-gout-de-liberte.fr/?canceled=true',
+      payment_method_types: ['card'],
+      line_items: validItems,
+      shipping_options: [{ shipping_rate: await shippingRate(validItems) }],
+      shipping_address_collection: {
+        allowed_countries: ['FR']
+      },
+      mode: 'payment',
+      metadata: {
+        source: 'website',
+        ip: clientIP,
+        timestamp: new Date().toISOString()
+      },
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
+    })
+
+    return {
+      url: session.url,
+      id: session.id
+    }
+  } catch (error) {
+    console.error('Order creation error:', error)
+
+    // Don't expose internal errors to client
+    if (error.statusCode) {
+      throw error // Re-throw our custom errors
+    }
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Internal server error'
+    })
+  }
 })
 
 
@@ -51,15 +155,46 @@ const shippingRates = [
 
 
 const fetchItemWeight = async (priceId, quantity) => {
-  const { product } = await stripe.prices.retrieve(priceId);
-  const { metadata : { 'Poids': weightMeta } } = await stripe.products.retrieve(product)
+  try {
+    const { product } = await stripe.prices.retrieve(priceId);
+    const productData = await stripe.products.retrieve(product);
 
-  const weight = Number(weightMeta.split('g')[0].trim())
+    // Check if metadata exists and has the 'Poids' field
+    if (!productData.metadata || !productData.metadata['Poids']) {
+      console.warn(`Product ${product} missing weight metadata, using default weight`);
+      return 100 * quantity; // Default weight in grams
+    }
 
-  if (weight === NaN || weight <= 0) throw new Error('Invalid weight ("Poids") metadata');
-  if (quantity === NaN || quantity <= 0) throw new Error('Invalid item quantity (NaN)');
+    const weightMeta = productData.metadata['Poids'];
 
-  return weight * quantity;
+    // Check if weightMeta is a string before calling split
+    if (typeof weightMeta !== 'string') {
+      console.warn(`Product ${product} has invalid weight metadata format`);
+      return 100 * quantity; // Default weight in grams
+    }
+
+    const weight = Number(weightMeta.split('g')[0].trim());
+
+    if (isNaN(weight) || weight <= 0) {
+      console.warn(`Product ${product} has invalid weight value: ${weightMeta}`);
+      return 100 * quantity; // Default weight in grams
+    }
+
+    if (isNaN(quantity) || quantity <= 0) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Invalid item quantity'
+      });
+    }
+
+    return weight * quantity;
+  } catch (error) {
+    console.error('Error fetching item weight:', error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Failed to calculate item weight'
+    });
+  }
 }
 
 

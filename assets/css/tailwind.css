@@ -1,3 +1,49 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+}
+
+@layer components {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .prose {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  .prose h1 {
+    @apply text-3xl font-bold text-gray-900 mb-4;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-semibold text-gray-900 mb-3;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose strong {
+    @apply font-semibold text-gray-900;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .transition-all-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

@@ -27,48 +27,79 @@
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
-              class="w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+              class="w-full max-w-5xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
             >
-              <div class="mx-auto flex justify-center" style="max-height: 80vh">
-                <div v-if="product !== null">
-                    <div class="max-w-screen-xl h-full grid grid-flow-row grid-rows-6 md:grid-rows-none md:grid-flow-col rounded-lg bg-gray-100">
-                        <div class="min-w-0 min-h-0 bg-white rounded-lg h-full w-full grid-cols row-span-2 md:row-auto" >
-                          <nuxt-img class="w-full object-cover min-h-0 min-w-0 rounded-t-md md:rounded-l-md md:rounded-r-none mx-auto h-full" :src="product.images?.[0]" />
+              <div class="relative">
+                <!-- Close button -->
+                <button
+                  @click="$emit('close')"
+                  class="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-all duration-200"
+                  aria-label="Fermer"
+                >
+                  <svg class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                <div v-if="product" class="grid grid-cols-1 lg:grid-cols-2">
+                  <!-- Image section -->
+                  <div class="relative bg-gray-50 aspect-square lg:aspect-auto">
+                    <nuxt-img
+                      class="w-full h-full object-cover"
+                      :src="product.images?.[0]"
+                      :alt="product.name"
+                      loading="eager"
+                    />
+                  </div>
+
+                  <!-- Content section -->
+                  <div class="p-8 flex flex-col">
+                    <div class="flex-1">
+                      <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+                      <p class="text-lg text-gray-600 mb-6">{{ product.description }}</p>
+
+                      <!-- Product details -->
+                      <div class="space-y-4 mb-8">
+                        <div v-if="product.metadata?.Ingrédients" class="border-l-4 border-amber-400 pl-4">
+                          <h3 class="font-semibold text-gray-900 mb-1">Ingrédients</h3>
+                          <p class="text-gray-700">{{ product.metadata.Ingrédients }}</p>
                         </div>
-                        <div class="w-full h-full p-5 flex flex-col justify-between mt-auto row-span-4 md:row-auto">
-                          <div>
-                            <h1 class="font-bold text-xl leading-tight truncate text-gray-700">{{product.name}}</h1>
-                            <div class="text-gray-600"><h2>{{product.description}}</h2></div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                          <div v-if="product.metadata?.Poids">
+                            <span class="font-semibold text-gray-900">Poids:</span>
+                            <span class="text-gray-700 ml-1">{{ product.metadata.Poids }}</span>
                           </div>
-                          <hr class="my-5 border-yellow-400" />
-                          <div class="text-gray-600 flex-1 overflow-auto">
-                            <span class="font-semibold">Ingrédients : </span><span>{{product.metadata?.Ingrédients}}</span>
-                            <br/>
-                            <span class="font-semibold">* : </span><span>Produits issus de l'agriculture biologique.</span>
-                            <br />
-                            <span class="font-semibold">° : </span><span>Produits locaux.</span>
-                            <br />
-                            <span v-if="product.metadata?.Allergènes" class="font-semibold">Allergènes : </span><span>{{product.metadata?.Allergènes}}</span>
-                            <br />
-                            <span class="font-semibold">Poids : </span><span>{{product.metadata.Poids}}</span>
-                          </div>
-                          <hr class="my-5 border-yellow-400" />
-                          <div class="flex flex-row justify-between text-gray-700">
-                            <span class="mr-4 md:mx-8 inline-flex items-center text-2xl font-bold">{{product.price.unit_amount / 100}} {{product.price.currency === 'eur' ? '€' : product.price.currency}}</span>
-                            <button
-                                class="grow text-white font-semibold bg-amber-700 border border-amber-600 hover:shadow-none hover:bg-amber-600 hover:border-amber-400 py-2 px-4 shadow-md rounded"
-                                @click="addToCart(product.id)">
-                                Ajouter au panier
-                            </button>
+                          <div v-if="product.metadata?.Allergènes">
+                            <span class="font-semibold text-gray-900">Allergènes:</span>
+                            <span class="text-gray-700 ml-1">{{ product.metadata.Allergènes }}</span>
                           </div>
                         </div>
+
+                        <div class="text-sm text-gray-500 space-y-1">
+                          <p><span class="font-medium">*</span> Produits issus de l'agriculture biologique</p>
+                          <p><span class="font-medium">°</span> Produits locaux</p>
+                        </div>
+                      </div>
                     </div>
+
+                    <!-- Price and add to cart -->
+                    <div class="border-t pt-6">
+                      <div class="flex items-center justify-between mb-6">
+                        <div class="text-3xl font-bold text-amber-600">
+                          {{ formatPrice(product.price) }}
+                        </div>
+                      </div>
+
+                      <button
+                        @click="addToCart(product.id)"
+                        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-amber-300"
+                      >
+                        Ajouter au panier
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-
-              <div class="mt-4">
-                <button type="button" class="text-amber-600 font-medium hover:text-amber-500" @click="$emit('close')"><span aria-hidden="true">&larr; </span>Retour</button>
               </div>
             </DialogPanel>
           </TransitionChild>
@@ -95,7 +126,14 @@ const emit = defineEmits(['close'])
 
 const cart = useStore()
 
-function addToCart(productId) { 
+const formatPrice = (price) => {
+  if (!price) return ''
+  const amount = price.unit_amount / 100
+  const currency = price.currency === 'eur' ? '€' : price.currency.toUpperCase()
+  return `${amount.toFixed(2)} ${currency}`
+}
+
+function addToCart(productId) {
   cart.addItem(productId)
   emit('close')
 }

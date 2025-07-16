@@ -48,7 +48,7 @@
     opacity:1;
     transform: translate(0) scale(1);
     visibility: visible;
-  }  
+  }
 
 </style>
 

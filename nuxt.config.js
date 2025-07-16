@@ -1,72 +1,10 @@
-import { defineNuxtConfig } from 'nuxt'
-
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: true,
   target: 'server',
+  devtools: { enabled: true },
 
-  // router: { # TODO
-  //   middleware: ['auth']
-  // },
-  // serverMiddleware: [
-  //   '~/api/stripe.js'
-  // ],
-  /*
-  ** Headers of the page
-  ** See https://nuxtjs.org/api/configuration-head
-  */
-  head: {
-    title: 'Un Goût de Liberté',
-    //titleTemplate: '%s - Un Goût de Liberté',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-    ],
-    htmlAttrs: {
-      lang: 'fr'
-    },
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ],
-    // script: [{
-    // }],
-  },
-  /*
-  ** Global CSS
-  */
-  css: [
-  ],
-  /*
-  ** Plugins to load before mounting the App
-  ** https://nuxtjs.org/guide/plugins
-  */
-  // plugins: [{
-  //   src: '~/plugins/vue-stripe.js', mode: 'client'
-  // }, {
-  //   src: '~/plugins/vuex-persist.js', mode: 'client' 
-  // },
-  // {
-  //   src: '~/plugins/swiper.client.js', mode: 'client'
-  // }],
-  /*
-  /*
-  ** Nuxt.js dev-modules
-  */
-  buildModules: [
-    '@nuxtjs/pwa',
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
-  ],
-  /*
-  ** Nuxt.js modules
-  */
-  modules: [
-    //'@nuxtjs/google-analytics',
-    '@nuxt/image-edge',
-    '@nuxtjs/sitemap',
-    '@nuxtjs/robots',
-    '@nuxt/content',
-    '@vueuse/nuxt'
-  ],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/content', '@vueuse/nuxt', '@nuxt/image'],
   env: {
     STRIPE_PK: process.env.STRIPE_PK,
     hostname: process.env.HOST || 'https://un-gout-de-liberte.fr'
@@ -85,13 +23,10 @@ export default defineNuxtConfig({
       },
     },
   },
-  sitemap: {
-    hostname: 'https://un-gout-de-liberte.fr'
-  },
   robots: {
     UserAgent: '*',
     Disallow: '/user',
-    Sitemap: '/sitemap.xml'
+    // Sitemap: '/sitemap.xml'
   },
   axios: {
     baseURL: `https://${process.env.VERCEL_URL || 'un-gout-de-liberte.vercel.app'}`,
@@ -99,8 +34,52 @@ export default defineNuxtConfig({
   },
   pwa: {
     icon: {
-      source: '~/static/logo.jpg'
-    } 
+      source: '~/static/logo.jpg',
+      fileName: 'logo.jpg'
+    },
+    meta: {
+      name: 'Un Goût de Liberté',
+      author: 'Un Goût de Liberté',
+      description: 'Pâtisserie & Biscuiterie artisanale à CHILHAC',
+      theme_color: '#f59e0b',
+      lang: 'fr'
+    },
+    manifest: {
+      name: 'Un Goût de Liberté - Pâtisserie artisanale',
+      short_name: 'Un Goût de Liberté',
+      description: 'Pâtisserie & Biscuiterie artisanale à CHILHAC',
+      theme_color: '#f59e0b',
+      background_color: '#ffffff',
+      display: 'standalone',
+      orientation: 'portrait',
+      start_url: '/',
+      lang: 'fr'
+    },
+    workbox: {
+      runtimeCaching: [
+        {
+          urlPattern: 'https://images.unsplash.com/.*',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'unsplash-images',
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+            }
+          }
+        },
+        {
+          urlPattern: '/api/.*',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: {
+              maxAgeSeconds: 60 * 60 // 1 hour
+            }
+          }
+        }
+      ]
+    }
   },
   vite: {
     ssr: {

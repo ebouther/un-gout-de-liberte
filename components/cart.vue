@@ -124,18 +124,35 @@ export default {
     })
 
     async function submit() {
-      console.log('SUBMIT')
-      const res = await $fetch('/api/order', {
-        method: 'POST',
-        body: {
-          items: Object.keys(cart.items).map(k => ({
-            price: cart.items[k].price.id,
-            quantity: cart.items[k].quantity
-          }))
-        }
-      });
+      if (Object.keys(cart.items).length === 0) {
+        return
+      }
 
-      window.location.href = res.url;
+      try {
+        // Show loading state
+        const loadingToast = 'Préparation de votre commande...'
+
+        const res = await $fetch('/api/order', {
+          method: 'POST',
+          body: {
+            items: Object.keys(cart.items).map(k => ({
+              price: cart.items[k].price.id,
+              quantity: cart.items[k].quantity
+            }))
+          }
+        })
+
+        if (res.url) {
+          window.location.href = res.url
+        } else {
+          throw new Error('No checkout URL received')
+        }
+      } catch (error) {
+        console.error('Checkout error:', error)
+
+        // Show user-friendly error message
+        alert('Une erreur est survenue lors de la préparation de votre commande. Veuillez réessayer.')
+      }
     }
 
 

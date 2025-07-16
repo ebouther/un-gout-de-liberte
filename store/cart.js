@@ -15,16 +15,16 @@ export const useStore = defineStore({
       this.isOpen = true
     },
     close() {
-      this.isOpen = false 
+      this.isOpen = false
     },
     async load() {
-      this.loading = true 
+      this.loading = true
 
       const { data: products } = await useFetch('/api/products')
 
       this.products = products;
 
-      this.loading = false 
+      this.loading = false
     },
     addItem(id) {
       if (!this.items[id]) {
