@@ -41,15 +41,21 @@ export default defineEventHandler(async (event) => {
 
     const result = products
       .filter(p => p.active && !p.metadata?.hidden) // Hide products with hidden metadata
-      .map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        images: p.images,
-        metadata: p.metadata,
-        price: prices.find(price => price.product === p.id)
-      }))
-      .filter(p => p.price) // Only return products with valid prices
+      .map(p => {
+        // Get all prices for this product
+        const productPrices = prices.filter(price => price.product === p.id)
+        
+        return {
+          id: p.id,
+          name: p.name,
+          description: p.description,
+          images: p.images,
+          metadata: p.metadata,
+          price: productPrices[0] || null, // First price as default (backward compatibility)
+          prices: productPrices // All prices for variants
+        }
+      })
+      .filter(p => p.prices.length > 0) // Only return products with valid prices
 
     // Update cache
     productsCache = result

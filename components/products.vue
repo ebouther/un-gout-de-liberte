@@ -69,9 +69,12 @@
                 </p>
               </div>
               <div class="mt-4 flex items-center justify-between">
-                <span class="text-xl font-bold text-amber-600">
-                  {{ formatPrice(product.price) }}
-                </span>
+                <div class="text-xl font-bold text-amber-600">
+                  {{ getCheapestPrice(product) }}
+                  <span v-if="hasMultiplePrices(product)" class="text-sm font-normal text-gray-500 ml-1">
+                    à partir de
+                  </span>
+                </div>
                 <div class="flex items-center text-amber-600 group-hover:text-amber-700 transition-colors">
                   <span class="text-sm font-medium mr-1">Voir</span>
                   <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -160,6 +163,26 @@ const formatPrice = (price) => {
   const amount = price.unit_amount / 100
   const currency = price.currency === 'eur' ? '€' : price.currency?.toUpperCase() || ''
   return `${amount.toFixed(2)} ${currency}`
+}
+
+// Fonction pour obtenir le prix le moins cher d'un produit
+const getCheapestPrice = (product) => {
+  // Si le produit a plusieurs prix (variantes)
+  if (product.prices && product.prices.length > 1) {
+    const cheapestPrice = product.prices.reduce((min, current) => {
+      return current.unit_amount < min.unit_amount ? current : min
+    })
+    return formatPrice(cheapestPrice)
+  }
+  
+  // Sinon, utiliser le prix unique ou le premier prix disponible
+  const price = product.price || product.prices?.[0]
+  return formatPrice(price)
+}
+
+// Fonction pour vérifier s'il y a plusieurs prix
+const hasMultiplePrices = (product) => {
+  return product.prices && product.prices.length > 1
 }
 
 const formatCategoryName = (category) => {

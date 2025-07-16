@@ -3,7 +3,9 @@
     <Dialog as="div" @close="$emit('close')" class="relative z-10">
       <TransitionChild
         as="template"
-        enter="duration-300 ease-out"
+        enter="d// Computed pour l'image à afficher (supprimé car remplacé par une fonction)
+
+const formatPrice = (price) => {t"
         enter-from="opacity-0"
         enter-to="opacity-100"
         leave="duration-200 ease-in"
@@ -46,7 +48,7 @@
                   <div class="relative bg-gray-50 aspect-square lg:aspect-auto">
                     <nuxt-img
                       class="w-full h-full object-cover"
-                      :src="product.images?.[0]"
+                      :src="getDisplayImage()"
                       :alt="product.name"
                       loading="eager"
                     />
@@ -66,9 +68,9 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                          <div v-if="product.metadata?.Poids">
+                          <div v-if="displayWeight">
                             <span class="font-semibold text-gray-900">Poids:</span>
-                            <span class="text-gray-700 ml-1">{{ product.metadata.Poids }}</span>
+                            <span class="text-gray-700 ml-1">{{ displayWeight }}</span>
                           </div>
                           <div v-if="product.metadata?.Allergènes">
                             <span class="font-semibold text-gray-900">Allergènes:</span>
@@ -85,17 +87,36 @@
 
                     <!-- Price and add to cart -->
                     <div class="border-t pt-6">
+                      <!-- Product variants selection -->
+                      <ProductVariants 
+                        v-if="product.prices && product.prices.length > 1"
+                        :product="product"
+                        :selected-price-id="selectedPriceId"
+                        @price-selected="onPriceSelected"
+                        class="mb-6"
+                      />
+                      
                       <div class="flex items-center justify-between mb-6">
                         <div class="text-3xl font-bold text-amber-600">
-                          {{ formatPrice(product.price) }}
+                          {{ formatPrice(selectedPrice || props.product?.prices?.[0] || props.product?.price) }}
+                        </div>
+                        <div v-if="selectedPrice?.metadata?.weight" class="text-lg text-gray-600">
+                          {{ selectedPrice.metadata.weight }}
                         </div>
                       </div>
 
                       <button
-                        @click="addToCart(product.id)"
-                        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-amber-300"
+                        @click="addToCart()"
+                        :disabled="!canAddToCart"
+                        :class="[
+                          'w-full font-semibold py-4 px-6 rounded-lg transition-all duration-200 focus:outline-none focus:ring-4',
+                          canAddToCart 
+                            ? 'bg-amber-600 hover:bg-amber-700 text-white focus:ring-amber-300 hover:shadow-lg' 
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ]"
                       >
-                        Ajouter au panier
+                        <span v-if="canAddToCart">Ajouter au panier</span>
+                        <span v-else>Sélectionnez un format</span>
                       </button>
                     </div>
                   </div>
@@ -110,6 +131,7 @@
 </template>
 <script setup>
 import { useStore } from '~/store/cart'
+import ProductVariants from './ProductVariants.vue'
 
 import { XIcon } from 'heroicons-vue3/outline'
 
@@ -126,6 +148,90 @@ const emit = defineEmits(['close'])
 
 const cart = useStore()
 
+// État pour la gestion des variantes
+const selectedPriceId = ref(null)
+
+// Computed pour le prix sélectionné
+const selectedPrice = computed(() => {
+  if (!selectedPriceId.value || !props.product?.prices) return null
+  return props.product.prices.find(price => price.id === selectedPriceId.value)
+})
+
+// Computed pour vérifier si on peut ajouter au panier
+const canAddToCart = computed(() => {
+  if (!props.product) return false
+  
+  // Si pas de variantes, toujours possible
+  if (!props.product.prices || props.product.prices.length <= 1) return true
+  
+  // Si variantes, il faut avoir sélectionné un prix
+  return !!selectedPriceId.value
+})
+
+// Computed pour le poids à afficher
+const displayWeight = computed(() => {
+  // Priorité 1: poids du prix sélectionné
+  if (selectedPrice.value?.metadata?.weight) {
+    return selectedPrice.value.metadata.weight
+  }
+  
+  // Priorité 2: poids du premier prix disponible
+  if (props.product?.prices?.[0]?.metadata?.weight) {
+    return props.product.prices[0].metadata.weight
+  }
+  
+  // Priorité 3: poids du prix par défaut (backward compatibility)
+  if (props.product?.price?.metadata?.weight) {
+    return props.product.price.metadata.weight
+  }
+  
+  // Priorité 4: fallback sur les métadonnées du produit
+  if (props.product?.metadata?.['Poids']) {
+    return props.product.metadata['Poids']
+  }
+  
+  // Priorité 5: "Poids net total" du produit
+  if (props.product?.metadata?.['Poids net total']) {
+    return props.product.metadata['Poids net total']
+  }
+  
+  return null
+})
+
+// Computed pour l'image à afficher (supprimé car remplacé par une fonction)
+const displayImage = computed(() => {
+  // Si une variante est sélectionnée et qu'elle a des images spécifiques
+  if (selectedPrice.value?.metadata?.variant_images) {
+    try {
+      const variantImages = JSON.parse(selectedPrice.value.metadata.variant_images)
+      if (variantImages.length > 0) {
+        return variantImages[0]
+      }
+    } catch (e) {
+      console.warn('Erreur parsing variant_images:', e)
+    }
+  }
+  
+  // Fallback sur l'image du produit
+  return props.product?.images?.[0]
+})
+
+// Sélectionner automatiquement le premier prix si une seule option
+watch(() => props.product, (newProduct) => {
+  if (!newProduct?.prices || newProduct.prices.length === 0) {
+    selectedPriceId.value = null
+  } else if (newProduct.prices.length === 1) {
+    selectedPriceId.value = newProduct.prices[0].id
+  } else {
+    selectedPriceId.value = null
+  }
+}, { immediate: true })
+
+// Gérer la sélection d'un prix
+const onPriceSelected = (price) => {
+  selectedPriceId.value = price.id
+}
+
 const formatPrice = (price) => {
   if (!price) return ''
   const amount = price.unit_amount / 100
@@ -133,9 +239,41 @@ const formatPrice = (price) => {
   return `${amount.toFixed(2)} ${currency}`
 }
 
-function addToCart(productId) {
-  cart.addItem(productId)
+function addToCart() {
+  if (!canAddToCart.value) return
+  
+  const priceToAdd = selectedPrice.value || props.product?.prices?.[0] || props.product?.price
+  if (!priceToAdd) {
+    console.error('No price available for cart')
+    return
+  }
+  
+  cart.addItem({
+    id: priceToAdd.id,
+    product: props.product,
+    price: priceToAdd,
+    quantity: 1
+  })
+  
   emit('close')
+}
+
+// Fonction pour obtenir l'image à afficher
+function getDisplayImage() {
+  // Si une variante est sélectionnée et qu'elle a des images spécifiques
+  if (selectedPrice.value?.metadata?.variant_images) {
+    try {
+      const variantImages = JSON.parse(selectedPrice.value.metadata.variant_images)
+      if (variantImages.length > 0) {
+        return variantImages[0]
+      }
+    } catch (e) {
+      console.warn('Erreur parsing variant_images:', e)
+    }
+  }
+  
+  // Fallback sur l'image du produit
+  return props.product?.images?.[0]
 }
 
 </script>

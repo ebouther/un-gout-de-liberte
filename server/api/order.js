@@ -156,27 +156,51 @@ const shippingRates = [
 
 const fetchItemWeight = async (priceId, quantity) => {
   try {
-    const { product } = await stripe.prices.retrieve(priceId);
-    const productData = await stripe.products.retrieve(product);
+    const priceData = await stripe.prices.retrieve(priceId);
+    const productData = await stripe.products.retrieve(priceData.product);
 
-    // Check if metadata exists and has the 'Poids' field
-    if (!productData.metadata || !productData.metadata['Poids']) {
-      console.warn(`Product ${product} missing weight metadata, using default weight`);
+    // Priorité 1: Chercher le poids dans les métadonnées du prix (pour les variantes)
+    let weightMeta = null;
+    if (priceData.metadata && priceData.metadata.weight) {
+      weightMeta = priceData.metadata.weight;
+    }
+    // Priorité 2: Chercher dans les métadonnées du prix avec la clé 'Poids'
+    else if (priceData.metadata && priceData.metadata['Poids']) {
+      weightMeta = priceData.metadata['Poids'];
+    }
+    // Priorité 3: Fallback sur les métadonnées du produit (ancien système)
+    else if (productData.metadata && productData.metadata['Poids']) {
+      weightMeta = productData.metadata['Poids'];
+    }
+    // Priorité 4: Chercher "Poids net total" dans les métadonnées du produit
+    else if (productData.metadata && productData.metadata['Poids net total']) {
+      weightMeta = productData.metadata['Poids net total'];
+    }
+
+    // Si aucun poids trouvé, utiliser un poids par défaut
+    if (!weightMeta) {
+      console.warn(`Price ${priceId} and Product ${priceData.product} missing weight metadata, using default weight`);
       return 100 * quantity; // Default weight in grams
     }
 
-    const weightMeta = productData.metadata['Poids'];
-
-    // Check if weightMeta is a string before calling split
+    // Vérifier que weightMeta est une chaîne
     if (typeof weightMeta !== 'string') {
-      console.warn(`Product ${product} has invalid weight metadata format`);
+      console.warn(`Price ${priceId} has invalid weight metadata format`);
       return 100 * quantity; // Default weight in grams
     }
 
-    const weight = Number(weightMeta.split('g')[0].trim());
+    // Extraire le poids numérique (support pour "250g", "0.5kg", etc.)
+    let weight;
+    if (weightMeta.includes('kg')) {
+      // Conversion kg en grammes
+      weight = Number(weightMeta.split('kg')[0].trim()) * 1000;
+    } else {
+      // Supposer que c'est en grammes
+      weight = Number(weightMeta.split('g')[0].trim());
+    }
 
     if (isNaN(weight) || weight <= 0) {
-      console.warn(`Product ${product} has invalid weight value: ${weightMeta}`);
+      console.warn(`Price ${priceId} has invalid weight value: ${weightMeta}`);
       return 100 * quantity; // Default weight in grams
     }
 

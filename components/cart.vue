@@ -25,7 +25,7 @@
                       <ul role="list" class="-my-6 divide-y divide-gray-200">
                         <li v-for="product in products" :key="product.id" class="py-6 flex">
                           <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                            <nuxt-img :src="product.images?.[0]" class="w-full h-full object-center object-cover" />
+                            <nuxt-img :src="(product.product?.images || product.images)?.[0]" class="w-full h-full object-center object-cover" />
                           </div>
 
                           <div class="ml-4 flex-1 flex flex-col">
@@ -33,15 +33,15 @@
                               <div class="flex justify-between text-base font-medium text-gray-900">
                                 <h3>
                                   <a :href="product.href">
-                                    {{ product.name }}
+                                    {{ product.product?.name || product.name }}
                                   </a>
                                 </h3>
                                 <p class="ml-4">
-                                  {{product.price.unit_amount / 100}} {{product.price.currency === 'eur' ? '€' : product.price.currency}}
+                                  {{ formatPrice(product.price) }}
                                 </p>
                               </div>
-                              <p class="mt-1 text-sm text-gray-500">
-                                {{ product.color }}
+                              <p v-if="product.price?.metadata?.weight" class="mt-1 text-sm text-gray-500">
+                                {{ product.price.metadata.weight }}
                               </p>
                             </div>
                             <div class="flex-1 flex items-end justify-between text-sm">
@@ -137,7 +137,7 @@ export default {
           body: {
             items: Object.keys(cart.items).map(k => ({
               price: cart.items[k].price.id,
-              quantity: cart.items[k].quantity
+              quantity: Number(cart.items[k].quantity) // Ensure quantity is a number
             }))
           }
         })
@@ -161,9 +161,17 @@ export default {
 
       return imgs[`/content${src}`].default
     }
+    
     function dirname(p) {
       // return path.dirname(p)
       return p.substr(0, p.lastIndexOf("/"));
+    }
+    
+    function formatPrice(price) {
+      if (!price?.unit_amount) return ''
+      const amount = price.unit_amount / 100
+      const currency = price.currency === 'eur' ? '€' : price.currency?.toUpperCase() || ''
+      return `${amount.toFixed(2)} ${currency}`
     }
 
     return {
@@ -175,6 +183,7 @@ export default {
       totalPrice,
       imgSrc,
       dirname,
+      formatPrice,
       open: cart.open,
       close: cart.close,
       submit
