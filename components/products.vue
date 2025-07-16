@@ -2,9 +2,6 @@
   <div>
     <product :product="selectedProduct" @close="selectedProduct = null"/>
 
-    <!-- Debug component for development -->
-    <CategoryDebug :products="cart.products || []" />
-
     <!-- Category filters -->
     <CategoryFilter 
       :categories="availableCategories"
