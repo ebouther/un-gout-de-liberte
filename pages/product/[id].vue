@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-6xl">
+  <div class="container mx-auto px-4 py-8 max-w-6xl" style="scroll-behavior: auto;">
     <div v-if="pending" class="flex justify-center items-center min-h-[400px]">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
     </div>
@@ -75,8 +75,8 @@
                   </div>
                 </div>
                 <button
-                  @click.stop="addToCart(price)"
-                  class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                  @click.stop="addToCart(price, $event)"
+                  class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Ajouter au panier
                 </button>
@@ -90,6 +90,7 @@
           <NuxtLink
             to="/"
             class="inline-flex items-center text-amber-600 hover:text-amber-700 transition-colors"
+            @click="() => sessionStorage.setItem('from-product-page', 'true')"
           >
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -108,6 +109,11 @@ import { useStore } from '~/store/cart'
 const route = useRoute()
 const cart = useStore()
 
+// Forcer le scroll en haut immédiatement
+if (process.client) {
+  window.scrollTo(0, 0)
+}
+
 // Récupération du produit
 const { data: products, pending, error } = await useFetch('/api/products')
 
@@ -117,6 +123,14 @@ const product = computed(() => {
 })
 
 const selectedPrice = ref(null)
+
+// S'assurer que la page commence en haut - sécurité supplémentaire
+onMounted(() => {
+  // Attendre que le DOM soit prêt
+  nextTick(() => {
+    window.scrollTo(0, 0)
+  })
+})
 
 // Sélectionner le premier prix par défaut
 watchEffect(() => {
@@ -211,7 +225,7 @@ function formatPrice(price) {
   return `${amount.toFixed(2)} €`
 }
 
-function addToCart(price) {
+function addToCart(price, event) {
   if (!product.value || !price) return
   
   cart.addItem({
@@ -221,8 +235,38 @@ function addToCart(price) {
     quantity: 1
   })
   
-  // Feedback visuel
-  cart.open()
+  // Feedback visuel rapide
+  const button = event?.target
+  if (button) {
+    const originalText = button.textContent
+    button.textContent = '✓ Ajouté!'
+    button.disabled = true
+    button.classList.remove('bg-amber-600', 'hover:bg-amber-700')
+    button.classList.add('bg-green-600', 'hover:bg-green-600')
+    
+    setTimeout(() => {
+      // Marquer qu'on revient d'une page produit
+      sessionStorage.setItem('from-product-page', 'true')
+      
+      // Revenir à la page précédente ou à l'accueil
+      if (window.history.length > 1) {
+        window.history.back()
+      } else {
+        navigateTo('/')
+      }
+    }, 800)
+  } else {
+    // Si pas d'événement, revenir immédiatement
+    setTimeout(() => {
+      sessionStorage.setItem('from-product-page', 'true')
+      
+      if (window.history.length > 1) {
+        window.history.back()
+      } else {
+        navigateTo('/')
+      }
+    }, 300)
+  }
 }
 
 // Redirection si produit non trouvé

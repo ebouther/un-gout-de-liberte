@@ -5,6 +5,31 @@
 npm install stripe dotenv
 ```
 
+## 📊 Export/Import des données Stripe (NOUVEAU)
+
+### Export des données vers CSV
+```bash
+node scripts/export-stripe-data.js
+```
+
+Ce script récupère tous les produits et prix Stripe et les exporte dans un fichier CSV que tu peux modifier dans Excel/LibreOffice.
+
+**Fichier généré :** `exports/stripe-export-YYYY-MM-DDTHH-MM-SS.csv`
+
+### Import des modifications depuis CSV
+```bash
+node scripts/import-stripe-data.js exports/mon-fichier-modifie.csv
+```
+
+#### Colonnes modifiables :
+- **Produits** : name, description, active, url, shippable, images, metadata
+- **Prix** : active, nickname, lookup_key, metadata (⚠️ pas le montant!)
+
+#### Exemples d'utilisation :
+1. **Corriger les poids** : Modifier `price_metadata_weight` en masse
+2. **Ajouter descriptions** : Remplir `product_description` 
+3. **Désactiver produits** : Mettre `product_active` à `false`
+
 ## 1. Sauvegarde de sécurité (OBLIGATOIRE avant toute modification)
 ```bash
 node scripts/backup-restore.js backup

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <product :product="selectedProduct" @close="selectedProduct = null"/>
-
     <!-- Category filters -->
     <CategoryFilter 
       :categories="availableCategories"
@@ -36,10 +34,11 @@
         <article
           v-for="product in filteredProducts"
           :key="product.id || Math.random()"
-          class="group rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 hover:border-amber-200 flex flex-col transition-all duration-300 hover:-translate-y-1"
+          class="group rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 hover:border-amber-200 flex flex-col transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          @click="openProductModal(product)"
         >
-          <!-- Lien SEO-friendly vers la page produit -->
-          <NuxtLink :to="`/product/${product.id}`" class="w-full h-full flex flex-col">
+          <!-- Lien SEO-friendly vers la page produit - remplacé par modal -->
+          <div class="w-full h-full flex flex-col">
             <div class="relative rounded-t-xl bg-gray-50 overflow-hidden aspect-square">
               <nuxt-img
                 v-if="product.images && product.images[0]"
@@ -81,19 +80,7 @@
                 </div>
               </div>
             </div>
-          </NuxtLink>
-          
-          <!-- Bouton d'ouverture modal pour compatibilité -->
-          <button 
-            @click="openProduct(product)"
-            class="absolute top-2 right-2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-all opacity-0 group-hover:opacity-100"
-            aria-label="Voir les détails"
-          >
-            <svg class="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </button>
+          </div>
         </article>
       </div>
     </div>
@@ -108,6 +95,13 @@
       <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
       <p class="text-gray-500">Essayez une autre recherche ou parcourez tous nos produits.</p>
     </div>
+
+    <!-- Modal produit -->
+    <Product 
+      :open="!!selectedProduct"
+      :product="selectedProduct" 
+      @close="selectedProduct = null" 
+    />
   </div>
 </template>
 
@@ -213,7 +207,7 @@ const formatCategoryName = (category) => {
   return categoryMap[category.toLowerCase()] || category.charAt(0).toUpperCase() + category.slice(1)
 }
 
-function openProduct(product) {
+function openProductModal(product) {
   selectedProduct.value = product
 }
 
