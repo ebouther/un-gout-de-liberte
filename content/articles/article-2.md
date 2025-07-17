@@ -1,6 +1,6 @@
 ---
-title: Cookies 
-description: Vive les cookies 
+title: Cookies
+description: Vive les cookies
 date: 1652322900
 ---
 

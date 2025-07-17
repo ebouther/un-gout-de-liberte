@@ -55,7 +55,7 @@ import Cart from "./icons/cart.vue"
 import { useStore } from '~/store/cart'
 const cart = useStore()
 
-// 
+//
 // export default {
     // components: {
       // Home,

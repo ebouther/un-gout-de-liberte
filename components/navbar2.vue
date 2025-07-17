@@ -22,7 +22,7 @@
                 </div>
               </div>
             </div> -->
-            
+
 
             <div class="flex-1 flex items-center justify-end">
               <!-- Cart -->

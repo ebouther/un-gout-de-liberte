@@ -10,7 +10,7 @@
 	<br>
 	<p>Pâtisserie sur commande au gré des saisons et de vos envies</p>
 	<br>
-  
+
 </div>
 
 ---

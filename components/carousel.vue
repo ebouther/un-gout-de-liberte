@@ -92,7 +92,7 @@
 </template>
 
 <style scoped>
-  @import 'tw-elements/dist/css/index.min.css';
+  @import 'tw-elements/dist/css/tw-elements.min.css';
 
   @font-face {
     font-family: 'Gout Liberte';

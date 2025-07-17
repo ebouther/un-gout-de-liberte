@@ -22,10 +22,11 @@
 
                   <div class="mt-8">
                     <div class="flow-root">
-                      <ul role="list" class="-my-6 divide-y divide-gray-200">
+                      <!-- Items list -->
+                      <ul v-if="Object.keys(cart.items).length > 0" role="list" class="-my-6 divide-y divide-gray-200">
                         <li v-for="product in products" :key="product.id" class="py-6 flex">
                           <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                            <nuxt-img :src="product.images?.[0]" class="w-full h-full object-center object-cover" />
+                            <nuxt-img :src="(product.product?.images || product.images)?.[0]" class="w-full h-full object-center object-cover" />
                           </div>
 
                           <div class="ml-4 flex-1 flex flex-col">
@@ -33,15 +34,15 @@
                               <div class="flex justify-between text-base font-medium text-gray-900">
                                 <h3>
                                   <a :href="product.href">
-                                    {{ product.name }}
+                                    {{ product.product?.name || product.name }}
                                   </a>
                                 </h3>
                                 <p class="ml-4">
-                                  {{product.price.unit_amount / 100}} {{product.price.currency === 'eur' ? '€' : product.price.currency}}
+                                  {{ formatPrice(product.price) }}
                                 </p>
                               </div>
-                              <p class="mt-1 text-sm text-gray-500">
-                                {{ product.color }}
+                              <p v-if="product.price?.metadata?.weight" class="mt-1 text-sm text-gray-500">
+                                {{ product.price.metadata.weight }}
                               </p>
                             </div>
                             <div class="flex-1 flex items-end justify-between text-sm">
@@ -71,13 +72,30 @@
 
                 <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div class="flex justify-between text-base font-medium text-gray-900">
+                    <p>Sous-total</p>
+                    <p>{{ totalPrice }} €</p>
+                  </div>
+                  <div v-if="Object.keys(cart.items).length > 0" class="flex justify-between text-sm text-gray-600 mt-2">
+                    <p>Frais de livraison ({{ totalWeight < 1 ? (totalWeight * 1000).toFixed(0) + 'g' : totalWeight.toFixed(2) + 'kg' }})</p>
+                    <p>{{ shippingCost.toFixed(2) }} €</p>
+                  </div>
+                  <div class="flex justify-between text-lg font-bold text-gray-900 mt-3 pt-3 border-t border-gray-200">
                     <p>Total</p>
-                    <p>{{totalPrice}} €</p>
+                    <p>{{ totalWithShipping }} €</p>
                   </div>
-                  <p class="mt-0.5 text-sm text-gray-500">Frais de livraison calculés lors du passage à l'achat.</p>
+                  <p class="mt-0.5 text-sm text-gray-500">Livraison Colissimo en France métropolitaine.</p>
+
                   <div class="mt-6">
-                    <button @click="submit" class=" w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700">Finaliser l'achat</button>
+                    <button 
+                      @click="submit" 
+                      :disabled="!isValidOrder"
+                      class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <span v-if="!isValidOrder">Panier vide</span>
+                      <span v-else>Finaliser l'achat</span>
+                    </button>
                   </div>
+
                   <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
                     <p>
                       ou <button type="button" class="text-amber-600 font-medium hover:text-amber-500" @click="close">Continuer mes achats<span aria-hidden="true"> &rarr;</span></button>
@@ -94,11 +112,12 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon } from 'heroicons-vue3/outline'
 
 import { useStore } from '~/store/cart'
+import { useShipping } from '~/composables/useShipping'
 
 export default {
   components: {
@@ -111,7 +130,8 @@ export default {
   },
   setup() {
     const cart = useStore()
-    const products = cart.items;
+    const { calculateCartShipping, getItemWeight } = useShipping()
+    const products = computed(() => Object.values(cart.items))
 
     const open = cart.open
 
@@ -123,19 +143,65 @@ export default {
               .toFixed(2);
     })
 
-    async function submit() {
-      console.log('SUBMIT')
-      const res = await $fetch('/api/order', {
-        method: 'POST',
-        body: {
-          items: Object.keys(cart.items).map(k => ({
-            price: cart.items[k].price.id,
-            quantity: cart.items[k].quantity
-          }))
-        }
-      });
+    const shippingCost = computed(() => {
+      if (!Object.keys(cart.items).length) return 0;
+      
+      const items = Object.values(cart.items)
+      return calculateCartShipping(items, 'FR', '', 'standard')
+    })
 
-      window.location.href = res.url;
+    const totalWeight = computed(() => {
+      if (!Object.keys(cart.items).length) return 0;
+      
+      const items = Object.values(cart.items)
+      let weight = 0
+      for (const item of items) {
+        const itemWeight = getItemWeight(item)
+        weight += itemWeight * item.quantity
+      }
+      return weight
+    })
+
+    const totalWithShipping = computed(() => {
+      const subtotal = parseFloat(totalPrice.value) || 0
+      const shipping = parseFloat(shippingCost.value) || 0
+      return (subtotal + shipping).toFixed(2)
+    })
+
+    const isValidOrder = computed(() => {
+      return Object.keys(cart.items).length > 0
+    })
+
+    async function submit() {
+      if (Object.keys(cart.items).length === 0) {
+        return
+      }
+
+      try {
+        // Show loading state
+        const loadingToast = 'Préparation de votre commande...'
+
+        const res = await $fetch('/api/order', {
+          method: 'POST',
+          body: {
+            items: Object.keys(cart.items).map(k => ({
+              price: cart.items[k].price.id,
+              quantity: Number(cart.items[k].quantity) // Ensure quantity is a number
+            }))
+          }
+        })
+
+        if (res.url) {
+          window.location.href = res.url
+        } else {
+          throw new Error('No checkout URL received')
+        }
+      } catch (error) {
+        console.error('Checkout error:', error)
+
+        // Show user-friendly error message
+        alert('Une erreur est survenue lors de la préparation de votre commande. Veuillez réessayer.')
+      }
     }
 
 
@@ -144,9 +210,17 @@ export default {
 
       return imgs[`/content${src}`].default
     }
+    
     function dirname(p) {
       // return path.dirname(p)
       return p.substr(0, p.lastIndexOf("/"));
+    }
+    
+    function formatPrice(price) {
+      if (!price?.unit_amount) return ''
+      const amount = price.unit_amount / 100
+      const currency = price.currency === 'eur' ? '€' : price.currency?.toUpperCase() || ''
+      return `${amount.toFixed(2)} ${currency}`
     }
 
     return {
@@ -156,8 +230,13 @@ export default {
       removeItem: cart.removeItem,
       updateQuantity: cart.updateQuantity,
       totalPrice,
+      shippingCost,
+      totalWeight,
+      totalWithShipping,
+      isValidOrder,
       imgSrc,
       dirname,
+      formatPrice,
       open: cart.open,
       close: cart.close,
       submit

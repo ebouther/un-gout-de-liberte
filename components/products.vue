@@ -1,90 +1,215 @@
 <template>
   <div>
     <product :product="selectedProduct" @close="selectedProduct = null"/>
-    <div class="max-w-screen mx-auto text-center">
+
+    <!-- Category filters -->
+    <CategoryFilter 
+      :categories="availableCategories"
+      :selected-category="selectedCategory"
+      :products="cart.products || []"
+      @category-changed="selectedCategory = $event"
+    />
+
+    <!-- Product statistics -->
+    <ProductStats
+      :filtered-count="filteredProducts.length"
+      :total-count="(cart.products || []).length"
+      :selected-category="selectedCategory"
+      :search-term="props.name"
+      @clear-filters="clearAllFilters"
+    />
+
+    <!-- Loading skeleton -->
+    <div v-if="loading" class="max-w-screen mx-auto text-center">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-        <div v-for="p in products" :key="p.id" class="rounded-lg bg-gray-100 shadow-lg hover:shadow-none hover:border-yellow-500 border-2 border-transparent flex flex-col   transition duration-150 ease-in-out hover:scale-110">
-          <!-- <nuxt-link :to="`/produits/${p._id}`"> -->
-          <button @click="openProduct(p)">
-              <div class=" rounded-t-lg bg-white">
-                <!-- <nuxt-img class="object-cover h-48 w-full rounded-t-lg" :src="imgSrc(`${dirname(p._path)}/img/small.jpg`)" :alt="p.name"> -->
-                <nuxt-img v-if="p.images?.[0]" class="object-cover h-48 w-full rounded-t-lg" :src="p.images[0]" :alt="p.name" />
-              </div>
-              <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
-              <h4 class="mt-1 font-semibold text-base leading-tight truncate text-gray-700">{{p.name}}</h4>
-              <div class="mt-1 text-sm text-gray-700">{{p.description}}</div>
-              </div>
-          </button>
-          <!-- </nuxt-link> -->
-          <!-- <div class="flex items-center justify-between mx-2 mb-2 mt-auto">
-				  	<span class="text-xl font-bold text-gray-900 dark:text-white">{{p.price.amount}} {{p.price.currency}}</span>
-				  	<button
-				  		class="text-white bg-yellow-700 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-              @click="addToCart(p.id)" >
-              <Cart class="w-3"/>
-            </button>
-				  </div> -->
+        <div v-for="n in 6" :key="n" class="animate-pulse">
+          <div class="rounded-lg bg-gray-200 aspect-square mb-4"></div>
+          <div class="h-4 bg-gray-200 rounded mb-2"></div>
+          <div class="h-3 bg-gray-200 rounded w-3/4"></div>
         </div>
       </div>
     </div>
+
+    <!-- Products grid -->
+    <div v-else-if="filteredProducts && filteredProducts.length > 0" class="max-w-screen mx-auto text-center">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <article
+          v-for="product in filteredProducts"
+          :key="product.id || Math.random()"
+          class="group rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 hover:border-amber-200 flex flex-col transition-all duration-300 hover:-translate-y-1"
+        >
+          <button @click="openProduct(product)" class="w-full h-full flex flex-col">
+            <div class="relative rounded-t-xl bg-gray-50 overflow-hidden aspect-square">
+              <nuxt-img
+                v-if="product.images && product.images[0]"
+                class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                :src="product.images[0]"
+                :alt="product.name || 'Product'"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <!-- Category badge -->
+              <div v-if="product.metadata?.category" class="absolute top-3 left-3">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 shadow-sm">
+                  {{ formatCategoryName(product.metadata.category) }}
+                </span>
+              </div>
+            </div>
+            <div class="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="font-semibold text-lg leading-tight text-gray-900 mb-2 group-hover:text-amber-700 transition-colors">
+                  {{ product.name || 'Produit' }}
+                </h3>
+                <p class="text-sm text-gray-600 line-clamp-2">
+                  {{ product.description || '' }}
+                </p>
+              </div>
+              <div class="mt-4 flex items-center justify-between">
+                <div class="text-xl font-bold text-amber-600">
+                  {{ getCheapestPrice(product) }}
+                  <span v-if="hasMultiplePrices(product)" class="text-sm font-normal text-gray-500 ml-1">
+                    à partir de
+                  </span>
+                </div>
+                <div class="flex items-center text-amber-600 group-hover:text-amber-700 transition-colors">
+                  <span class="text-sm font-medium mr-1">Voir</span>
+                  <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </button>
+        </article>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div v-else class="text-center py-12">
+      <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <svg class="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
+      <p class="text-gray-500">Essayez une autre recherche ou parcourez tous nos produits.</p>
+    </div>
   </div>
-
-
 </template>
 
-<style>
-</style>
-
 <script setup>
-  import { useStore } from '~/store/cart'
-  const cart = useStore()
+import { useStore } from '~/store/cart'
 
-  let selectedProduct = ref('')
+const cart = useStore()
+const selectedProduct = ref(null)
+const selectedCategory = ref(null)
 
-  let products = ref(cart.products)
+// Simple props definition
+const props = defineProps({
+  name: String,
+  loading: Boolean
+})
 
-  const props = defineProps({
-    categories: {
-      type: Array,
-      required: false
-    },
-    name: {
-      type: String,
-      required: false
+// Computed property for available categories
+const availableCategories = computed(() => {
+  const allProducts = cart.products || []
+  const categories = new Set()
+  
+  allProducts.forEach(product => {
+    if (product?.metadata?.category) {
+      categories.add(product.metadata.category)
     }
   })
+  
+  return Array.from(categories).sort()
+})
 
-  // async function getProducts () {
-  //    return queryContent('products')
-  //    .where({
-  //      ...(props.name && props.name != "" ? {name: {$contains: props.name }} : {}),
-  //      ...(props.categories ? {categories: {$contains: props.categories}} : {})
-  //    })
-  //    .sort('name')
-  //    .find()
-  // }
-  // function dirname(p) {
-  //   // return path.dirname(p)
-  //   return p.substr(0, p.lastIndexOf("/"));
-  // }
-  // function imgSrc(src) {
-  //   const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
+// Computed property for filtered products
+const filteredProducts = computed(() => {
+  const allProducts = cart.products || []
 
-  //   return imgs[`/content${src}`].default
-  // }
-  function addToCart(productId) {
-    this.$store.commit('cart/add', productId)
+  let filtered = allProducts
+
+  // Filter by search term
+  if (props.name && props.name.trim() !== '') {
+    const searchTerm = props.name.toLowerCase().trim()
+    filtered = filtered.filter(product => {
+      if (!product) return false
+
+      const nameMatch = product.name?.toLowerCase().includes(searchTerm)
+      const descMatch = product.description?.toLowerCase().includes(searchTerm)
+      const categoryMatch = product.metadata?.category?.toLowerCase().includes(searchTerm)
+
+      return nameMatch || descMatch || categoryMatch
+    })
   }
 
-  function openProduct(product) {
-    selectedProduct.value = product
-
+  // Filter by category
+  if (selectedCategory.value) {
+    filtered = filtered.filter(product => {
+      return product?.metadata?.category === selectedCategory.value
+    })
   }
 
-  watch(() => props.name, async (value, oldV) => {
-    console.log('WATCHED')
-    products.value = cart.products.filter(p => p.name.toLowerCase().includes(value.toLowerCase()))
-  });
+  return filtered
+})
 
- 
-</script >
+const formatPrice = (price) => {
+  if (!price?.unit_amount) return ''
+  const amount = price.unit_amount / 100
+  const currency = price.currency === 'eur' ? '€' : price.currency?.toUpperCase() || ''
+  return `${amount.toFixed(2)} ${currency}`
+}
+
+// Fonction pour obtenir le prix le moins cher d'un produit
+const getCheapestPrice = (product) => {
+  // Si le produit a plusieurs prix (variantes)
+  if (product.prices && product.prices.length > 1) {
+    const cheapestPrice = product.prices.reduce((min, current) => {
+      return current.unit_amount < min.unit_amount ? current : min
+    })
+    return formatPrice(cheapestPrice)
+  }
+  
+  // Sinon, utiliser le prix unique ou le premier prix disponible
+  const price = product.price || product.prices?.[0]
+  return formatPrice(price)
+}
+
+// Fonction pour vérifier s'il y a plusieurs prix
+const hasMultiplePrices = (product) => {
+  return product.prices && product.prices.length > 1
+}
+
+const formatCategoryName = (category) => {
+  // Convert category names to more readable format
+  const categoryMap = {
+    'confitures': 'Confitures',
+    'fruits-sirop': 'Fruits au sirop',
+    'biscuits-sucres': 'Biscuits sucrés',
+    'aperitifs': 'Apéritifs',
+    'biscottes': 'Biscottes',
+    'macarons': 'Macarons',
+    'confits-chutneys': 'Confits & Chutneys',
+    'sirops': 'Sirops',
+    'caramels': 'Caramels',
+    'autres': 'Autres'
+  }
+  
+  return categoryMap[category.toLowerCase()] || category.charAt(0).toUpperCase() + category.slice(1)
+}
+
+function openProduct(product) {
+  selectedProduct.value = product
+}
+
+function clearAllFilters() {
+  selectedCategory.value = null
+  // Emit event to parent to clear search as well
+  emit('clearSearch')
+}
+
+// Define emits
+const emit = defineEmits(['clearSearch'])
+</script>
