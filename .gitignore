@@ -92,3 +92,6 @@ sw.*
 backup-products-*
 
 .output/
+
+exports/
+backups/

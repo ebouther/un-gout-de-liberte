@@ -51,16 +51,32 @@ const getAllProductsWithPrices = async () => {
     let startingAfter = undefined
 
     while (hasMore) {
-        const response = await stripe.products.list({
-            limit: 100,
-            starting_after: startingAfter,
-            expand: ['data.default_price']
-        })
+        try {
+            const response = await stripe.products.list({
+                limit: 100,
+                starting_after: startingAfter,
+                expand: ['data.default_price']
+            })
 
-        products.push(...response.data)
-        hasMore = response.has_more
-        if (hasMore) {
-            startingAfter = response.data[response.data.length - 1].id
+            products.push(...response.data)
+            hasMore = response.has_more
+            if (hasMore) {
+                startingAfter = response.data[response.data.length - 1].id
+            }
+
+            // Petite pause pour éviter les rate limits
+            if (hasMore) {
+                await new Promise(resolve => setTimeout(resolve, 100))
+            }
+
+        } catch (error) {
+            if (error.type === 'StripeError' && error.code === 'rate_limit') {
+                console.warn('⚠️ Rate limit atteinte, attente de 3 secondes...')
+                await new Promise(resolve => setTimeout(resolve, 3000))
+                // Réessayer sans incrémenter startingAfter
+                continue
+            }
+            throw error
         }
     }
 
@@ -71,28 +87,50 @@ const getAllProductsWithPrices = async () => {
 
     const productsWithPrices = []
 
-    for (const product of products) {
-        console.log(`🔍 Traitement du produit: ${product.name}`)
+    for (let i = 0; i < products.length; i++) {
+        const product = products[i]
+        console.log(`🔍 Traitement du produit: ${product.name} (${i + 1}/${products.length})`)
 
-        // Récupérer tous les prix pour ce produit
-        const prices = await stripe.prices.list({
-            product: product.id,
-            limit: 100
-        })
+        try {
+            // Récupérer tous les prix pour ce produit
+            const prices = await stripe.prices.list({
+                product: product.id,
+                limit: 100
+            })
 
-        if (prices.data.length === 0) {
-            // Produit sans prix
+            if (prices.data.length === 0) {
+                // Produit sans prix
+                productsWithPrices.push({
+                    product,
+                    price: null
+                })
+            } else {
+                // Ajouter une ligne pour chaque prix
+                prices.data.forEach(price => {
+                    productsWithPrices.push({
+                        product,
+                        price
+                    })
+                })
+            }
+
+            // Pause pour éviter les rate limits (100ms entre chaque produit)
+            await new Promise(resolve => setTimeout(resolve, 100))
+
+        } catch (error) {
+            if (error.type === 'StripeError' && error.code === 'rate_limit') {
+                console.warn(`⚠️ Rate limit pour ${product.name}, attente de 3 secondes...`)
+                await new Promise(resolve => setTimeout(resolve, 3000))
+                // Réessayer le même produit
+                i--
+                continue
+            }
+
+            console.error(`❌ Erreur pour le produit ${product.name}:`, error.message)
+            // Ajouter le produit sans prix pour ne pas perdre la donnée
             productsWithPrices.push({
                 product,
                 price: null
-            })
-        } else {
-            // Ajouter une ligne pour chaque prix
-            prices.data.forEach(price => {
-                productsWithPrices.push({
-                    product,
-                    price
-                })
             })
         }
     }
