@@ -1,5 +1,11 @@
 import Stripe from 'stripe'
 import { defineEventHandler, createError, getRequestIP, readBody, getMethod } from 'h3'
+import { 
+  calculateOrderWeight, 
+  calculateShippingCost, 
+  isFreeShippingEligible,
+  createShippingRate
+} from '../utils/shipping.js'
 
 const stripe = new Stripe(process.env.STRIPE_SK, {
   apiVersion: '2023-10-16',
@@ -104,12 +110,35 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    // Calculer le poids total et les frais de livraison
+    const totalWeight = await calculateOrderWeight(validItems, stripe)
+    
+    // Calculer le total du panier en récupérant les prix réels depuis Stripe
+    let cartTotal = 0
+    for (const item of validItems) {
+      const priceData = await stripe.prices.retrieve(item.price)
+      cartTotal += (priceData.unit_amount / 100) * item.quantity
+    }
+
+    // Vérifier l'éligibilité à la livraison gratuite
+    const freeShipping = isFreeShippingEligible(cartTotal)
+    const shippingCost = freeShipping ? 0 : calculateShippingCost(totalWeight)
+
+    // Créer le shipping rate dynamique
+    const shippingRate = await createShippingRate(
+      shippingCost,
+      freeShipping ? 'Livraison gratuite' : `Colissimo Standard (${totalWeight.toFixed(2)} kg)`,
+      stripe
+    )
+
     const session = await stripe.checkout.sessions.create({
       success_url: 'https://un-gout-de-liberte.fr/?success=true&session_id={CHECKOUT_SESSION_ID}',
       cancel_url: 'https://un-gout-de-liberte.fr/?canceled=true',
       payment_method_types: ['card'],
       line_items: validItems,
-      shipping_options: [{ shipping_rate: await shippingRate(validItems) }],
+      shipping_options: [{ 
+        shipping_rate: shippingRate.id 
+      }],
       shipping_address_collection: {
         allowed_countries: ['FR']
       },
@@ -117,7 +146,10 @@ export default defineEventHandler(async (event) => {
       metadata: {
         source: 'website',
         ip: clientIP,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        total_weight: totalWeight.toString(),
+        shipping_cost: shippingCost.toString(),
+        free_shipping: freeShipping.toString()
       },
       expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
     })
@@ -140,106 +172,3 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
-
-
-
-const shippingRates = [
-  { weightR: [0, 249],     packagingWeight: 100,  id: 'shr_1JGPjtBVac9AX8WwYtnO1LfD' },
-  { weightR: [250, 499],   packagingWeight: 150,  id: 'shr_1JGPjcBVac9AX8WwPtJhv3Qn' },
-  { weightR: [500, 749],   packagingWeight: 300,  id: 'shr_1JGPjBBVac9AX8WwzQB9jFYT' },
-  { weightR: [750, 999],   packagingWeight: 400,  id: 'shr_1JGPisBVac9AX8WwsrJuCKpt' },
-  { weightR: [1000, 1999], packagingWeight: 600,  id: 'shr_1JGPi4BVac9AX8WwJbSkiWVa' },
-  { weightR: [2000, 4999], packagingWeight: 800,  id: 'shr_1JGPhdBVac9AX8WwenIXJNic' },
-  { weightR: [5000, 9999], packagingWeight: 1000, id: 'shr_1JGPgVBVac9AX8Ww3MJP3aVC' }
-];
-
-
-const fetchItemWeight = async (priceId, quantity) => {
-  try {
-    const priceData = await stripe.prices.retrieve(priceId);
-    const productData = await stripe.products.retrieve(priceData.product);
-
-    // Priorité 1: Chercher le poids dans les métadonnées du prix (pour les variantes)
-    let weightMeta = null;
-    if (priceData.metadata && priceData.metadata.weight) {
-      weightMeta = priceData.metadata.weight;
-    }
-    // Priorité 2: Chercher dans les métadonnées du prix avec la clé 'Poids'
-    else if (priceData.metadata && priceData.metadata['Poids']) {
-      weightMeta = priceData.metadata['Poids'];
-    }
-    // Priorité 3: Fallback sur les métadonnées du produit (ancien système)
-    else if (productData.metadata && productData.metadata['Poids']) {
-      weightMeta = productData.metadata['Poids'];
-    }
-    // Priorité 4: Chercher "Poids net total" dans les métadonnées du produit
-    else if (productData.metadata && productData.metadata['Poids net total']) {
-      weightMeta = productData.metadata['Poids net total'];
-    }
-
-    // Si aucun poids trouvé, utiliser un poids par défaut
-    if (!weightMeta) {
-      console.warn(`Price ${priceId} and Product ${priceData.product} missing weight metadata, using default weight`);
-      return 100 * quantity; // Default weight in grams
-    }
-
-    // Vérifier que weightMeta est une chaîne
-    if (typeof weightMeta !== 'string') {
-      console.warn(`Price ${priceId} has invalid weight metadata format`);
-      return 100 * quantity; // Default weight in grams
-    }
-
-    // Extraire le poids numérique (support pour "250g", "0.5kg", etc.)
-    let weight;
-    if (weightMeta.includes('kg')) {
-      // Conversion kg en grammes
-      weight = Number(weightMeta.split('kg')[0].trim()) * 1000;
-    } else {
-      // Supposer que c'est en grammes
-      weight = Number(weightMeta.split('g')[0].trim());
-    }
-
-    if (isNaN(weight) || weight <= 0) {
-      console.warn(`Price ${priceId} has invalid weight value: ${weightMeta}`);
-      return 100 * quantity; // Default weight in grams
-    }
-
-    if (isNaN(quantity) || quantity <= 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid item quantity'
-      });
-    }
-
-    return weight * quantity;
-  } catch (error) {
-    console.error('Error fetching item weight:', error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to calculate item weight'
-    });
-  }
-}
-
-
-
-const shippingRate = async (items) => {
-
-  const totalWeight = (await Promise.all(
-    items.map(i => fetchItemWeight(i.price, Number(i.quantity)))
-  )).reduce((acc, val) => acc + val);
-
-
-  console.log('[-] TOTAL WEIGHT', totalWeight)
-
-  if (totalWeight > 9999) throw new Error('Too many items') // TODO: front side error
-
-
-  const { id: shippingRate } = shippingRates.find(
-    (s) => s.weightR[0] <= totalWeight && totalWeight <= s.weightR[1]
-  );
-
-  if (!shippingRate) throw new Error('Failed to calculate shipping rate')
-
-  return shippingRate;
-}

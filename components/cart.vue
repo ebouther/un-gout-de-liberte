@@ -22,7 +22,8 @@
 
                   <div class="mt-8">
                     <div class="flow-root">
-                      <ul role="list" class="-my-6 divide-y divide-gray-200">
+                      <!-- Items list -->
+                      <ul v-if="Object.keys(cart.items).length > 0" role="list" class="-my-6 divide-y divide-gray-200">
                         <li v-for="product in products" :key="product.id" class="py-6 flex">
                           <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
                             <nuxt-img :src="(product.product?.images || product.images)?.[0]" class="w-full h-full object-center object-cover" />
@@ -71,13 +72,30 @@
 
                 <div class="border-t border-gray-200 py-6 px-4 sm:px-6">
                   <div class="flex justify-between text-base font-medium text-gray-900">
+                    <p>Sous-total</p>
+                    <p>{{ totalPrice }} €</p>
+                  </div>
+                  <div v-if="Object.keys(cart.items).length > 0" class="flex justify-between text-sm text-gray-600 mt-2">
+                    <p>Frais de livraison ({{ totalWeight < 1 ? (totalWeight * 1000).toFixed(0) + 'g' : totalWeight.toFixed(2) + 'kg' }})</p>
+                    <p>{{ shippingCost.toFixed(2) }} €</p>
+                  </div>
+                  <div class="flex justify-between text-lg font-bold text-gray-900 mt-3 pt-3 border-t border-gray-200">
                     <p>Total</p>
-                    <p>{{totalPrice}} €</p>
+                    <p>{{ totalWithShipping }} €</p>
                   </div>
-                  <p class="mt-0.5 text-sm text-gray-500">Frais de livraison calculés lors du passage à l'achat.</p>
+                  <p class="mt-0.5 text-sm text-gray-500">Livraison Colissimo en France métropolitaine.</p>
+
                   <div class="mt-6">
-                    <button @click="submit" class=" w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700">Finaliser l'achat</button>
+                    <button 
+                      @click="submit" 
+                      :disabled="!isValidOrder"
+                      class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <span v-if="!isValidOrder">Panier vide</span>
+                      <span v-else>Finaliser l'achat</span>
+                    </button>
                   </div>
+
                   <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
                     <p>
                       ou <button type="button" class="text-amber-600 font-medium hover:text-amber-500" @click="close">Continuer mes achats<span aria-hidden="true"> &rarr;</span></button>
@@ -94,11 +112,12 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon } from 'heroicons-vue3/outline'
 
 import { useStore } from '~/store/cart'
+import { useShipping } from '~/composables/useShipping'
 
 export default {
   components: {
@@ -111,7 +130,8 @@ export default {
   },
   setup() {
     const cart = useStore()
-    const products = cart.items;
+    const { calculateCartShipping, getItemWeight } = useShipping()
+    const products = computed(() => Object.values(cart.items))
 
     const open = cart.open
 
@@ -121,6 +141,49 @@ export default {
       return Object.values(cart.items)
               .reduce((acc, i) => acc + i.price.unit_amount / 100 * i.quantity, 0)
               .toFixed(2);
+    })
+
+    const shippingCost = computed(() => {
+      if (!Object.keys(cart.items).length) return 0;
+      
+      const items = Object.values(cart.items)
+      console.log('Items pour calcul shipping:', items)
+      
+      const cost = calculateCartShipping(items, 'FR', '', 'standard')
+      console.log('Coût calculé:', cost)
+      
+      return cost
+    })
+
+    const totalWeight = computed(() => {
+      if (!Object.keys(cart.items).length) return 0;
+      
+      const items = Object.values(cart.items)
+      let weight = 0
+      console.log('=== Calcul du poids total ===')
+      for (const item of items) {
+        const itemWeight = getItemWeight(item)
+        const itemTotal = itemWeight * item.quantity
+        console.log(`Item: ${item.product?.name || item.name}`)
+        console.log(`  - Poids unitaire: ${itemWeight}kg`)
+        console.log(`  - Quantité: ${item.quantity}`)
+        console.log(`  - Poids total item: ${itemTotal}kg`)
+        console.log(`  - Métadonnées price:`, item.price?.metadata)
+        console.log(`  - Métadonnées product:`, item.product?.metadata)
+        weight += itemTotal
+      }
+      console.log('Poids total final:', weight, 'kg')
+      return weight
+    })
+
+    const totalWithShipping = computed(() => {
+      const subtotal = parseFloat(totalPrice.value) || 0
+      const shipping = parseFloat(shippingCost.value) || 0
+      return (subtotal + shipping).toFixed(2)
+    })
+
+    const isValidOrder = computed(() => {
+      return Object.keys(cart.items).length > 0
     })
 
     async function submit() {
@@ -181,6 +244,10 @@ export default {
       removeItem: cart.removeItem,
       updateQuantity: cart.updateQuantity,
       totalPrice,
+      shippingCost,
+      totalWeight,
+      totalWithShipping,
+      isValidOrder,
       imgSrc,
       dirname,
       formatPrice,
