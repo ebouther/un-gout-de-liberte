@@ -139,10 +139,46 @@
     title,
     meta: [
       { name: 'description', content: description },
+      { name: 'keywords', content: 'pâtisserie artisanale, biscuiterie, CHILHAC, Haute-Loire, commande, Justine DUMESNIL, gâteaux, desserts' },
       { property: 'og:title', content: title },
       { property: 'og:description', content: description },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: 'https://un-gout-de-liberte.fr' },
+      { property: 'og:image', content: 'https://un-gout-de-liberte.fr/logo.png' },
+      { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
-      { name: 'twitter:description', content: description }
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: 'https://un-gout-de-liberte.fr/logo.png' }
+    ],
+    link: [
+      { rel: 'canonical', href: 'https://un-gout-de-liberte.fr' }
+    ],
+    script: [
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": title.value,
+          "description": description.value,
+          "url": "https://un-gout-de-liberte.fr",
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Un Goût de Liberté",
+            "url": "https://un-gout-de-liberte.fr"
+          },
+          "about": {
+            "@type": "Bakery",
+            "name": "Un Goût de Liberté",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "CHILHAC",
+              "postalCode": "43380",
+              "addressCountry": "FR"
+            }
+          }
+        })
+      }
     ],
     htmlAttrs: {
       lang: 'fr'
