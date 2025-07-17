@@ -147,12 +147,7 @@ export default {
       if (!Object.keys(cart.items).length) return 0;
       
       const items = Object.values(cart.items)
-      console.log('Items pour calcul shipping:', items)
-      
-      const cost = calculateCartShipping(items, 'FR', '', 'standard')
-      console.log('Coût calculé:', cost)
-      
-      return cost
+      return calculateCartShipping(items, 'FR', '', 'standard')
     })
 
     const totalWeight = computed(() => {
@@ -160,19 +155,10 @@ export default {
       
       const items = Object.values(cart.items)
       let weight = 0
-      console.log('=== Calcul du poids total ===')
       for (const item of items) {
         const itemWeight = getItemWeight(item)
-        const itemTotal = itemWeight * item.quantity
-        console.log(`Item: ${item.product?.name || item.name}`)
-        console.log(`  - Poids unitaire: ${itemWeight}kg`)
-        console.log(`  - Quantité: ${item.quantity}`)
-        console.log(`  - Poids total item: ${itemTotal}kg`)
-        console.log(`  - Métadonnées price:`, item.price?.metadata)
-        console.log(`  - Métadonnées product:`, item.product?.metadata)
-        weight += itemTotal
+        weight += itemWeight * item.quantity
       }
-      console.log('Poids total final:', weight, 'kg')
       return weight
     })
 

@@ -60,13 +60,9 @@ const parseWeightFromPriceInfo = (price) => {
  * Calcule le poids d'un article depuis ses métadonnées ou son nom
  */
 const getItemWeight = async (priceId, stripe) => {
-  console.log('getItemWeight serveur appelé pour:', priceId)
-  
   try {
     // Récupérer les informations du prix
     const price = await stripe.prices.retrieve(priceId)
-    console.log('Prix récupéré:', price.id, 'Nickname:', price.nickname, 'Lookup_key:', price.lookup_key)
-    console.log('Métadonnées price:', price.metadata)
     
     // 1. Vérifier d'abord les métadonnées du prix (PRIORITÉ pour les variantes)
     if (price.metadata) {
@@ -74,9 +70,7 @@ const getItemWeight = async (priceId, stripe) => {
       for (const key of possibleKeys) {
         const weightStr = price.metadata[key]
         if (weightStr) {
-          const weight = parseWeight(weightStr)
-          console.log(`Poids trouvé dans price.metadata['${key}']:`, weightStr, '->', weight, 'kg')
-          return weight
+          return parseWeight(weightStr)
         }
       }
     }
@@ -84,32 +78,26 @@ const getItemWeight = async (priceId, stripe) => {
     // 2. Extraire depuis nickname/lookup_key du prix
     const weightFromPriceInfo = parseWeightFromPriceInfo(price)
     if (weightFromPriceInfo) {
-      console.log('Poids extrait du nickname/lookup_key:', weightFromPriceInfo, 'kg')
       return weightFromPriceInfo
     }
 
     // 3. Si pas trouvé dans le prix, vérifier le produit (fallback)
     if (price.product) {
       const product = await stripe.products.retrieve(price.product)
-      console.log('Produit récupéré:', product.name, 'Métadonnées product:', product.metadata)
       
       if (product.metadata) {
         const possibleKeys = ['Poids', 'Poids net total', 'poids', 'weight', 'Weight']
         for (const key of possibleKeys) {
           const weightStr = product.metadata[key]
           if (weightStr) {
-            const weight = parseWeight(weightStr)
-            console.log(`Poids trouvé dans product.metadata['${key}']:`, weightStr, '->', weight, 'kg')
-            return weight
+            return parseWeight(weightStr)
           }
         }
       }
 
       // 4. Fallback : extraction depuis le nom du produit
       if (product.name) {
-        const weight = parseWeight(product.name)
-        console.log('Poids extrait du nom du produit:', product.name, '->', weight, 'kg')
-        return weight
+        return parseWeight(product.name)
       }
     }
   } catch (error) {
@@ -117,7 +105,6 @@ const getItemWeight = async (priceId, stripe) => {
   }
 
   // Poids par défaut
-  console.log('Poids par défaut utilisé: 0.5kg')
   return 0.5
 }
 
@@ -125,17 +112,13 @@ const getItemWeight = async (priceId, stripe) => {
  * Calcule le poids total d'une commande
  */
 const calculateOrderWeight = async (items, stripe) => {
-  console.log('calculateOrderWeight serveur appelé avec:', items)
   let totalWeight = 0
 
   for (const item of items) {
     const itemWeight = await getItemWeight(item.price, stripe)
-    const itemTotal = itemWeight * item.quantity
-    console.log(`Item serveur: price=${item.price}, quantity=${item.quantity}, weight=${itemWeight}kg, total=${itemTotal}kg`)
-    totalWeight += itemTotal
+    totalWeight += itemWeight * item.quantity
   }
 
-  console.log('Poids total serveur calculé:', totalWeight, 'kg')
   return totalWeight
 }
 
@@ -143,25 +126,15 @@ const calculateOrderWeight = async (items, stripe) => {
  * Calcule les frais de livraison pour la France métropolitaine
  */
 const calculateShippingCost = (weightKg, deliveryType = 'standard') => {
-  console.log('calculateShippingCost serveur appelé avec:', { weightKg, deliveryType })
-  
   if (weightKg <= 0) return 0
 
-  console.log('Recherche dans les tarifs serveur:', colissimoFranceRates)
-  const rate = colissimoFranceRates.find(r => {
-    console.log(`Test serveur: ${weightKg}kg <= ${r.maxWeight}kg ?`, weightKg <= r.maxWeight)
-    return weightKg <= r.maxWeight
-  })
-  
-  console.log('Tarif trouvé serveur:', rate)
+  const rate = colissimoFranceRates.find(r => weightKg <= r.maxWeight)
   if (!rate) return 0
 
   if (deliveryType === 'access' && rate.access !== null) {
-    console.log('Retour tarif access serveur:', rate.access)
     return rate.access
   }
   
-  console.log('Retour tarif standard serveur:', rate.standard)
   return rate.standard
 }
 

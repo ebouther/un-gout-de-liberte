@@ -106,32 +106,18 @@ export const useShipping = () => {
    * Calcule les frais de livraison en fonction du poids et de la zone française
    */
   const calculateShippingCost = (weightKg, countryCode = 'FR', postalCode = '', deliveryType = 'standard') => {
-    console.log('calculateShippingCost appelé avec:', { weightKg, countryCode, postalCode, deliveryType })
-    
     if (weightKg <= 0) return 0
 
     const zone = getShippingZone(countryCode, postalCode)
-    console.log('Zone déterminée:', zone)
     
     // France métropolitaine - choix entre standard et access
     if (zone === 'france-metropolitaine') {
-      console.log('Recherche dans les tarifs France:', colissimoFranceRates)
-      console.log('Poids à chercher:', weightKg, 'kg')
-      
-      const rate = colissimoFranceRates.find(r => {
-        console.log(`Test: ${weightKg}kg <= ${r.maxWeight}kg ?`, weightKg <= r.maxWeight)
-        return weightKg <= r.maxWeight
-      })
-      
-      console.log('Tarif trouvé:', rate)
-      
+      const rate = colissimoFranceRates.find(r => weightKg <= r.maxWeight)
       if (!rate) return 0
       
       if (deliveryType === 'access' && rate.access !== null) {
-        console.log('Retour tarif access:', rate.access)
         return rate.access
       }
-      console.log('Retour tarif standard:', rate.standard)
       return rate.standard
     }
 
@@ -149,102 +135,68 @@ export const useShipping = () => {
    * Calcule les frais de livraison pour un panier entier
    */
   const calculateCartShipping = (cartItems, countryCode = 'FR', postalCode = '', deliveryType = 'standard') => {
-    console.log('calculateCartShipping appelé avec:', { cartItems, countryCode, postalCode, deliveryType })
-    
     if (!cartItems || cartItems.length === 0) return 0
 
     // Calcul du poids total du panier
     let totalWeight = 0
     
-    console.log('=== Calcul du poids total du panier ===')
     for (const item of cartItems) {
       const itemWeight = getItemWeight(item)
-      const itemTotal = itemWeight * item.quantity
-      console.log(`Item: ${item.product?.name || item.name} - Poids: ${itemWeight}kg x ${item.quantity} = ${itemTotal}kg`)
-      totalWeight += itemTotal
+      totalWeight += itemWeight * item.quantity
     }
     
-    console.log('Poids total du panier:', totalWeight, 'kg')
-    
-    const shippingCost = calculateShippingCost(totalWeight, countryCode, postalCode, deliveryType)
-    console.log('Coût de livraison final:', shippingCost, '€')
-    
-    return shippingCost
+    return calculateShippingCost(totalWeight, countryCode, postalCode, deliveryType)
   }
 
   /**
    * Extrait le poids d'un article (en kg)
    */
   const getItemWeight = (item) => {
-    console.log('getItemWeight appelé avec:', item)
-    
     // Si c'est un objet variant avec price
     if (item.price && item.price.metadata) {
-      console.log('Métadonnées price trouvées:', item.price.metadata)
-      
       // Chercher dans toutes les clés possibles
       const possibleKeys = ['Poids', 'Poids net total', 'poids', 'weight', 'Weight']
       for (const key of possibleKeys) {
         const weightStr = item.price.metadata[key]
         if (weightStr) {
-          console.log(`Poids trouvé dans price.metadata['${key}']:`, weightStr)
-          const weight = parseWeight(weightStr)
-          console.log('Poids parsé:', weight)
-          return weight
+          return parseWeight(weightStr)
         }
       }
     }
 
     // Si c'est un produit avec metadata
     if (item.product && item.product.metadata) {
-      console.log('Métadonnées product trouvées:', item.product.metadata)
-      
       const possibleKeys = ['Poids', 'Poids net total', 'poids', 'weight', 'Weight']
       for (const key of possibleKeys) {
         const weightStr = item.product.metadata[key]
         if (weightStr) {
-          console.log(`Poids trouvé dans product.metadata['${key}']:`, weightStr)
-          const weight = parseWeight(weightStr)
-          console.log('Poids parsé:', weight)
-          return weight
+          return parseWeight(weightStr)
         }
       }
     }
 
     // Chercher directement dans les métadonnées de l'item
     if (item.metadata) {
-      console.log('Métadonnées item trouvées:', item.metadata)
-      
       const possibleKeys = ['Poids', 'Poids net total', 'poids', 'weight', 'Weight']
       for (const key of possibleKeys) {
         const weightStr = item.metadata[key]
         if (weightStr) {
-          console.log(`Poids trouvé dans item.metadata['${key}']:`, weightStr)
-          const weight = parseWeight(weightStr)
-          console.log('Poids parsé:', weight)
-          return weight
+          return parseWeight(weightStr)
         }
       }
     }
 
     // Fallback : extraction depuis le nom du produit
     if (item.product && item.product.name) {
-      console.log('Fallback: extraction depuis le nom du produit:', item.product.name)
-      const weight = parseWeightFromName(item.product.name)
-      console.log('Poids extrait du nom:', weight)
-      return weight
+      return parseWeightFromName(item.product.name)
     }
 
     // Fallback : extraction depuis le nom de l'item
     if (item.name) {
-      console.log('Fallback: extraction depuis le nom de l\'item:', item.name)
-      const weight = parseWeightFromName(item.name)
-      console.log('Poids extrait du nom:', weight)
-      return weight
+      return parseWeightFromName(item.name)
     }
 
     // Poids par défaut si aucune information
-    console.log('Aucun poids trouvé, utilisation du poids par défaut: 0.5kg')
     return 0.5
   }
 
