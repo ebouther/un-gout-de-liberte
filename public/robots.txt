@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /user/
+Disallow: /_nuxt/
+
+# Allow important assets
+Allow: /api/products
+Allow: /api/sitemap.xml
+Allow: /_nuxt/*.css
+Allow: /_nuxt/*.js
+
+# Sitemap
+Sitemap: https://un-gout-de-liberte.fr/api/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
