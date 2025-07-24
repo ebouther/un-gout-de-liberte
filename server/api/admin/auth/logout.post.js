@@ -1,6 +1,5 @@
 export default defineEventHandler(async (event) => {
     try {
-        // Supprimer le cookie d'authentification
         deleteCookie(event, 'admin-auth')
 
         return {

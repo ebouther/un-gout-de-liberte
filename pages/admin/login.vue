@@ -65,8 +65,7 @@
 
 <script setup>
 definePageMeta({
-  layout: false,
-  middleware: 'guest' // Rediriger si déjà connecté
+  layout: false
 })
 
 // État réactif
@@ -76,26 +75,38 @@ const error = ref('')
 
 // Gestion de la connexion
 const handleLogin = async () => {
-  if (!password.value) return
+  console.log('🔍 handleLogin appelé avec:', password.value)
+  
+  if (!password.value) {
+    console.log('❌ Pas de mot de passe')
+    error.value = 'Veuillez saisir le mot de passe'
+    return
+  }
   
   try {
+    console.log('🚀 Début de la connexion...')
     loading.value = true
     error.value = ''
-    
     const response = await $fetch('/api/admin/auth/login', {
       method: 'POST',
       body: {
         password: password.value
       }
     })
-    
     if (response.success) {
-      // Redirection vers l'admin
-      await navigateTo('/admin')
+      window.location.href = '/admin'
+    } else {
+      error.value = 'Erreur de connexion'
     }
     
   } catch (err) {
-    console.error('Erreur de connexion:', err)
+    console.error('❌ Erreur de connexion:', err)
+    console.log('📊 Détails erreur:', {
+      statusCode: err.statusCode,
+      statusMessage: err.statusMessage,
+      message: err.message,
+      data: err.data
+    })
     
     if (err.statusCode === 401) {
       error.value = 'Mot de passe incorrect'
@@ -103,11 +114,14 @@ const handleLogin = async () => {
       setTimeout(() => {
         password.value = ''
       }, 2000)
+    } else if (err.statusCode === 500) {
+      error.value = 'Erreur serveur. Vérifiez la configuration.'
     } else {
-      error.value = 'Erreur de connexion. Veuillez réessayer.'
+      error.value = `Erreur de connexion: ${err.statusMessage || err.message || 'Inconnu'}`
     }
   } finally {
     loading.value = false
+    console.log('🏁 Fin de handleLogin')
   }
 }
 

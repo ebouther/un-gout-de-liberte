@@ -132,22 +132,22 @@
     }
   })
 
-  const title = ref('Un Goût de Liberté - Pâtisserie & Biscuiterie artisanale à CHILHAC')
-  const description = ref('Pâtisserie & Biscuiterie artisanale - 43380 CHILHAC - Justine DUMESNIL - Pâtisserie sur commande au gré des saisons et de vos envies.')
+  const title = ref('Un Goût de Liberté - Pâtisserie Artisanale à Chilhac')
+  const description = ref('Découvrez notre pâtisserie artisanale à Chilhac (43380). Confitures maison, biscuits traditionnels, biscottes et produits d\'apéritif. Livraison disponible !')
 
   useHead({
     title,
     meta: [
       { name: 'description', content: description },
-      { name: 'keywords', content: 'pâtisserie artisanale, biscuiterie, CHILHAC, Haute-Loire, commande, Justine DUMESNIL, gâteaux, desserts' },
+      { name: 'keywords', content: 'pâtisserie artisanale, biscuiterie, CHILHAC, Haute-Loire, confiture, biscuits, biscottes, fait maison, Justine DUMESNIL' },
       { property: 'og:title', content: title },
-      { property: 'og:description', content: description },
+      { property: 'og:description', content: 'Pâtisserie artisanale à Chilhac. Confitures, biscuits et gourmandises faits maison avec amour.' },
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: 'https://un-gout-de-liberte.fr' },
       { property: 'og:image', content: 'https://un-gout-de-liberte.fr/logo.png' },
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: title },
-      { name: 'twitter:description', content: description },
+      { name: 'twitter:description', content: 'Pâtisserie artisanale à Chilhac. Confitures, biscuits et gourmandises faits maison.' },
       { name: 'twitter:image', content: 'https://un-gout-de-liberte.fr/logo.png' }
     ],
     link: [
@@ -197,6 +197,25 @@
       window.removeEventListener('scroll', handleScroll)
     })
   })
+
+// SEO optimisé pour la page d'accueil
+useSeoMeta({
+  title: 'Un Goût de Liberté - Pâtisserie Artisanale à Chilhac',
+  description: 'Découvrez notre pâtisserie artisanale à Chilhac (43380). Confitures maison, biscuits traditionnels, biscottes et produits d\'apéritif. Livraison disponible dans toute la France !',
+  ogTitle: 'Un Goût de Liberté - Pâtisserie Artisanale à Chilhac',
+  ogDescription: 'Pâtisserie artisanale à Chilhac. Confitures, biscuits et gourmandises faits maison avec amour par Justine DUMESNIL.',
+  ogUrl: 'https://un-gout-de-liberte.fr',
+  ogImage: 'https://un-gout-de-liberte.fr/logo.png',
+  twitterTitle: 'Un Goût de Liberté - Pâtisserie Artisanale',
+  twitterDescription: 'Pâtisserie artisanale à Chilhac. Confitures, biscuits et gourmandises faits maison.',
+  twitterCard: 'summary_large_image'
+})
+
+useHead({
+  link: [
+    { rel: 'canonical', href: 'https://un-gout-de-liberte.fr' }
+  ]
+})
 
 
 </script>

@@ -6,11 +6,11 @@
         <h1 class="text-3xl font-bold text-gray-900">Administration des Produits</h1>
         <p class="mt-2 text-gray-600">Gérez vos produits, prix et informations facilement</p>
       </div>
-
-      <!-- Actions principales -->
-      <div class="mb-6 flex flex-wrap gap-4">
+      
+      <!-- Buttons container -->
+      <div class="flex flex-wrap gap-4 items-center mb-6">
         <button
-          @click="showCreateForm = true"
+          @click="createNewProduct"
           class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,6 +31,7 @@
 
         <div class="flex-1"></div>
 
+        <!-- Search -->
         <div class="relative">
           <input
             v-model="searchQuery"
@@ -44,7 +45,7 @@
         </div>
       </div>
 
-      <!-- Filtres -->
+      <!-- Filters -->
       <div class="mb-6 bg-white p-4 rounded-lg shadow">
         <div class="flex flex-wrap gap-4 items-center">
           <div>
@@ -57,15 +58,6 @@
             </select>
           </div>
           
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
-            <select v-model="selectedStatus" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <option value="">Tous</option>
-              <option value="active">Actifs</option>
-              <option value="inactive">Inactifs</option>
-            </select>
-          </div>
-
           <div class="flex-1"></div>
           
           <div class="text-sm text-gray-600">
@@ -74,7 +66,7 @@
         </div>
       </div>
 
-      <!-- Message de statut -->
+      <!-- Status Message -->
       <div v-if="statusMessage" class="mb-4 p-4 rounded-lg" 
            :class="{
              'bg-green-100 text-green-700': statusType === 'success',
@@ -82,26 +74,7 @@
              'bg-yellow-100 text-yellow-700': statusType === 'warning',
              'bg-blue-100 text-blue-700': statusType === 'info'
            }">
-        <div class="flex items-center">
-          <!-- Icône de succès -->
-          <svg v-if="statusType === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'erreur -->
-          <svg v-else-if="statusType === 'error'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'avertissement -->
-          <svg v-else-if="statusType === 'warning'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'info -->
-          <svg v-else class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
-          
-          {{ statusMessage }}
-        </div>
+        {{ statusMessage }}
       </div>
 
       <!-- Loading -->
@@ -109,8 +82,8 @@
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
       </div>
 
-      <!-- Liste des produits -->
-      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Product List -->
+      <div v-else-if="filteredProducts.length > 0" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="product in filteredProducts"
           :key="product.id"
@@ -141,7 +114,7 @@
             </div>
           </div>
 
-          <!-- Contenu -->
+          <!-- Content -->
           <div class="p-4">
             <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ product.name }}</h3>
             
@@ -153,8 +126,9 @@
             <div class="mb-3">
               <div v-if="product.prices && product.prices.length > 0" class="space-y-1">
                 <div v-for="price in product.prices.slice(0, 2)" :key="price.id" class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">{{ price.nickname || formatPrice(price.unit_amount) }}</span>
-                  <span class="font-medium">{{ formatPrice(price.unit_amount) }}</span>
+                  <span class="text-gray-600">
+                    <template v-if="price.nickname">{{ price.nickname }} – </template>{{ formatPrice(price.unit_amount) }}
+                  </span>
                 </div>
                 <div v-if="product.prices.length > 2" class="text-xs text-gray-500">
                   +{{ product.prices.length - 2 }} autre{{ product.prices.length > 3 ? 's' : '' }} prix
@@ -168,10 +142,6 @@
               <div v-if="product.metadata?.category" class="flex items-center gap-1">
                 <span class="font-medium">Catégorie:</span>
                 <span>{{ product.metadata.category }}</span>
-              </div>
-              <div v-if="getProductWeight(product)" class="flex items-center gap-1">
-                <span class="font-medium">Poids:</span>
-                <span>{{ getProductWeight(product) }}</span>
               </div>
             </div>
 
@@ -198,13 +168,18 @@
         </div>
       </div>
 
-      <!-- Message si aucun produit -->
-      <div v-if="!loading && filteredProducts.length === 0" class="text-center py-12">
+      <!-- No Products Message -->
+      <div v-else-if="filteredProducts.length === 0" class="text-center py-12">
         <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m-2 0v-2a2 2 0 012-2h2m0 0V9a2 2 0 012-2h2M9 3v2m6-2v2"></path>
         </svg>
         <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
-        <p class="text-gray-600">Essayez de modifier vos filtres ou créez un nouveau produit.</p>
+        <p class="text-gray-600">
+          {{ products.length === 0 ? 
+            'Aucun produit chargé depuis Stripe. Vérifiez votre configuration.' : 
+            'Essayez de modifier vos filtres ou créez un nouveau produit.' 
+          }}
+        </p>
       </div>
     </div>
 
@@ -220,8 +195,27 @@
 
 <script setup>
 definePageMeta({
-  layout: 'admin',
-  middleware: 'admin-auth'
+  layout: 'admin'
+})
+
+// Authentication check
+onMounted(async () => {
+  if (process.client) {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    const token = useCookie('admin-auth')
+    try {
+      const response = await $fetch('/api/admin/auth/check')
+      if (!response.authenticated) {
+        await navigateTo('/admin/login')
+        return
+      }
+      await loadProducts()
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      await navigateTo('/admin/login')
+      return
+    }
+  }
 })
 
 // État réactif
@@ -231,7 +225,6 @@ const showCreateForm = ref(false)
 const editingProduct = ref(null)
 const searchQuery = ref('')
 const selectedCategory = ref('')
-const selectedStatus = ref('')
 const statusMessage = ref('')
 const statusType = ref('success')
 
@@ -265,48 +258,39 @@ const filteredProducts = computed(() => {
     )
   }
 
-  // Filtre par statut
-  if (selectedStatus.value) {
-    const isActive = selectedStatus.value === 'active'
-    filtered = filtered.filter(product => product.active === isActive)
-  }
-
   return filtered
 })
 
-// Méthodes
+// Fonctions
 const loadProducts = async () => {
   try {
     loading.value = true
-    showStatus('Chargement des produits...', 'info')
+    const data = await $fetch('/api/products')
     
-    const { data } = await $fetch('/api/admin/products')
-    products.value = data || []
-    
-    showStatus(`${products.value.length} produits chargés`, 'success')
+    // L'API renvoie directement un tableau de produits
+    products.value = Array.isArray(data) ? data : []
   } catch (error) {
-    if (error.statusCode === 429) {
-      showStatus('Trop de requêtes. Nouvelle tentative dans 5 secondes...', 'warning')
-      // Retry automatique après 5 secondes
-      setTimeout(() => {
-        loadProducts()
-      }, 5000)
-    } else {
-      showStatus('Erreur lors du chargement des produits', 'error')
-      console.error('Erreur:', error)
-    }
+    console.error('Erreur lors du chargement des produits:', error)
+    showStatus('Erreur lors du chargement des produits', 'error')
+    products.value = []
   } finally {
     loading.value = false
   }
 }
 
-const refreshProducts = () => {
-  showStatus('Actualisation...', 'info')
-  loadProducts()
+const refreshProducts = async () => {
+  await loadProducts()
+  showStatus('Produits actualisés', 'success')
+}
+
+const createNewProduct = () => {
+  editingProduct.value = null
+  showCreateForm.value = true
 }
 
 const editProduct = (product) => {
   editingProduct.value = product
+  showCreateForm.value = true
 }
 
 const closeModal = () => {
@@ -314,87 +298,59 @@ const closeModal = () => {
   editingProduct.value = null
 }
 
-const onProductSaved = () => {
+const onProductSaved = (savedProduct) => {
+  if (editingProduct.value) {
+    // Mode édition : mettre à jour le produit dans la liste
+    const index = products.value.findIndex(p => p.id === savedProduct.id)
+    if (index !== -1) {
+      products.value[index] = { ...savedProduct }
+      showStatus('Produit modifié avec succès', 'success')
+    }
+  } else {
+    // Mode création : ajouter le nouveau produit à la liste
+    products.value.unshift(savedProduct)
+    showStatus('Produit créé avec succès', 'success')
+  }
+  
   closeModal()
-  loadProducts()
-  showStatus('Produit sauvegardé avec succès', 'success')
 }
 
 const toggleProductStatus = async (product) => {
   try {
-    const newStatus = !product.active
-    showStatus(`${newStatus ? 'Activation' : 'Désactivation'} en cours...`, 'info')
-    
-    await $fetch('/api/admin/products/toggle-status', {
-      method: 'POST',
+    const response = await $fetch(`/api/admin/products/${product.id}`, {
+      method: 'PATCH',
       body: {
-        productId: product.id,
-        active: newStatus
+        active: !product.active
       }
     })
     
-    product.active = newStatus
-    showStatus(
-      `Produit ${newStatus ? 'activé' : 'désactivé'} avec succès`, 
-      'success'
-    )
-  } catch (error) {
-    if (error.statusCode === 429) {
-      showStatus('Trop de requêtes. Veuillez patienter...', 'warning')
-      // Retry automatique après 3 secondes
-      setTimeout(() => {
-        toggleProductStatus(product)
-      }, 3000)
+    if (response.success) {
+      // Mettre à jour localement
+      product.active = !product.active
+      showStatus(`Produit ${product.active ? 'activé' : 'désactivé'}`, 'success')
     } else {
       showStatus('Erreur lors de la modification du statut', 'error')
-      console.error('Erreur:', error)
     }
+  } catch (error) {
+    console.error('Erreur lors de la modification du statut:', error)
+    showStatus('Erreur lors de la modification du statut', 'error')
   }
 }
 
-const formatPrice = (amountCents) => {
-  if (!amountCents) return '0,00 €'
+const formatPrice = (amount) => {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR'
-  }).format(amountCents / 100)
+  }).format(amount / 100)
 }
 
-const getProductWeight = (product) => {
-  // Chercher le poids dans les prix d'abord
-  if (product.prices && product.prices.length > 0) {
-    for (const price of product.prices) {
-      if (price.metadata?.weight) {
-        return price.metadata.weight
-      }
-    }
-  }
-  
-  // Puis dans les métadonnées du produit
-  return product.metadata?.Poids || product.metadata?.weight || null
-}
-
-const showStatus = (message, type = 'success') => {
+const showStatus = (message, type = 'success', duration = 3000) => {
   statusMessage.value = message
   statusType.value = type
-  
-  // Durée d'affichage selon le type
-  const duration = {
-    'success': 3000,
-    'error': 7000,
-    'warning': 5000,
-    'info': 2000
-  }[type] || 5000
-  
   setTimeout(() => {
     statusMessage.value = ''
   }, duration)
 }
-
-// Chargement initial
-onMounted(() => {
-  loadProducts()
-})
 </script>
 
 <style scoped>

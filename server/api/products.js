@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
       return productsCache
     }
 
+
     const { data: products } = await stripe.products.list({
       limit: 100,
       active: true,
@@ -44,15 +45,16 @@ export default defineEventHandler(async (event) => {
       .map(p => {
         // Get all prices for this product
         const productPrices = prices.filter(price => price.product === p.id)
-        
+        const mainPrice = productPrices[0] || null
         return {
           id: p.id,
           name: p.name,
           description: p.description,
           images: p.images,
           metadata: p.metadata,
-          price: productPrices[0] || null, // First price as default (backward compatibility)
-          prices: productPrices // All prices for variants
+          active: p.active, // Ajout du statut actif
+          price: mainPrice ? { ...mainPrice } : null, // Inclut toutes les propriétés du Stripe Price
+          prices: productPrices.map(price => ({ ...price })) // All prices for variants, full objects
         }
       })
       .filter(p => p.prices.length > 0) // Only return products with valid prices

@@ -379,17 +379,15 @@ const addToCart = async () => {
   const productToAdd = {
     id: props.product.id,
     name: props.product.name,
-    price: currentPrice?.unit_amount ? currentPrice.unit_amount / 100 : currentPrice,
+    price: currentPrice,
     image: props.product.images?.[0] || props.product.image,
     variant: selectedVariant.value || null
   }
-  
-  // Ajouter le produit au panier immédiatement
+
   addItem(productToAdd, quantity.value)
   addingToCart.value = false
   showAddedMessage.value = true
-  
-  // Fermer la modale après un court délai pour voir le message
+
   setTimeout(() => {
     emit('close')
   }, 1000)

@@ -1,8 +1,8 @@
-import Stripe from 'stripe'
-
 export default defineEventHandler(async (event) => {
     try {
-        // Routes statiques
+        const baseUrl = 'https://un-gout-de-liberte.fr'
+        
+        // Routes statiques avec informations SEO optimisées
         const staticRoutes = [
             {
                 url: '/',
@@ -29,9 +29,8 @@ export default defineEventHandler(async (event) => {
         // Note: Les produits sont maintenant affichés via modal popup, 
         // donc pas besoin de routes individuelles dans le sitemap
 
-        // Générer le XML
+        // Générer le XML avec titre optimisé
         const allRoutes = [...staticRoutes, ...productRoutes]
-        const hostname = 'https://un-gout-de-liberte.fr'
 
         let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -39,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
         allRoutes.forEach(route => {
             sitemap += `  <url>
-    <loc>${hostname}${route.url}</loc>
+    <loc>${baseUrl}${route.url}</loc>
     <lastmod>${route.lastmod}</lastmod>
     <changefreq>${route.changefreq}</changefreq>
     <priority>${route.priority}</priority>
@@ -50,12 +49,13 @@ export default defineEventHandler(async (event) => {
         sitemap += `</urlset>`
 
         // Définir les en-têtes appropriés
-        setHeader(event, 'Content-Type', 'application/xml')
+        setHeader(event, 'Content-Type', 'application/xml; charset=utf-8')
         setHeader(event, 'Cache-Control', 'max-age=3600') // Cache pendant 1 heure
 
         return sitemap
 
     } catch (error) {
+        console.error('Erreur génération sitemap:', error)
         throw createError({
             statusCode: 500,
             statusMessage: 'Erreur lors de la génération du sitemap'

@@ -180,7 +180,7 @@ export const useShipping = () => {
      * Utilise uniquement price.metadata.weight et valide le poids minimum
      */
     const getItemWeight = (item) => {
-        // Récupérer le poids depuis price.metadata.weight uniquement
+        // Récupérer le poids depuis price.metadata.weight, sinon product.metadata.weight
         let weightStr = null
 
         // Si c'est un objet variant avec price
@@ -188,12 +188,19 @@ export const useShipping = () => {
             weightStr = item.variant.price.metadata.weight
         }
         // Sinon si c'est un objet price direct
-        else if (item.price && item.price.metadata) {
+        else if (item.price && item.price.metadata && item.price.metadata.weight) {
             weightStr = item.price.metadata.weight
+        }
+        // Fallback sur product.metadata.weight
+        else if (item.product && item.product.metadata && item.product.metadata.weight) {
+            weightStr = item.product.metadata.weight
         }
 
         // Vérifier que la métadata weight existe
         if (!weightStr) {
+            const priceMeta = item.price && item.price.metadata ? Object.keys(item.price.metadata) : [];
+            const productMeta = item.product && item.product.metadata ? Object.keys(item.product.metadata) : [];
+            console.error('Métadata weight absente. price.metadata keys:', priceMeta, 'product.metadata keys:', productMeta);
             throw new Error(`Métadata 'weight' manquante pour l'article: ${item.name || item.id || 'inconnu'}. Structure reçue: ${JSON.stringify(item, null, 2)}`)
         }
 
