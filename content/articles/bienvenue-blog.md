@@ -1,14 +1,15 @@
 ---
-title: "Bienvenue sur notre blog !"
-description: "Découvrez l'univers de la pâtisserie artisanale et nos conseils pour réussir vos créations maison."
-date: "2025-07-26"
-category: "actualités"
-status: "published"
-author: "Justine DUMESNIL"
-image: "/logo.png"
-slug: "bienvenue-blog"
+title: Bienvenue sur notre blog !
+description: >-
+  Découvrez l'univers de la pâtisserie artisanale et nos conseils pour réussir
+  vos créations maison.
+category: recettes
+status: published
+date: '2025-07-25T22:00:00.000Z'
+slug: bienvenue-blog
+readingTime: 1
+image: 'http://google.com'
 ---
-
 # Bienvenue sur notre blog !
 
 Nous sommes ravis de vous accueillir sur le blog **Un Goût de Liberté** ! 
