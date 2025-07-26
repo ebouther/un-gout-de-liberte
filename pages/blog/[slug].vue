@@ -112,8 +112,6 @@
 </template>
 
 <script setup>
-import { marked } from 'marked'
-
 // Récupérer le slug depuis la route
 const route = useRoute()
 const slug = route.params.slug
@@ -125,24 +123,96 @@ const { data: article, pending, error } = await useFetch(`/api/blog/articles/${s
 })
 
 // Métadonnées dynamiques de la page
-if (article) {
-  useHead({
-    title: `${article.title} - Un Goût de Liberté`,
-    meta: [
-      { name: 'description', content: article.description },
-      { property: 'og:title', content: article.title },
-      { property: 'og:description', content: article.description },
-      { property: 'og:image', content: article.image || '/logo.png' },
-      { property: 'og:type', content: 'article' }
-    ]
-  })
-}
+watch(article, (newArticle) => {
+  if (newArticle) {
+    useHead({
+      title: `${newArticle.title} - Un Goût de Liberté`,
+      meta: [
+        { name: 'description', content: newArticle.description },
+        { property: 'og:title', content: newArticle.title },
+        { property: 'og:description', content: newArticle.description },
+        { property: 'og:image', content: newArticle.image || '/logo.png' },
+        { property: 'og:type', content: 'article' }
+      ]
+    })
+  }
+}, { immediate: true })
 
 // Convertir le markdown en HTML
-const articleContent = computed(() => {
-  if (!article?.content) return ''
-  return marked(article.content)
+const articleContent = ref('')
+
+// Fonction pour convertir le markdown côté serveur avec un parser basique
+const parseMarkdownBasic = (content) => {
+  if (!content) return ''
+  
+  return content
+    .split('\n\n')
+    .map(paragraph => {
+      // Titres
+      if (paragraph.startsWith('# ')) {
+        return `<h1>${paragraph.substring(2)}</h1>`
+      }
+      if (paragraph.startsWith('## ')) {
+        return `<h2>${paragraph.substring(3)}</h2>`
+      }
+      if (paragraph.startsWith('### ')) {
+        return `<h3>${paragraph.substring(4)}</h3>`
+      }
+      
+      // Listes
+      if (paragraph.includes('\n- ')) {
+        const items = paragraph.split('\n- ').filter(item => item.trim())
+        const listItems = items.map(item => `<li>${item.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*(.+?)\*/g, '<em>$1</em>')}</li>`).join('')
+        return `<ul>${listItems}</ul>`
+      }
+      
+      // Paragraphes normaux
+      if (paragraph.trim()) {
+        const formatted = paragraph
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em>$1</em>')
+          .replace(/---/g, '<hr>')
+        return `<p>${formatted}</p>`
+      }
+      
+      return ''
+    })
+    .filter(block => block)
+    .join('')
+}
+
+// Conversion initiale côté serveur
+if (article.value?.content) {
+  articleContent.value = parseMarkdownBasic(article.value.content)
+}
+
+// Amélioration côté client avec marked si disponible
+onMounted(async () => {
+  if (article.value?.content && process.client) {
+    try {
+      const { marked } = await import('marked')
+      articleContent.value = marked(article.value.content)
+    } catch (error) {
+      console.warn('Marked non disponible, utilisation du parser basique')
+    }
+  }
 })
+
+// Surveiller les changements d'article
+watch(article, (newArticle) => {
+  if (newArticle?.content) {
+    articleContent.value = parseMarkdownBasic(newArticle.content)
+    
+    // Amélioration côté client
+    if (process.client) {
+      import('marked').then(({ marked }) => {
+        articleContent.value = marked(newArticle.content)
+      }).catch(() => {
+        // Garder le parser basique en cas d'erreur
+      })
+    }
+  }
+}, { immediate: true })
 
 // Formater la date
 const formatDate = (dateString) => {

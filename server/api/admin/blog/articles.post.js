@@ -148,7 +148,7 @@ export default defineEventHandler(async (event) => {
           'Content-Type': 'application/json'
         },
         body: {
-          message: `✨ Ajouter l'article: ${title}`,
+          message: `content(blog): add new article "${cleanSlug}"`,
           content: Buffer.from(markdownContent).toString('base64'),
           branch: 'develop'
         }

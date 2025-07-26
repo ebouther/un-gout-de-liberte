@@ -42,6 +42,14 @@
                 data-mdb-ripple-color="light"
                 >Mes produits</a
               >
+              <NuxtLink
+                class="mx-2 inline-block px-7 py-3 mb-1 border-2 border-gray-200 text-gray-200 font-medium text-sm leading-snug uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
+                to="/blog"
+                role="button"
+                data-mdb-ripple="true"
+                data-mdb-ripple-color="light"
+                >Blog</NuxtLink
+              >
               <a
                 class="mx-2 inline-block px-7 py-3 mb-1 border-2 border-gray-200 text-gray-200 font-medium text-sm leading-snug uppercase rounded hover:bg-black hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
                 href="#about"

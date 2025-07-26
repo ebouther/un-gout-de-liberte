@@ -165,7 +165,7 @@ export default defineEventHandler(async (event) => {
             'Content-Type': 'application/json'
           },
           body: {
-            message: `✏️ Renommer et modifier l'article: ${slug} → ${cleanSlug}`,
+            message: `content(blog): rename article "${slug}" to "${cleanSlug}"`,
             content: Buffer.from(markdownContent).toString('base64'),
             branch: 'develop'
           }
@@ -180,7 +180,7 @@ export default defineEventHandler(async (event) => {
             'Content-Type': 'application/json'
           },
           body: {
-            message: `🗑️ Supprimer l'ancien article: ${slug}`,
+            message: `content(blog): remove old article "${slug}"`,
             sha: existingFile.sha,
             branch: 'develop'
           }
@@ -195,7 +195,7 @@ export default defineEventHandler(async (event) => {
             'Content-Type': 'application/json'
           },
           body: {
-            message: `✏️ Modifier l'article: ${title}`,
+            message: `content(blog): update article "${cleanSlug}"`,
             content: Buffer.from(markdownContent).toString('base64'),
             sha: existingFile.sha,
             branch: 'develop'
@@ -262,7 +262,7 @@ export default defineEventHandler(async (event) => {
           'Content-Type': 'application/json'
         },
         body: {
-          message: `🗑️ Supprimer l'article: ${slug}`,
+          message: `content(blog): remove article "${slug}"`,
           sha: existingFile.sha,
           branch: 'develop'
         }

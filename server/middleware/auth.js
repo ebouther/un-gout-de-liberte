@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken'
+
 export default defineEventHandler(async (event) => {
     if (event.node.req.url?.startsWith('/api/admin/') &&
         !event.node.req.url?.startsWith('/api/admin/auth/')) {

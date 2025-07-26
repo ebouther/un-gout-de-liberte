@@ -5,19 +5,16 @@
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
 module.exports = {
-  content: ['./**/*.{html,js,vue}', './node_modules/tw-elements/dist/js/**/*.js'],
+  content: [
+    './components/**/*.{vue,js,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
+    './content/**/*.md',
+    './app.vue',
+    './node_modules/tw-elements/dist/js/**/*.js'
+  ],
   plugins: [require('tw-elements/dist/plugin.cjs')],
   theme: {},
-  variants: {},
-  purge: {
-    // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
-    enabled: process.env.NODE_ENV === 'production',
-    content: [
-      'components/**/*.vue',
-      'layouts/**/*.vue',
-      'pages/**/*.vue',
-      'plugins/**/*.js',
-      'content/**/*.md',
-    ],
-  }
+  variants: {}
 }
