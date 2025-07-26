@@ -5,10 +5,9 @@ description: >-
   vos créations maison.
 category: recettes
 status: published
-date: '2025-07-25T22:00:00.000Z'
+date: '2025-07-25T20:00:00.000Z'
 slug: bienvenue-blog
 readingTime: 1
-image: 'http://google.com'
 ---
 # Bienvenue sur notre blog !
 
