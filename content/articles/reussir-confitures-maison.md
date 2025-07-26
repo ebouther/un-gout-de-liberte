@@ -48,4 +48,4 @@ Les **confitures maison** sont un véritable plaisir à déguster et à offrir. 
 
 ---
 
-*Envie de découvrir nos confitures artisanales ? [Découvrez notre gamme](/produits) !*
+*Envie de découvrir nos confitures artisanales ? [Découvrez notre gamme](#produits) !*

@@ -14,10 +14,10 @@ export default defineEventHandler(async (event) => {
         })
         const products = productsRes.data
 
-        // 2. Charger tous les prix (jusqu'à 100 par page)
+        // 2. Charger tous les prix (jusqu'à 100 par page) - ADMIN voit tout
         const pricesRes = await stripe.prices.list({
-            limit: 100,
-            active: true
+            limit: 100
+            // Pas de filtre active: true pour l'admin
         })
         const prices = pricesRes.data
 

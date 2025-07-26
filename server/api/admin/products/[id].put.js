@@ -43,35 +43,79 @@ export default defineEventHandler(async (event) => {
 
         console.log(`✅ Produit mis à jour: ${productId}`)
 
-        // Récupérer les prix existants avec retry
+        // Récupérer les prix existants avec retry - ADMIN voit tout
         const existingPrices = await rateLimiter.execute(() =>
             stripe.prices.list({
                 product: productId,
+                // Pas de filtre active: true pour pouvoir gérer les prix inactifs
                 limit: 100
             })
         )
 
         // Traiter les prix un par un pour éviter les rate limits
         const processedPrices = []
+        console.log(`🔍 Traitement de ${prices.length} prix(s)`)
 
         for (const priceData of prices) {
+            console.log(`🔍 Traitement du prix:`, priceData)
             try {
                 if (priceData.id) {
-                    // Prix existant - mise à jour des champs modifiables uniquement
+                    // Prix existant - vérifier si le unit_amount a changé
                     const existingPrice = existingPrices.data.find(p => p.id === priceData.id)
                     if (existingPrice) {
-                        const updatedPrice = await rateLimiter.execute(() =>
-                            stripe.prices.update(priceData.id, {
-                                nickname: priceData.nickname || undefined,
-                                active: priceData.active ?? true,
-                                metadata: {
-                                    weight: priceData.weight,
-                                    updated_by: 'admin_interface'
-                                }
-                            })
-                        )
-                        processedPrices.push(updatedPrice)
-                        console.log(`✅ Prix mis à jour: ${priceData.id}`)
+                        const newUnitAmount = Math.round(priceData.unit_amount)
+                        const oldUnitAmount = existingPrice.unit_amount
+                        
+                        if (newUnitAmount !== oldUnitAmount) {
+                            // Le prix a changé - il faut créer un nouveau prix et désactiver l'ancien
+                            console.log(`💰 Prix changé de ${oldUnitAmount} à ${newUnitAmount} centimes, création d'un nouveau prix`)
+                            
+                            // Créer le nouveau prix
+                            const newPrice = await rateLimiter.execute(() =>
+                                stripe.prices.create({
+                                    unit_amount: newUnitAmount,
+                                    currency: 'eur',
+                                    product: productId,
+                                    nickname: priceData.nickname || undefined,
+                                    active: priceData.active ?? true,
+                                    metadata: {
+                                        weight: priceData.weight,
+                                        updated_by: 'admin_interface',
+                                        replaced_price: priceData.id // Référence vers l'ancien prix
+                                    }
+                                })
+                            )
+                            
+                            // Désactiver l'ancien prix
+                            await rateLimiter.execute(() =>
+                                stripe.prices.update(priceData.id, {
+                                    active: false,
+                                    metadata: {
+                                        ...existingPrice.metadata,
+                                        replaced_by: newPrice.id,
+                                        deactivated_by: 'admin_interface',
+                                        deactivated_at: new Date().toISOString()
+                                    }
+                                })
+                            )
+                            
+                            processedPrices.push(newPrice)
+                            console.log(`✅ Nouveau prix créé: ${newPrice.id}, ancien prix désactivé: ${priceData.id}`)
+                        } else {
+                            // Le prix n'a pas changé, juste mettre à jour les autres champs
+                            const updatedPrice = await rateLimiter.execute(() =>
+                                stripe.prices.update(priceData.id, {
+                                    nickname: priceData.nickname || undefined,
+                                    active: priceData.active ?? true,
+                                    metadata: {
+                                        weight: priceData.weight,
+                                        updated_by: 'admin_interface'
+                                    }
+                                })
+                            )
+                            processedPrices.push(updatedPrice)
+                            console.log(`✅ Prix mis à jour (sans changement de montant): ${priceData.id}`)
+                        }
                     }
                 } else {
                     // Nouveau prix

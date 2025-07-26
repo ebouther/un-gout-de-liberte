@@ -38,7 +38,7 @@
                                   </a>
                                 </h3>
                                 <p class="ml-4">
-                                  {{ formatPrice(product.price) }}
+                                  {{ formatPrice(product) }}
                                 </p>
                               </div>
                               <p v-if="product.price?.metadata?.weight" class="mt-1 text-sm text-gray-500">
@@ -216,11 +216,38 @@ export default {
       return p.substr(0, p.lastIndexOf("/"));
     }
     
-    function formatPrice(price) {
-      if (!price?.unit_amount) return ''
-      const amount = price.unit_amount / 100
-      const currency = price.currency === 'eur' ? '€' : price.currency?.toUpperCase() || ''
-      return `${amount.toFixed(2)} ${currency}`
+    function formatPrice(product) {
+      // Cas 1: Structure moderne avec price.unit_amount
+      if (product?.price?.unit_amount) {
+        const amount = product.price.unit_amount / 100
+        const currency = product.price.currency === 'eur' ? '€' : product.price.currency?.toUpperCase() || ''
+        return `${amount.toFixed(2)} ${currency}`
+      }
+      
+      // Cas 2: Ancien format avec price direct (nombre)
+      if (typeof product?.price === 'number') {
+        return `${product.price.toFixed(2)} €`
+      }
+      
+      // Cas 3: Produit avec variantPrice
+      if (product?.variantPrice) {
+        if (typeof product.variantPrice === 'number') {
+          return `${product.variantPrice.toFixed(2)} €`
+        }
+        if (product.variantPrice.unit_amount) {
+          const amount = product.variantPrice.unit_amount / 100
+          return `${amount.toFixed(2)} €`
+        }
+      }
+      
+      // Cas 4: Ancien format où le prix est stocké différemment
+      if (product?.unit_amount) {
+        const amount = product.unit_amount / 100
+        return `${amount.toFixed(2)} €`
+      }
+      
+      // Si aucun prix trouvé, chercher dans les métadonnées ou autres propriétés
+      return 'Prix indisponible'
     }
 
     return {

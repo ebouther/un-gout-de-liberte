@@ -505,6 +505,12 @@ const onArticleSaved = (savedArticle) => {
 }
 
 const onProductSaved = (savedProduct) => {
+  if (!savedProduct || !savedProduct.id) {
+    console.error('Produit sauvegardé invalide:', savedProduct)
+    showStatus('Erreur: produit invalide reçu', 'error')
+    return
+  }
+
   if (editingProduct.value) {
     // Mode édition : mettre à jour le produit dans la liste
     const index = products.value.findIndex(p => p.id === savedProduct.id)
