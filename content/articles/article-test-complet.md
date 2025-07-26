@@ -1,10 +1,10 @@
 ---
-title: Article Test Complet
-description: Test du cycle complet
+title: Article Test Complet MODIFIÉ
+description: Description modifiée
 category: general
-status: draft
-date: '2025-07-26T16:29:04.478Z'
+status: published
+date: '2025-07-26T16:29:54.273Z'
 slug: article-test-complet
 readingTime: 1
 ---
-Contenu initial
+Contenu modifié !
