@@ -1,9 +1,12 @@
 ---
 title: ASHomer
 description: Un déli-délicieux donut
-date: 1652322881
+category: general
+status: published
+date: '1970-01-20T01:58:00.000Z'
+slug: article-1
+readingTime: 1
 ---
-
 ![image](https://intrld.com/wp-content/uploads/2018/03/les-simpson-donut.jpg)
 
 Que voyez-vous ?
