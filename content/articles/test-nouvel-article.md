@@ -1,9 +1,9 @@
 ---
-title: test nouvel article
+title: test nouvel article 2
 description: test nouvel article
 category: general
-status: draft
-date: '2025-07-26T14:05:00.000Z'
+status: published
+date: '2025-07-26T12:05:00.000Z'
 slug: test-nouvel-article
 readingTime: 1
 ---
