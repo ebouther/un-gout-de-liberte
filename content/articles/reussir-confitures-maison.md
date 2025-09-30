@@ -1,14 +1,14 @@
 ---
-title: "Comment réussir ses confitures maison"
-description: "Découvrez tous nos secrets pour réaliser des confitures parfaites avec des fruits de saison."
-date: "2025-07-25"
-category: "recettes"
-status: "published"
-author: "Justine DUMESNIL"
-image: "/logo.png"
-slug: "reussir-confitures-maison"
+title: Comment réussir ses confitures maison
+description: >-
+  Découvrez tous nos secrets pour réaliser des confitures parfaites avec des
+  fruits de saison.
+category: recettes
+status: draft
+date: '2025-07-25T00:00:00.000Z'
+slug: reussir-confitures-maison
+readingTime: 2
 ---
-
 # Comment réussir ses confitures maison
 
 Les **confitures maison** sont un véritable plaisir à déguster et à offrir. Voici nos conseils pour réussir vos préparations !
