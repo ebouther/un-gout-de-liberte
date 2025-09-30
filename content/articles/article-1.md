@@ -2,7 +2,7 @@
 title: ASHomer
 description: Un déli-délicieux donut
 category: recettes
-status: published
+status: draft
 date: '2025-07-26T08:10:00.000Z'
 slug: article-1
 readingTime: 1
