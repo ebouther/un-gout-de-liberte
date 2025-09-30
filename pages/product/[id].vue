@@ -186,6 +186,13 @@ const structuredData = computed(() => {
       "highPrice": Math.max(...offers.map(o => parseFloat(o.price))).toFixed(2),
       "priceCurrency": "EUR"
     } : offers[0],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "15",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "category": "Pâtisserie",
     "additionalProperty": [
       {

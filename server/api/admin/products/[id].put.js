@@ -65,11 +65,11 @@ export default defineEventHandler(async (event) => {
                     if (existingPrice) {
                         const newUnitAmount = Math.round(priceData.unit_amount)
                         const oldUnitAmount = existingPrice.unit_amount
-                        
+
                         if (newUnitAmount !== oldUnitAmount) {
                             // Le prix a changé - il faut créer un nouveau prix et désactiver l'ancien
                             console.log(`💰 Prix changé de ${oldUnitAmount} à ${newUnitAmount} centimes, création d'un nouveau prix`)
-                            
+
                             // Créer le nouveau prix
                             const newPrice = await rateLimiter.execute(() =>
                                 stripe.prices.create({
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
                                     }
                                 })
                             )
-                            
+
                             // Désactiver l'ancien prix
                             await rateLimiter.execute(() =>
                                 stripe.prices.update(priceData.id, {
@@ -98,7 +98,7 @@ export default defineEventHandler(async (event) => {
                                     }
                                 })
                             )
-                            
+
                             processedPrices.push(newPrice)
                             console.log(`✅ Nouveau prix créé: ${newPrice.id}, ancien prix désactivé: ${priceData.id}`)
                         } else {

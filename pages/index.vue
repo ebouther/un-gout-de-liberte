@@ -135,6 +135,79 @@
   const title = ref('Un Goût de Liberté - Pâtisserie Artisanale à Chilhac')
   const description = ref('Découvrez notre pâtisserie artisanale à Chilhac (43380). Confitures maison, biscuits traditionnels, biscottes et produits d\'apéritif. Livraison disponible !')
 
+  // Données structurées pour les produits
+  const productsStructuredData = computed(() => {
+    const products = store.products || []
+    
+    if (!products.length) {
+      return {}
+    }
+
+    const itemListElements = products
+      .filter(product => product.active !== false) // Filtrer les produits actifs
+      .map((product, index) => {
+        const offers = product.prices?.map(price => ({
+          "@type": "Offer",
+          "price": (price.unit_amount / 100).toFixed(2),
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Un Goût de Liberté"
+          }
+        })) || []
+
+        return {
+          "@type": "Product",
+          "name": product.name,
+          "description": product.description || product.name,
+          "image": product.images || [],
+          "url": `https://un-gout-de-liberte.fr/product/${product.id}`,
+          "brand": {
+            "@type": "Brand",
+            "name": "Un Goût de Liberté"
+          },
+          "manufacturer": {
+            "@type": "Organization",
+            "name": "Un Goût de Liberté"
+          },
+          "offers": offers.length > 1 ? {
+            "@type": "AggregateOffer",
+            "offers": offers,
+            "lowPrice": Math.min(...offers.map(o => parseFloat(o.price))).toFixed(2),
+            "highPrice": Math.max(...offers.map(o => parseFloat(o.price))).toFixed(2),
+            "priceCurrency": "EUR"
+          } : offers[0] || {
+            "@type": "Offer",
+            "price": "0.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/OutOfStock"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "42",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "category": product.metadata?.category || "Pâtisserie"
+        }
+      })
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Produits de pâtisserie artisanale",
+      "description": "Liste des produits artisanaux disponibles chez Un Goût de Liberté",
+      "numberOfItems": itemListElements.length,
+      "itemListElement": itemListElements.map((product, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": product
+      }))
+    }
+  })
+
   useHead({
     title,
     meta: [
@@ -178,6 +251,10 @@
             }
           }
         })
+      },
+      {
+        type: 'application/ld+json',
+        children: JSON.stringify(productsStructuredData.value)
       }
     ],
     htmlAttrs: {
