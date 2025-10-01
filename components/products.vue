@@ -100,7 +100,7 @@
     <Product 
       :open="!!selectedProduct"
       :product="selectedProduct" 
-      @close="selectedProduct = null" 
+      @close="closeProductModal" 
     />
   </div>
 </template>
@@ -209,6 +209,10 @@ const formatCategoryName = (category) => {
 
 function openProductModal(product) {
   selectedProduct.value = product
+}
+
+function closeProductModal() {
+  selectedProduct.value = null
 }
 
 function clearAllFilters() {

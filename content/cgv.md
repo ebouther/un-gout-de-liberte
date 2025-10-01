@@ -4,14 +4,14 @@
 
 ## 1. INFORMATIONS LÉGALES
 
-**Un Goût de Liberté**  
-Pâtisserie & Biscuiterie artisanale  
-Responsable : Justine DUMESNIL  
-Adresse : 43380 CHILHAC  
-Email : ungoutdeliberte@protonmail.com  
-Forme juridique : Entreprise individuelle  
-Numéro SIRET : [À compléter]  
-Code APE : [À compléter]  
+**Un Goût de Liberté**
+Pâtisserie & Biscuiterie artisanale
+Responsable : Justine DUMESNIL
+Adresse : 43380 CHILHAC
+Email : ungoutdeliberte@protonmail.com
+Forme juridique : Entreprise individuelle
+Numéro SIRET : [À compléter]
+Code APE : [À compléter]
 
 ## 2. OBJET ET CHAMP D'APPLICATION
 
@@ -162,10 +162,10 @@ Tous les éléments du site (textes, photos, logos) sont protégés par le droit
 ### 13.1 Médiation de la consommation
 En cas de litige, le client peut recourir gratuitement au service de médiation de la consommation :
 
-**CNPM - MÉDIATION DE LA CONSOMMATION**  
-27 avenue de la libération  
-42400 Saint-Chamond  
-http://www.cnpm-mediation-consommation.eu  
+**CNPM - MÉDIATION DE LA CONSOMMATION**
+27 avenue de la libération
+42400 Saint-Chamond
+http://www.cnpm-mediation-consommation.eu
 cnpm.mediation@gmail.com
 
 ### 13.2 Droit applicable
@@ -175,9 +175,9 @@ Les présentes CGV sont soumises au droit français. En cas de litige et à déf
 
 Pour toute question relative aux présentes conditions générales de vente ou à vos commandes :
 
-**Un Goût de Liberté**  
-Email : ungoutdeliberte@protonmail.com  
-Adresse : 43380 CHILHAC  
+**Un Goût de Liberté**
+Email : ungoutdeliberte@protonmail.com
+Adresse : 43380 CHILHAC
 
 ---
 

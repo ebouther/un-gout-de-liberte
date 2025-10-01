@@ -1,24 +1,24 @@
 <template>
-  <Dialog :open="open" @close="$emit('close')" class="relative z-50">
+  <Dialog v-if="product" :open="open" class="relative z-50">
     <div class="fixed inset-0 bg-black/30" aria-hidden="true" />
-    
+
     <!-- Desktop Layout -->
     <div class="fixed inset-0 hidden md:flex w-screen items-center justify-center p-4">
-      <DialogPanel 
+      <DialogPanel
         class="w-full max-w-7xl bg-white rounded-lg shadow-xl overflow-hidden max-h-[95vh] flex flex-col"
       >
         <!-- Desktop Header -->
         <div class="flex items-center justify-between p-4 border-b border-gray-100">
           <div class="flex items-center space-x-3">
             <DialogTitle class="text-xl font-semibold text-gray-900">
-              {{ product.name }}
+              {{ product?.name }}
             </DialogTitle>
-            <div v-if="product.metadata?.['Label bio'] === 'Oui'" class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">
+            <div v-if="product?.metadata?.['Label bio'] === 'Oui'" class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">
               Bio
             </div>
           </div>
-          
-          <button 
+
+          <button
             @click="$emit('close')"
             class="text-gray-400 hover:text-gray-600 transition-colors"
           >
@@ -33,14 +33,14 @@
           <!-- Image produit -->
           <div class="w-1/2">
             <div class="w-full h-full overflow-hidden">
-              <img 
-                :src="product.images?.[0] || product.image" 
-                :alt="product.name"
+              <img
+                :src="product?.images?.[0] || product?.image || '/logo.png'"
+                :alt="product?.name || 'Produit'"
                 class="w-full h-full object-cover"
               />
             </div>
           </div>
-          
+
           <!-- Informations et achat -->
           <div class="w-1/2 flex flex-col">
             <!-- Zone d'informations avec scroll si nécessaire -->
@@ -49,7 +49,7 @@
               <div class="mb-4">
                 <h3 class="text-base font-semibold mb-2">Description</h3>
                 <p class="text-gray-600 leading-relaxed text-sm">
-                  {{ product.description }}
+                  {{ product?.description }}
                 </p>
               </div>
 
@@ -72,7 +72,7 @@
                     <div v-if="index === 0" class="absolute -top-1 -right-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium">
                       Moins cher
                     </div>
-                    
+
                     <div class="flex justify-between items-center">
                       <div class="flex-1">
                         <div class="font-medium text-sm">
@@ -160,19 +160,19 @@
                     {{ formatPricePerUnit(selectedVariant) }}
                   </div>
                 </div>
-                
+
                 <!-- Quantité -->
                 <div class="flex items-center space-x-3">
                   <label class="font-medium text-sm">Quantité :</label>
                   <div class="flex items-center border rounded-lg bg-white">
-                    <button 
+                    <button
                       @click="decrementQuantity"
                       class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors text-sm"
                     >
                       -
                     </button>
                     <span class="px-4 py-2 border-x text-sm font-medium">{{ quantity }}</span>
-                    <button 
+                    <button
                       @click="incrementQuantity"
                       class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors text-sm"
                     >
@@ -181,7 +181,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <!-- Bouton ajouter au panier -->
               <button
                 @click="addToCart"
@@ -191,7 +191,7 @@
                 <span v-if="addingToCart">Ajout en cours...</span>
                 <span v-else>Ajouter au panier</span>
               </button>
-              
+
               <!-- Message de confirmation avec transition -->
               <Transition
                 enter-active-class="transition-all duration-300 ease-out"
@@ -217,7 +217,7 @@
         <!-- Mobile Header - Sticky -->
         <div class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
           <div class="flex items-center justify-between p-4">
-            <button 
+            <button
               @click="$emit('close')"
               class="flex items-center text-amber-600 hover:text-amber-700 transition-colors"
             >
@@ -226,7 +226,7 @@
               </svg>
               <span class="text-sm font-medium">Retour</span>
             </button>
-            
+
             <div v-if="product.metadata?.['Label bio'] === 'Oui'" class="bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full">
               Bio
             </div>
@@ -238,9 +238,9 @@
           <!-- Image produit - Grande sur mobile -->
           <div class="relative bg-gray-50">
             <div class="aspect-square w-full">
-              <img 
-                :src="product.images?.[0] || product.image" 
-                :alt="product.name"
+              <img
+                :src="product?.images?.[0] || product?.image"
+                :alt="product?.name"
                 class="w-full h-full object-cover"
               />
             </div>
@@ -251,14 +251,14 @@
             <!-- Titre et prix principal -->
             <div class="space-y-2">
               <h1 class="text-2xl font-bold text-gray-900 leading-tight">
-                {{ product.name }}
+                {{ product?.name }}
               </h1>
-              
+
               <!-- Prix principal visible -->
               <div class="text-3xl font-bold text-amber-600">
                 {{ formatTotalPrice() }}
               </div>
-              
+
               <div v-if="selectedVariant && selectedVariant.price.unit_amount && selectedVariant.weight" class="text-sm text-gray-500 mt-1">
                 {{ formatPricePerUnit(selectedVariant) }}
               </div>
@@ -268,7 +268,7 @@
             <div class="space-y-2">
               <h3 class="text-lg font-semibold text-gray-900">Description</h3>
               <p class="text-gray-600 leading-relaxed">
-                {{ product.description }}
+                {{ product?.description }}
               </p>
             </div>
 
@@ -299,9 +299,9 @@
                         {{ formatPricePerUnit(variant) }}
                       </div>
                     </div>
-                    
+
                     <!-- Indicateur de sélection -->
-                    <div v-if="selectedVariantId === variant.id" 
+                    <div v-if="selectedVariantId === variant.id"
                          class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
                       <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -324,7 +324,7 @@
               </div>
 
               <!-- Poids -->
-              <div v-if="(!productVariants || productVariants.length <= 1) && (product.metadata?.['Poids net total'] || product.metadata?.['Poids net égoutté'])" 
+              <div v-if="(!productVariants || productVariants.length <= 1) && (product.metadata?.['Poids net total'] || product.metadata?.['Poids net égoutté'])"
                    class="bg-gray-50 rounded-lg p-4">
                 <h4 class="font-medium text-gray-900 mb-2 flex items-center">
                   <span class="text-blue-500 mr-2">⚖️</span>
@@ -394,7 +394,7 @@
             <div class="flex items-center space-x-3">
               <span class="font-medium text-sm text-gray-700">Quantité</span>
               <div class="flex items-center border border-gray-300 rounded-lg bg-white">
-                <button 
+                <button
                   @click="decrementQuantity"
                   class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
                 >
@@ -403,7 +403,7 @@
                   </svg>
                 </button>
                 <span class="px-4 py-2 border-x font-medium min-w-[3rem] text-center">{{ quantity }}</span>
-                <button 
+                <button
                   @click="incrementQuantity"
                   class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors"
                 >
@@ -421,7 +421,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Bouton ajouter au panier -->
           <button
             @click="addToCart"
@@ -442,7 +442,7 @@
               Ajouter au panier
             </span>
           </button>
-          
+
           <!-- Message de confirmation -->
           <Transition
             enter-active-class="transition-all duration-300 ease-out"
@@ -473,8 +473,14 @@ import { ref, computed, watch, Transition } from 'vue'
 const { addItem } = useCart()
 
 const props = defineProps({
-  open: Boolean,
-  product: Object
+  open: {
+    type: Boolean,
+    default: false
+  },
+  product: {
+    type: Object,
+    default: null
+  }
 })
 
 const emit = defineEmits(['close'])
@@ -496,12 +502,12 @@ watch(() => props.open, (newVal) => {
 // Variantes du produit (si plusieurs prix disponibles)
 const productVariants = computed(() => {
   if (!props.product?.prices || props.product.prices.length <= 1) return []
-  
+
   // Créer les variantes avec les informations extraites
   const variants = props.product.prices.map((price, index) => {
     // Extraire le poids des métadonnées du prix
     let weight = price.metadata?.weight || price.metadata?.poids || ''
-    
+
     // Si pas de poids dans les métadonnées, essayer d'extraire du nickname
     if (!weight && price.nickname) {
       const weightMatch = price.nickname.match(/(\d+\s*(?:g|kg|ml|l))/i)
@@ -511,13 +517,13 @@ const productVariants = computed(() => {
         weight = price.nickname
       }
     }
-    
+
     // Nom d'affichage - ne pas afficher "Format X"
     let displayName = ''
     if (price.nickname && price.nickname !== weight) {
       displayName = price.nickname.replace(weight, '').trim()
     }
-    
+
     return {
       id: price.id || index,
       name: displayName,
@@ -526,7 +532,7 @@ const productVariants = computed(() => {
       sortPrice: price.unit_amount || 0
     }
   })
-  
+
   // Trier par prix croissant (moins cher en premier)
   return variants.sort((a, b) => a.sortPrice - b.sortPrice)
 })
@@ -546,16 +552,16 @@ const formatPrice = (priceObj) => {
 
 const formatPricePerUnit = (variant) => {
   if (!variant.weight || !variant.price?.unit_amount) return ''
-  
+
   // Nettoyer et extraire le nombre et l'unité du poids
   const cleanWeight = variant.weight.toString().toLowerCase().replace(/\s+/g, '')
   const weightMatch = cleanWeight.match(/(\d+(?:\.\d+)?)\s*(g|kg|ml|l|grammes?|kilogrammes?)/i)
-  
+
   if (!weightMatch) return ''
-  
+
   const weightValue = parseFloat(weightMatch[1])
   const weightUnit = weightMatch[2].toLowerCase()
-  
+
   // Convertir en grammes pour le calcul
   let weightInGrams = weightValue
   if (weightUnit.startsWith('kg') || weightUnit.startsWith('kilogramme')) {
@@ -565,9 +571,9 @@ const formatPricePerUnit = (variant) => {
   } else if (weightUnit === 'ml') {
     weightInGrams = weightValue // Approximation 1ml = 1g
   }
-  
+
   if (weightInGrams <= 0) return ''
-  
+
   const priceIn100g = (variant.price.unit_amount / 100) * (100 / weightInGrams)
   return `${priceIn100g.toFixed(2)}€/100g`
 }
@@ -593,18 +599,18 @@ const displayedMetadataKeys = ['Ingrédients', 'Poids net total', 'Poids net ég
 
 const otherMetadata = computed(() => {
   if (!props.product?.metadata) return {}
-  
+
   const filtered = {}
   Object.entries(props.product.metadata).forEach(([key, value]) => {
     // Exclure les clés techniques et celles déjà affichées
-    if (!displayedMetadataKeys.includes(key) && 
+    if (!displayedMetadataKeys.includes(key) &&
         !['category', 'category_color', 'deprecated', 'has_variants', 'migration_date', 'replaced_by', 'updated_at', 'variant_type'].includes(key) &&
-        value && 
+        value &&
         typeof value === 'string') {
       filtered[key] = value
     }
   })
-  
+
   return filtered
 })
 
@@ -623,12 +629,12 @@ const decrementQuantity = () => {
 }
 
 const addToCart = async () => {
-  if (addingToCart.value) return
-  
+  if (addingToCart.value || !props.product) return
+
   addingToCart.value = true
-  
+
   const currentPrice = selectedVariant.value?.price || props.product?.prices?.[0] || props.product?.price
-  
+
   const productToAdd = {
     id: props.product.id,
     name: props.product.name,
@@ -642,6 +648,7 @@ const addToCart = async () => {
   showAddedMessage.value = true
 
   setTimeout(() => {
+    showAddedMessage.value = false
     emit('close')
   }, 1000)
 }
