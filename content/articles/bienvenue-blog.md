@@ -5,11 +5,11 @@ description: >-
   vos créations maison.
 category: recettes
 status: published
-date: '2025-07-25T18:00:00.000Z'
+date: '2025-07-25T16:00:00.000Z'
 slug: bienvenue-blog
 readingTime: 1
 ---
-# Bienvenue sur notre blog ! 
+# Bienvenue sur notre blog !
 
 Nous sommes ravis de vous accueillir sur le blog **Un Goût de Liberté** ! 
 
