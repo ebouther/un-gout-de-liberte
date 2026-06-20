@@ -1,9 +1,3 @@
-/*
-** TailwindCSS Configuration File
-**
-** Docs: https://tailwindcss.com/docs/configuration
-** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
-*/
 module.exports = {
   content: [
     './components/**/*.{vue,js,ts}',
@@ -15,6 +9,24 @@ module.exports = {
     './node_modules/tw-elements/dist/js/**/*.js'
   ],
   plugins: [require('tw-elements/dist/plugin.cjs')],
-  theme: {},
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
+        body: ['Sora', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        cream: '#F4EFE8',
+        gold: {
+          DEFAULT: '#B88645',
+          dark: '#9A7239',
+        },
+        sage: '#5A7D63',
+        line: '#D6CEC2',
+        espresso: '#1C1814',
+        textbody: '#4D4740',
+      }
+    }
+  },
   variants: {}
 }

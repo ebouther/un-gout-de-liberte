@@ -1,39 +1,49 @@
 <template>
-  <div class="min-h-screen bg-gray-900">
+  <div class="min-h-screen" style="background-color: var(--stone, #F4EFE8);">
     <!-- Navigation -->
-    <nav class="bg-gray-800 border-b border-gray-700">
+    <nav style="background-color: var(--espresso, #3A2C24); border-color: var(--line, #D6CEC2);">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
           <!-- Logo et navigation -->
           <div class="flex items-center">
             <NuxtLink to="/" class="flex items-center space-x-2">
               <img src="/logo.png" alt="Logo" class="h-8 w-8">
-              <span class="text-white font-semibold">Un Goût de Liberté</span>
+              <span style="color: var(--cream, #F4EFE8);" class="font-semibold">Un Goût de Liberté</span>
             </NuxtLink>
             
             <div class="ml-10 flex items-baseline space-x-4">
               <NuxtLink 
                 to="/admin" 
-                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                active-class="bg-gray-900 text-white"
+                style="color: var(--line, #D6CEC2);"
+                class="hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                active-class="font-bold text-white"
               >
                 Produits
               </NuxtLink>
               
               <NuxtLink 
-                to="/admin/orders" 
-                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                active-class="bg-gray-900 text-white"
+                to="/admin?tab=blog" 
+                style="color: var(--line, #D6CEC2);"
+                class="hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                active-class="font-bold text-white"
+              >
+                Articles
+              </NuxtLink>
+              <NuxtLink 
+                to="/admin?tab=orders" 
+                style="color: var(--line, #D6CEC2);"
+                class="hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                active-class="font-bold text-white"
               >
                 Commandes
               </NuxtLink>
-              
               <NuxtLink 
-                to="/admin/analytics" 
-                class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                active-class="bg-gray-900 text-white"
+                to="/admin?tab=gallery" 
+                style="color: var(--line, #D6CEC2);"
+                class="hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                active-class="font-bold text-white"
               >
-                Statistiques
+                Galerie
               </NuxtLink>
             </div>
           </div>
@@ -42,7 +52,8 @@
           <div class="flex items-center space-x-4">
             <button
               @click="exportData"
-              class="text-gray-300 hover:text-white p-2 rounded-md"
+              style="color: var(--line, #D6CEC2);"
+              class="hover:text-white p-2 rounded-md"
               title="Exporter les données"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +63,8 @@
             
             <button
               @click="logout"
-              class="text-gray-300 hover:text-white p-2 rounded-md"
+              style="color: var(--line, #D6CEC2);"
+              class="hover:text-white p-2 rounded-md"
               title="Se déconnecter"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +74,8 @@
             
             <NuxtLink 
               to="/" 
-              class="text-gray-300 hover:text-white p-2 rounded-md"
+              style="color: var(--line, #D6CEC2);"
+              class="hover:text-white p-2 rounded-md"
               title="Voir le site"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,14 +95,16 @@
     <!-- Notifications -->
     <div
       v-if="notification"
-      class="fixed bottom-4 right-4 max-w-sm w-full bg-white rounded-lg shadow-lg pointer-events-auto ring-1 ring-black ring-opacity-5 z-50"
+      style="background-color: var(--cream, #F4EFE8);"
+      class="fixed bottom-4 right-4 max-w-sm w-full rounded-lg shadow-lg pointer-events-auto ring-1 ring-black ring-opacity-5 z-50"
     >
       <div class="p-4">
         <div class="flex items-start">
           <div class="flex-shrink-0">
             <svg
               v-if="notification.type === 'success'"
-              class="h-6 w-6 text-green-400"
+              style="color: var(--sage, #5A7D63);"
+              class="h-6 w-6"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -107,17 +122,18 @@
             </svg>
           </div>
           <div class="ml-3 w-0 flex-1">
-            <p class="text-sm font-medium text-gray-900">
+            <p style="color: var(--espresso, #3A2C24);" class="text-sm font-medium">
               {{ notification.title }}
             </p>
-            <p v-if="notification.message" class="mt-1 text-sm text-gray-500">
+            <p v-if="notification.message" style="color: var(--textbody, #5C4E3D);" class="mt-1 text-sm">
               {{ notification.message }}
             </p>
           </div>
           <div class="ml-4 flex-shrink-0 flex">
             <button
               @click="notification = null"
-              class="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500"
+              style="background-color: var(--cream, #F4EFE8); color: var(--line, #D6CEC2);"
+              class="rounded-md inline-flex hover:text-gray-500"
             >
               <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />

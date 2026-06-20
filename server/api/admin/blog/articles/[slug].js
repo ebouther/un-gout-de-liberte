@@ -1,46 +1,25 @@
-import jwt from 'jsonwebtoken'
 import matter from 'gray-matter'
 
 export default defineEventHandler(async (event) => {
-  // Vérifier l'authentification
+  const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+  verifyAdmin(event)
+
   const config = useRuntimeConfig()
-  const token = getCookie(event, 'admin-auth') || getHeader(event, 'authorization')?.replace('Bearer ', '')
-
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
-
-  try {
-    const secret = config.jwtSecret || process.env.JWT_SECRET || 'fallback-secret'
-    jwt.verify(token, secret)
-  } catch (error) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
-
+  const branch = config.githubBranch || 'develop'
   const method = getMethod(event)
   const slug = getRouterParam(event, 'slug')
 
   if (!slug) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'Slug manquant'
-    })
+    throw createError({ statusCode: 400, statusMessage: 'Slug manquant' })
   }
 
-  // Vérifier la configuration GitHub
   const githubToken = config.githubToken || process.env.GITHUB_TOKEN
-  const githubRepo = config.githubRepo || process.env.GITHUB_REPO || 'ebouther/un-gout-de-liberte'
+  const githubRepo = config.githubRepo || process.env.GITHUB_REPO
 
   if (!githubToken || !githubRepo) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Configuration GitHub manquante. Veuillez configurer GITHUB_TOKEN et GITHUB_REPO dans vos variables d\'environnement.'
+      statusMessage: 'Configuration GitHub manquante'
     })
   }
 
@@ -48,27 +27,18 @@ export default defineEventHandler(async (event) => {
   const filePath = `content/articles/${fileName}`
 
   if (method === 'PUT') {
-    // Mise à jour d'un article
     try {
-      // Récupérer le fichier existant pour obtenir son SHA
       let existingFile
-      console.log(`🔍 Recherche de l'article: ${filePath} sur le repo ${githubRepo}`)
-
       try {
-        existingFile = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=develop`, {
+        existingFile = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=${branch}`, {
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json'
           }
         })
-        console.log(`✅ Article trouvé: ${existingFile.name}`)
       } catch (error) {
-        console.log(`❌ Erreur lors de la recherche:`, error.status, error.statusText)
         if (error.status === 404) {
-          throw createError({
-            statusCode: 404,
-            statusMessage: 'Article non trouvé sur la branche develop'
-          })
+          throw createError({ statusCode: 404, statusMessage: 'Article non trouvé' })
         }
         throw error
       }
@@ -76,36 +46,11 @@ export default defineEventHandler(async (event) => {
       const body = await readBody(event)
       const { title, slug: newSlug, description, category, status, date, image, content } = body
 
-      // Validation des données
-      if (!title?.trim()) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'Le titre est requis'
-        })
-      }
+      if (!title?.trim()) throw createError({ statusCode: 400, statusMessage: 'Le titre est requis' })
+      if (!newSlug?.trim()) throw createError({ statusCode: 400, statusMessage: 'Le slug est requis' })
+      if (!description?.trim()) throw createError({ statusCode: 400, statusMessage: 'La description est requise' })
+      if (!content?.trim()) throw createError({ statusCode: 400, statusMessage: 'Le contenu est requis' })
 
-      if (!newSlug?.trim()) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'Le slug est requis'
-        })
-      }
-
-      if (!description?.trim()) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'La description est requise'
-        })
-      }
-
-      if (!content?.trim()) {
-        throw createError({
-          statusCode: 400,
-          statusMessage: 'Le contenu est requis'
-        })
-      }
-
-      // Nettoyer le nouveau slug
       const cleanSlug = newSlug.trim()
         .toLowerCase()
         .normalize('NFD')
@@ -115,7 +60,6 @@ export default defineEventHandler(async (event) => {
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '')
 
-      // Préparer le contenu markdown avec front matter
       const frontMatter = {
         title: title.trim(),
         description: description.trim(),
@@ -126,37 +70,25 @@ export default defineEventHandler(async (event) => {
         readingTime: Math.ceil(content.trim().split(/\s+/).length / 200)
       }
 
-      if (image?.trim()) {
-        frontMatter.image = image.trim()
-      }
+      if (image?.trim()) frontMatter.image = image.trim()
 
       const markdownContent = matter.stringify(content.trim(), frontMatter)
 
-      // Si le slug a changé, on doit supprimer l'ancien et créer le nouveau
       if (cleanSlug !== slug) {
-        const newFileName = `${cleanSlug}.md`
-        const newFilePath = `content/articles/${newFileName}`
+        const newFilePath = `content/articles/${cleanSlug}.md`
 
-        // Vérifier que le nouveau slug n'existe pas déjà
         try {
-          await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${newFilePath}?ref=develop`, {
+          await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${newFilePath}?ref=${branch}`, {
             headers: {
               'Authorization': `token ${githubToken}`,
               'Accept': 'application/vnd.github.v3+json'
             }
           })
-
-          throw createError({
-            statusCode: 409,
-            statusMessage: 'Un article avec ce slug existe déjà'
-          })
+          throw createError({ statusCode: 409, statusMessage: 'Un article avec ce slug existe déjà' })
         } catch (error) {
-          if (error.status !== 404) {
-            throw error
-          }
+          if (error.status !== 404) throw error
         }
 
-        // Créer le nouveau fichier
         await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${newFilePath}`, {
           method: 'PUT',
           headers: {
@@ -167,11 +99,10 @@ export default defineEventHandler(async (event) => {
           body: {
             message: `content(blog): rename article "${slug}" to "${cleanSlug}"`,
             content: Buffer.from(markdownContent).toString('base64'),
-            branch: 'develop'
+            branch
           }
         })
 
-        // Supprimer l'ancien fichier
         await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
           method: 'DELETE',
           headers: {
@@ -182,11 +113,10 @@ export default defineEventHandler(async (event) => {
           body: {
             message: `content(blog): remove old article "${slug}"`,
             sha: existingFile.sha,
-            branch: 'develop'
+            branch
           }
         })
       } else {
-        // Juste mettre à jour le fichier existant
         await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
           method: 'PUT',
           headers: {
@@ -198,62 +128,35 @@ export default defineEventHandler(async (event) => {
             message: `content(blog): update article "${cleanSlug}"`,
             content: Buffer.from(markdownContent).toString('base64'),
             sha: existingFile.sha,
-            branch: 'develop'
+            branch
           }
         })
       }
 
-      // Retourner l'article mis à jour
-      const updatedArticle = {
-        ...frontMatter,
-        slug: cleanSlug,
-        fileName: `${cleanSlug}.md`,
-        content: content.trim()
-      }
+      const updatedArticle = { ...frontMatter, slug: cleanSlug, fileName: `${cleanSlug}.md`, content: content.trim() }
 
-      return {
-        success: true,
-        message: 'Article mis à jour avec succès sur GitHub',
-        article: updatedArticle,
-        githubSync: true
-      }
-
+      return { success: true, message: 'Article mis à jour avec succès', article: updatedArticle, githubSync: true }
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'article:', error)
-
-      if (error.statusCode) {
-        throw error
-      }
-
-      throw createError({
-        statusCode: 500,
-        statusMessage: `Erreur GitHub: ${error.message || 'Impossible de mettre à jour le fichier'}`
-      })
+      if (error.statusCode) throw error
+      throw createError({ statusCode: 500, statusMessage: `Erreur: ${error.message || 'Impossible de mettre à jour le fichier'}` })
     }
+  }
 
-  } else if (method === 'DELETE') {
-    // Suppression d'un article
+  if (method === 'DELETE') {
     try {
-      // Récupérer le fichier existant pour obtenir son SHA
       let existingFile
       try {
-        existingFile = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=develop`, {
+        existingFile = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=${branch}`, {
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json'
           }
         })
       } catch (error) {
-        if (error.status === 404) {
-          throw createError({
-            statusCode: 404,
-            statusMessage: 'Article non trouvé'
-          })
-        }
+        if (error.status === 404) throw createError({ statusCode: 404, statusMessage: 'Article non trouvé' })
         throw error
       }
 
-      // Supprimer le fichier
       await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
         method: 'DELETE',
         headers: {
@@ -264,33 +167,16 @@ export default defineEventHandler(async (event) => {
         body: {
           message: `content(blog): remove article "${slug}"`,
           sha: existingFile.sha,
-          branch: 'develop'
+          branch
         }
       })
 
-      return {
-        success: true,
-        message: 'Article supprimé avec succès de GitHub',
-        githubSync: true
-      }
-
+      return { success: true, message: 'Article supprimé', githubSync: true }
     } catch (error) {
-      console.error('Erreur lors de la suppression de l\'article:', error)
-
-      if (error.statusCode) {
-        throw error
-      }
-
-      throw createError({
-        statusCode: 500,
-        statusMessage: `Erreur GitHub: ${error.message || 'Impossible de supprimer le fichier'}`
-      })
+      if (error.statusCode) throw error
+      throw createError({ statusCode: 500, statusMessage: `Erreur: ${error.message || 'Impossible de supprimer le fichier'}` })
     }
-
-  } else {
-    throw createError({
-      statusCode: 405,
-      statusMessage: 'Method not allowed'
-    })
   }
+
+  throw createError({ statusCode: 405, statusMessage: 'Method not allowed' })
 })

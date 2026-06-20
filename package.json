@@ -8,7 +8,8 @@
     "build": "nuxi build",
     "dev": "nuxi dev",
     "generate": "nuxi generate",
-    "preview": "nuxi preview"
+    "preview": "nuxi preview",
+    "test": "playwright test --project=firefox"
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.7",
@@ -39,6 +40,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.4.2",
+    "@playwright/test": "^1.55.1",
     "@vueuse/core": "^9.1.0",
     "@vueuse/nuxt": "^9.1.0",
     "nuxt": "^3.17.7",

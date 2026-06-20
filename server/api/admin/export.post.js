@@ -1,5 +1,8 @@
 export default defineEventHandler(async (event) => {
     try {
+        const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+        verifyAdmin(event)
+
         // Rediriger vers le script d'export existant
         const { execSync } = await import('child_process')
         const path = await import('path')

@@ -51,7 +51,10 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'canonical', href: 'https://un-gout-de-liberte.fr' },
         { rel: 'manifest', href: '/manifest.json' },
-        { rel: 'apple-touch-icon', href: '/logo.png' }
+        { rel: 'apple-touch-icon', href: '/logo.png' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Sora:wght@300..700&display=swap' }
       ],
       script: [
         {
@@ -66,12 +69,14 @@ export default defineNuxtConfig({
             "image": "https://un-gout-de-liberte.fr/logo.png",
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "",
+              "streetAddress": "Le Bourg",
               "addressLocality": "CHILHAC",
               "postalCode": "43380",
               "addressRegion": "Haute-Loire",
               "addressCountry": "FR"
             },
+            "telephone": "+33-6-50-71-66-01",
+            "email": "ungoutdeliberte@protonmail.com",
             "geo": {
               "@type": "GeoCoordinates",
               "latitude": 45.1167,
@@ -95,18 +100,65 @@ export default defineNuxtConfig({
                   "@type": "Offer",
                   "itemOffered": {
                     "@type": "Product",
-                    "name": "Pâtisseries artisanales"
+                    "name": "Pâtisseries artisanales",
+                    "offers": {
+                      "@type": "AggregateOffer",
+                      "priceCurrency": "EUR",
+                      "lowPrice": "2.90",
+                      "highPrice": "6.50",
+                      "offerCount": "25",
+                      "availability": "https://schema.org/InStock",
+                      "url": "https://un-gout-de-liberte.fr"
+                    }
                   }
                 },
                 {
                   "@type": "Offer",
                   "itemOffered": {
                     "@type": "Product",
-                    "name": "Biscuiterie artisanale"
+                    "name": "Biscuiterie artisanale",
+                    "offers": {
+                      "@type": "AggregateOffer",
+                      "priceCurrency": "EUR",
+                      "lowPrice": "2.90",
+                      "highPrice": "6.45",
+                      "offerCount": "21",
+                      "availability": "https://schema.org/InStock",
+                      "url": "https://un-gout-de-liberte.fr"
+                    }
                   }
                 }
               ]
-            }
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.8",
+              "reviewCount": "54",
+              "bestRating": "5",
+              "worstRating": "1"
+            },
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Saturday", "Wednesday"],
+                "opens": "14:00",
+                "closes": "17:00"
+              },
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Tuesday", "Thursday", "Friday"],
+                "opens": "11:00",
+                "closes": "12:30"
+              },
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Tuesday", "Thursday", "Friday"],
+                "opens": "14:00",
+                "closes": "17:00"
+              }
+            ],
+            "paymentAccepted": "Cash, Credit Card",
+            "currenciesAccepted": "EUR"
           })
         }
       ]
@@ -130,6 +182,7 @@ export default defineNuxtConfig({
     jwtSecret: process.env.JWT_SECRET,
     githubToken: process.env.GITHUB_TOKEN,
     githubRepo: process.env.GITHUB_REPO || 'ebouther/un-gout-de-liberte',
+    githubBranch: process.env.GITHUB_BRANCH || 'develop',
     public: {
       // Variables accessibles côté client
       stripePk: process.env.STRIPE_PK,
@@ -188,8 +241,9 @@ export default defineNuxtConfig({
       ]
 
       // Routes dynamiques des produits
+      let routes = [...staticRoutes]
+
       try {
-        // Utiliser l'API Stripe directement pendant la génération
         const Stripe = (await import('stripe')).default
         const stripe = new Stripe(process.env.STRIPE_SK)
 
@@ -205,11 +259,42 @@ export default defineNuxtConfig({
           lastmod: new Date(product.updated * 1000 || product.created * 1000 || Date.now()).toISOString()
         }))
 
-        return [...staticRoutes, ...productRoutes]
-      } catch (error) {
-        console.warn('Erreur lors de la génération des routes produits pour le sitemap:', error)
-        return staticRoutes
+        routes = [...routes, ...productRoutes]
+      } catch {
+        // Products unavailable during build
       }
+
+      // Routes dynamiques des articles de blog
+      try {
+        const githubToken = process.env.GITHUB_TOKEN
+        const githubRepo = process.env.GITHUB_REPO || 'ebouther/un-gout-de-liberte'
+        const branch = process.env.GITHUB_BRANCH || 'develop'
+
+        if (githubToken && githubRepo) {
+          const articles = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/content/articles?ref=${branch}`, {
+            headers: {
+              'Authorization': `token ${githubToken}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          })
+
+          if (Array.isArray(articles)) {
+            const blogRoutes = articles
+              .filter(f => f.name.endsWith('.md'))
+              .map(f => ({
+                url: `/blog/${f.name.replace('.md', '')}`,
+                changefreq: 'weekly',
+                priority: 0.6
+              }))
+
+            routes = [...routes, ...blogRoutes]
+          }
+        }
+      } catch {
+        // Blog articles unavailable during build
+      }
+
+      return routes
     },
     defaults: {
       changefreq: 'monthly',
@@ -230,15 +315,15 @@ export default defineNuxtConfig({
       name: 'Un Goût de Liberté',
       author: 'Un Goût de Liberté',
       description: 'Pâtisserie & Biscuiterie artisanale à CHILHAC',
-      theme_color: '#f59e0b',
+      theme_color: '#F4EFE8',
       lang: 'fr'
     },
     manifest: {
       name: 'Un Goût de Liberté - Pâtisserie artisanale',
       short_name: 'Un Goût de Liberté',
       description: 'Pâtisserie & Biscuiterie artisanale à CHILHAC',
-      theme_color: '#f59e0b',
-      background_color: '#ffffff',
+      theme_color: '#F4EFE8',
+      background_color: '#F4EFE8',
       display: 'standalone',
       orientation: 'portrait',
       start_url: '/',

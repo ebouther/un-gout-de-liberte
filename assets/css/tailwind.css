@@ -5,7 +5,20 @@
 @layer base {
   html {
     @apply scroll-smooth;
-    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+  }
+
+  ::selection {
+    background-color: #B88645;
+    color: white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-gold;
   }
 }
 
@@ -41,9 +54,5 @@
 @layer utilities {
   .animate-pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  .transition-all-smooth {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }

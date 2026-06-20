@@ -1,12 +1,37 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
+const loginAttempts = new Map()
+
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, data] of loginAttempts) {
+    if (now - data.resetAt > 0) loginAttempts.delete(key)
+  }
+}, 60000)
+
 export default defineEventHandler(async (event) => {
   try {
+    const ip = getHeader(event, 'x-forwarded-for') || event.node.req.socket.remoteAddress || 'unknown'
+    const now = Date.now()
+    const attempt = loginAttempts.get(ip) || { count: 0, resetAt: now + 900000 }
+
+    if (now < attempt.resetAt && attempt.count >= 5) {
+      const retryAfter = Math.ceil((attempt.resetAt - now) / 1000)
+      setHeader(event, 'Retry-After', String(retryAfter))
+      throw createError({
+        statusCode: 429,
+        statusMessage: `Trop de tentatives. Réessayez dans ${retryAfter} secondes.`
+      })
+    }
+
+    if (now >= attempt.resetAt) {
+      attempt.count = 0
+      attempt.resetAt = now + 900000
+    }
+
     const body = await readBody(event)
     const { password } = body
-
-    console.log('🔍 LOGIN API appelée avec:', { passwordLength: password?.length })
 
     if (!password) {
       throw createError({
@@ -18,13 +43,6 @@ export default defineEventHandler(async (event) => {
     // Récupérer la configuration runtime
     const config = useRuntimeConfig()
     const adminPassword = config.adminPassword || process.env.ADMIN_PASSWORD
-
-    console.log('=== DEBUG LOGIN ===')
-    console.log('Mot de passe reçu:', password)
-    console.log('Mot de passe attendu:', adminPassword)
-    console.log('Config disponible:', !!config.adminPassword)
-    console.log('JWT Secret disponible:', !!config.jwtSecret)
-    console.log('==================')
 
     if (!adminPassword) {
       console.error('ADMIN_PASSWORD non configuré')
@@ -41,21 +59,28 @@ export default defineEventHandler(async (event) => {
       // Mot de passe hashé avec bcrypt
       isValid = await bcrypt.compare(password, adminPassword)
     } else {
-      // Comparaison directe (pour le développement uniquement)
       isValid = password === adminPassword
-      console.log('Comparaison directe, résultat:', isValid)
     }
 
     if (!isValid) {
-      console.log('❌ Mot de passe incorrect')
+      attempt.count++
+      loginAttempts.set(ip, attempt)
       throw createError({
         statusCode: 401,
         statusMessage: 'Mot de passe incorrect'
       })
     }
 
+    loginAttempts.delete(ip)
+
     // Créer un token JWT
-    const secret = config.jwtSecret || process.env.JWT_SECRET || 'fallback-secret'
+    if (!config.jwtSecret) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Configuration JWT manquante'
+      })
+    }
+    const secret = config.jwtSecret
     const token = jwt.sign(
       {
         role: 'admin',
@@ -67,8 +92,6 @@ export default defineEventHandler(async (event) => {
       }
     )
 
-    console.log('✅ Token généré, définition du cookie')
-
     // Définir le cookie sécurisé
     setCookie(event, 'admin-auth', token, {
       httpOnly: true,
@@ -76,8 +99,6 @@ export default defineEventHandler(async (event) => {
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 // 24 heures
     })
-
-    console.log('🎉 Connexion réussie')
 
     return {
       success: true,

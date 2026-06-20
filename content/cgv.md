@@ -10,8 +10,8 @@ Responsable : Justine DUMESNIL
 Adresse : 43380 CHILHAC
 Email : ungoutdeliberte@protonmail.com
 Forme juridique : Entreprise individuelle
-Numéro SIRET : [À compléter]
-Code APE : [À compléter]
+Numéro SIRET : 89964837200014
+Code APE : 1071D
 
 ## 2. OBJET ET CHAMP D'APPLICATION
 

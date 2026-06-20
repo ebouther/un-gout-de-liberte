@@ -5,7 +5,7 @@
       <!-- Résumé des frais -->
       <div class="flex items-center justify-between">
         <span class="text-sm font-medium text-gray-700">Livraison Colissimo</span>
-        <span class="font-bold text-amber-600">
+        <span class="font-bold text-gold">
           {{ formatShippingPrice(currentShippingCost) }}
         </span>
       </div>
@@ -26,15 +26,15 @@
       </div>
 
       <!-- Progression vers livraison gratuite -->
-      <div v-else-if="remainingForFreeShipping > 0 && remainingForFreeShipping <= freeShippingThreshold" class="p-2 bg-amber-50 border border-amber-200 rounded-lg">
+      <div v-else-if="remainingForFreeShipping > 0 && remainingForFreeShipping <= freeShippingThreshold" class="p-2 bg-cream border border-line">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-xs font-medium text-amber-800">
+          <span class="text-xs font-medium text-espresso">
             Plus que {{ remainingForFreeShipping.toFixed(2) }}€ pour la livraison gratuite
           </span>
         </div>
-        <div class="w-full bg-amber-200 rounded-full h-1">
+        <div class="w-full bg-line h-1">
           <div 
-            class="bg-amber-600 h-1 rounded-full transition-all duration-300"
+            class="bg-gold h-1 transition-all duration-300"
             :style="{ width: `${Math.min((cartTotal / freeShippingThreshold) * 100, 100)}%` }"
           ></div>
         </div>

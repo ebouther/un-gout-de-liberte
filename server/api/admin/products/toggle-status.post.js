@@ -4,6 +4,9 @@ const stripe = new Stripe(process.env.STRIPE_SK || process.env.STRIPE_SECRET_KEY
 
 export default defineEventHandler(async (event) => {
     try {
+        const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+        verifyAdmin(event)
+
         const body = await readBody(event)
         const { productId, active } = body
 

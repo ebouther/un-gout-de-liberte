@@ -64,12 +64,12 @@
                     :class="[
                       'w-full p-3 border rounded-lg text-left transition-all duration-200 relative',
                       selectedVariantId === variant.id
-                        ? 'border-amber-500 bg-amber-50 text-amber-700 ring-2 ring-amber-200'
-                        : 'border-gray-200 hover:border-amber-300 hover:shadow-sm'
+                        ? 'border-gold bg-cream text-espresso'
+                        : 'border-gray-200 hover:border-gold/50 hover:shadow-sm'
                     ]"
                   >
                     <!-- Badge "Moins cher" pour la première variante -->
-                    <div v-if="index === 0" class="absolute -top-1 -right-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium">
+                    <div v-if="index === 0" class="absolute -top-1 -right-1 bg-sage text-white text-xs px-1.5 py-0.5 font-medium">
                       Moins cher
                     </div>
 
@@ -83,7 +83,7 @@
                         </div>
                       </div>
                       <div class="text-right ml-3">
-                        <div class="font-semibold text-sm text-amber-600">{{ formatPrice(variant.price) }}</div>
+                        <div class="font-semibold text-sm text-gold">{{ formatPrice(variant.price) }}</div>
                         <div v-if="variant.price.unit_amount && variant.weight" class="text-xs text-gray-500">
                           {{ formatPricePerUnit(variant) }}
                         </div>
@@ -121,7 +121,7 @@
                 </div>
 
                 <!-- Origine et certifications -->
-                <div v-if="product.metadata?.['*'] || product.metadata?.['°']" class="border-l-4 border-amber-500 pl-3">
+                <div v-if="product.metadata?.['*'] || product.metadata?.['°']" class="border-l-4 border-sage pl-3">
                   <h4 class="font-medium text-gray-800 mb-1 text-sm">🏷️ Certifications</h4>
                   <div class="text-xs text-gray-600 space-y-1">
                     <p v-if="product.metadata?.['*']" class="flex items-center">
@@ -153,7 +153,7 @@
               <div class="flex items-center justify-between mb-6">
                 <!-- Prix total calculé -->
                 <div class="text-left">
-                  <div class="text-2xl font-bold text-amber-600">
+                  <div class="text-2xl font-bold text-gold">
                     {{ formatTotalPrice() }}
                   </div>
                   <div v-if="selectedVariant && selectedVariant.price.unit_amount && selectedVariant.weight" class="text-sm text-gray-500 mt-1">
@@ -186,25 +186,19 @@
               <button
                 @click="addToCart"
                 :disabled="addingToCart"
-                class="w-full bg-amber-600 text-white py-3 px-4 rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm shadow-md"
+                class="w-full bg-gold text-white py-3 px-4 hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm font-body"
               >
-                <span v-if="addingToCart">Ajout en cours...</span>
+                <span v-if="addingToCart" class="flex items-center justify-center">
+                  <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Ajout en cours...
+                </span>
                 <span v-else>Ajouter au panier</span>
               </button>
 
-              <!-- Message de confirmation avec transition -->
-              <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 transform translate-y-2"
-                enter-to-class="opacity-100 transform translate-y-0"
-                leave-active-class="transition-all duration-300 ease-in"
-                leave-from-class="opacity-100 transform translate-y-0"
-                leave-to-class="opacity-0 transform translate-y-2"
-              >
-                <div v-if="showAddedMessage" class="text-green-600 font-medium text-center mt-3 text-sm">
-                  ✓ Produit ajouté au panier !
-                </div>
-              </Transition>
+
             </div>
           </div>
         </div>
@@ -219,7 +213,7 @@
           <div class="flex items-center justify-between p-4">
             <button
               @click="$emit('close')"
-              class="flex items-center text-amber-600 hover:text-amber-700 transition-colors"
+              class="flex items-center text-gold hover:text-gold-dark transition-colors"
             >
               <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -255,7 +249,7 @@
               </h1>
 
               <!-- Prix principal visible -->
-              <div class="text-3xl font-bold text-amber-600">
+              <div class="text-3xl font-bold text-gold">
                 {{ formatTotalPrice() }}
               </div>
 
@@ -283,7 +277,7 @@
                   :class="[
                     'w-full p-4 border-2 rounded-xl text-left transition-all duration-200 relative',
                     selectedVariantId === variant.id
-                      ? 'border-amber-500 bg-amber-50 shadow-md'
+                      ? 'border-gold bg-cream shadow-md'
                       : 'border-gray-200 hover:border-gray-300'
                   ]"
                 >
@@ -292,7 +286,7 @@
                       <div class="font-medium text-gray-900">
                         {{ variant.weight || `Format ${index + 1}` }}
                       </div>
-                      <div class="text-2xl font-bold text-amber-600">
+                      <div class="text-2xl font-bold text-gold">
                         {{ formatPrice(variant.price) }}
                       </div>
                       <div class="text-sm text-gray-500">
@@ -302,7 +296,7 @@
 
                     <!-- Indicateur de sélection -->
                     <div v-if="selectedVariantId === variant.id"
-                         class="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
+                         class="w-6 h-6 bg-gold flex items-center justify-center">
                       <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                       </svg>
@@ -350,9 +344,9 @@
               </div>
 
               <!-- Certifications -->
-              <div v-if="product.metadata?.['*'] || product.metadata?.['°']" class="bg-amber-50 rounded-lg p-4">
+              <div v-if="product.metadata?.['*'] || product.metadata?.['°']" class="bg-cream rounded-lg p-4">
                 <h4 class="font-medium text-gray-900 mb-2 flex items-center">
-                  <span class="text-amber-500 mr-2">🏷️</span>
+                  <span class="text-sage mr-2">🏷️</span>
                   Certifications
                 </h4>
                 <div class="text-sm text-gray-600 space-y-1">
@@ -416,7 +410,7 @@
 
             <!-- Prix total -->
             <div class="text-right">
-              <div class="text-xl font-bold text-amber-600">
+              <div class="text-xl font-bold text-gold">
                 {{ formatTotalPrice() }}
               </div>
             </div>
@@ -426,7 +420,7 @@
           <button
             @click="addToCart"
             :disabled="addingToCart"
-            class="w-full bg-amber-600 text-white py-4 px-6 rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg shadow-lg active:transform active:scale-[0.98]"
+            class="w-full bg-gold text-white py-4 px-6 hover:bg-gold-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg active:scale-[0.98]"
           >
             <span v-if="addingToCart" class="flex items-center justify-center">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -443,22 +437,6 @@
             </span>
           </button>
 
-          <!-- Message de confirmation -->
-          <Transition
-            enter-active-class="transition-all duration-300 ease-out"
-            enter-from-class="opacity-0 transform translate-y-2"
-            enter-to-class="opacity-100 transform translate-y-0"
-            leave-active-class="transition-all duration-300 ease-in"
-            leave-from-class="opacity-100 transform translate-y-0"
-            leave-to-class="opacity-0 transform translate-y-2"
-          >
-            <div v-if="showAddedMessage" class="text-green-600 font-medium text-center mt-3 flex items-center justify-center">
-              <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-              </svg>
-              Produit ajouté au panier !
-            </div>
-          </Transition>
         </div>
       </DialogPanel>
     </div>
@@ -471,6 +449,9 @@ import { ref, computed, watch, Transition } from 'vue'
 
 // Import du composable pour le panier
 const { addItem } = useCart()
+import { useStore } from '~/store/cart'
+const cartStore = useStore()
+const openCart = cartStore.open
 
 const props = defineProps({
   open: {
@@ -488,14 +469,12 @@ const emit = defineEmits(['close'])
 const quantity = ref(1)
 const selectedVariantId = ref(null)
 const addingToCart = ref(false)
-const showAddedMessage = ref(false)
 
 // Réinitialiser quand on ouvre/ferme la modale
 watch(() => props.open, (newVal) => {
   if (newVal) {
     quantity.value = 1
     selectedVariantId.value = productVariants.value?.[0]?.id || null
-    showAddedMessage.value = false
   }
 })
 
@@ -645,11 +624,7 @@ const addToCart = async () => {
 
   addItem(productToAdd, quantity.value)
   addingToCart.value = false
-  showAddedMessage.value = true
-
-  setTimeout(() => {
-    showAddedMessage.value = false
-    emit('close')
-  }, 1000)
+  emit('close')
+  openCart()
 }
 </script>

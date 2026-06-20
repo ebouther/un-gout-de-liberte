@@ -20,13 +20,18 @@
                     </div>
                   </div>
 
-                  <div class="mt-8">
-                    <div class="flow-root">
-                      <!-- Items list -->
-                      <ul v-if="Object.keys(cart.items).length > 0" role="list" class="-my-6 divide-y divide-gray-200">
+                    <div class="mt-8">
+                      <div v-if="Object.keys(cart.items).length === 0" class="text-center py-12">
+                        <p class="text-gray-500 font-body">Votre panier est vide.</p>
+                        <button type="button" class="mt-4 text-gold font-medium hover:text-gold-dark text-sm font-body" @click="close">
+                          Continuer mes achats &rarr;
+                        </button>
+                      </div>
+                      <div class="flow-root">
+                        <ul v-if="Object.keys(cart.items).length > 0" role="list" class="-my-6 divide-y divide-gray-200">
                         <li v-for="product in products" :key="product.id" class="py-6 flex">
                           <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
-                            <nuxt-img :src="(product.product?.images || product.images)?.[0]" class="w-full h-full object-center object-cover" />
+                            <nuxt-img :src="(product.product?.images || product.images)?.[0]" class="w-full h-full object-center object-cover" alt="" />
                           </div>
 
                           <div class="ml-4 flex-1 flex flex-col">
@@ -47,20 +52,12 @@
                             </div>
                             <div class="flex-1 flex items-end justify-between text-sm">
                               <!-- <p class="text-gray-500">Qté {{ product.quantity }}</p> -->
-                              <select :value="product.quantity" @input="updateQuantity({id: product.id, quantity: $event.target.value})"  :id="`quantity-${product.id}`" :name="`quantity-${product.id}`" class="block max-w-full rounded-md bg-white border-gray-300 py-1.5 text-base leading-5 font-medium text-gray-700 text-left shadow-sm focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 sm:text-sm">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
+                              <select :value="product.quantity" @input="updateQuantity({id: product.id, quantity: $event.target.value})"  :id="`quantity-${product.id}`" :name="`quantity-${product.id}`" class="block max-w-full border border-line py-1.5 text-base leading-5 font-medium text-gray-700 text-left focus:outline-none focus:ring-1 focus:ring-gold focus:border-gold sm:text-sm font-body">
+                                <option v-for="n in 99" :key="n" :value="n">{{ n }}</option>
                               </select>
 
                               <div class="flex">
-                                <button @click="removeItem(product.id)" type="button" class="font-medium text-amber-600 hover:text-amber-500">Supprimer</button>
+                                <button @click="removeItem(product.id)" type="button" class="font-medium text-gold hover:text-gold-dark">Supprimer</button>
                               </div>
                             </div>
                           </div>
@@ -88,17 +85,27 @@
                   <div class="mt-6">
                     <button 
                       @click="submit" 
-                      :disabled="!isValidOrder"
-                      class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                      :disabled="!isValidOrder || checkoutLoading"
+                      class="w-full flex justify-center items-center px-6 py-3 text-base font-medium text-white bg-gold hover:bg-gold-dark disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-body"
                     >
-                      <span v-if="!isValidOrder">Panier vide</span>
+                      <span v-if="checkoutLoading" class="flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Préparation...
+                      </span>
+                      <span v-else-if="!isValidOrder">Panier vide</span>
                       <span v-else>Finaliser l'achat</span>
                     </button>
+                    <div v-if="checkoutError" class="mt-3 text-sm text-red-600 text-center font-body">
+                      {{ checkoutError }}
+                    </div>
                   </div>
 
                   <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
                     <p>
-                      ou <button type="button" class="text-amber-600 font-medium hover:text-amber-500" @click="close">Continuer mes achats<span aria-hidden="true"> &rarr;</span></button>
+                      ou <button type="button" class="text-gold font-medium hover:text-gold-dark" @click="close">Continuer mes achats<span aria-hidden="true"> &rarr;</span></button>
                     </p>
                   </div>
                 </div>
@@ -172,21 +179,22 @@ export default {
       return Object.keys(cart.items).length > 0
     })
 
+    const checkoutLoading = ref(false)
+    const checkoutError = ref('')
+
     async function submit() {
-      if (Object.keys(cart.items).length === 0) {
-        return
-      }
+      if (Object.keys(cart.items).length === 0) return
+
+      checkoutLoading.value = true
+      checkoutError.value = ''
 
       try {
-        // Show loading state
-        const loadingToast = 'Préparation de votre commande...'
-
         const res = await $fetch('/api/order', {
           method: 'POST',
           body: {
             items: Object.keys(cart.items).map(k => ({
               price: cart.items[k].price.id,
-              quantity: Number(cart.items[k].quantity) // Ensure quantity is a number
+              quantity: Number(cart.items[k].quantity)
             }))
           }
         })
@@ -198,24 +206,12 @@ export default {
         }
       } catch (error) {
         console.error('Checkout error:', error)
-
-        // Show user-friendly error message
-        alert('Une erreur est survenue lors de la préparation de votre commande. Veuillez réessayer.')
+        checkoutError.value = 'Une erreur est survenue lors de la préparation de votre commande. Veuillez réessayer.'
+      } finally {
+        checkoutLoading.value = false
       }
     }
 
-
-    function imgSrc(src) {
-      const imgs = import.meta.globEager('/content/**/*.{png,jpg}');
-
-      return imgs[`/content${src}`].default
-    }
-    
-    function dirname(p) {
-      // return path.dirname(p)
-      return p.substr(0, p.lastIndexOf("/"));
-    }
-    
     function formatPrice(product) {
       // Cas 1: Structure moderne avec price.unit_amount
       if (product?.price?.unit_amount) {
@@ -261,8 +257,8 @@ export default {
       totalWeight,
       totalWithShipping,
       isValidOrder,
-      imgSrc,
-      dirname,
+      checkoutLoading,
+      checkoutError,
       formatPrice,
       open: cart.open,
       close: cart.close,

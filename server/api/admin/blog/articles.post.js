@@ -1,34 +1,8 @@
 import matter from 'gray-matter'
-import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
-  // Vérifier l'authentification
-  const config = useRuntimeConfig()
-  const token = getCookie(event, 'admin-auth') || getHeader(event, 'authorization')?.replace('Bearer ', '')
-
-  console.log('🔍 DEBUG articles.post.js')
-  console.log('Token reçu:', token ? 'PRÉSENT' : 'ABSENT')
-  console.log('JWT Secret disponible:', !!config.jwtSecret)
-
-  if (!token) {
-    console.log('❌ Aucun token trouvé')
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
-
-  try {
-    const secret = config.jwtSecret || process.env.JWT_SECRET || 'fallback-secret'
-    jwt.verify(token, secret)
-    console.log('✅ Token validé avec succès')
-  } catch (error) {
-    console.log('❌ Erreur validation token:', error.message)
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
+  const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+  verifyAdmin(event)
 
   if (getMethod(event) !== 'POST') {
     throw createError({
@@ -36,6 +10,8 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Method not allowed'
     })
   }
+
+  const config = useRuntimeConfig()
 
   try {
     const body = await readBody(event)
@@ -98,7 +74,7 @@ export default defineEventHandler(async (event) => {
 
     const markdownContent = matter.stringify(content.trim(), frontMatter)
 
-    // Utiliser uniquement l'API GitHub pour tous les environnements
+    const branch = config.githubBranch || 'develop'
     const githubToken = config.githubToken || process.env.GITHUB_TOKEN
     const githubRepo = config.githubRepo || process.env.GITHUB_REPO || 'ebouther/un-gout-de-liberte'
 
@@ -114,7 +90,7 @@ export default defineEventHandler(async (event) => {
 
     // Vérifier si le fichier existe déjà
     try {
-      const checkResponse = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}`, {
+      const checkResponse = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${filePath}?ref=${branch}`, {
         headers: {
           'Authorization': `token ${githubToken}`,
           'Accept': 'application/vnd.github.v3+json'
@@ -122,19 +98,11 @@ export default defineEventHandler(async (event) => {
       })
 
       if (checkResponse) {
-        throw createError({
-          statusCode: 409,
-          statusMessage: 'Un article avec ce slug existe déjà'
-        })
+        throw createError({ statusCode: 409, statusMessage: 'Un article avec ce slug existe déjà' })
       }
     } catch (error) {
-      // Si le fichier n'existe pas, c'est ce qu'on veut
       if (error.status !== 404) {
-        console.error('Erreur lors de la vérification GitHub:', error)
-        throw createError({
-          statusCode: 500,
-          statusMessage: 'Erreur lors de la vérification sur GitHub'
-        })
+        throw createError({ statusCode: 500, statusMessage: 'Erreur lors de la vérification sur GitHub' })
       }
     }
 
@@ -150,7 +118,7 @@ export default defineEventHandler(async (event) => {
         body: {
           message: `content(blog): add new article "${cleanSlug}"`,
           content: Buffer.from(markdownContent).toString('base64'),
-          branch: 'develop'
+          branch
         }
       })
 

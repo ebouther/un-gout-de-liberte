@@ -1,30 +1,13 @@
 import matter from 'gray-matter'
-import jwt from 'jsonwebtoken'
 
 export default defineEventHandler(async (event) => {
-  // Vérifier l'authentification
+  const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+  verifyAdmin(event)
+
   const config = useRuntimeConfig()
-  const token = getCookie(event, 'admin-auth') || getHeader(event, 'authorization')?.replace('Bearer ', '')
-
-  if (!token) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
 
   try {
-    const secret = config.jwtSecret || process.env.JWT_SECRET || 'fallback-secret'
-    jwt.verify(token, secret)
-  } catch (error) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
-    })
-  }
-
-  try {
-    // Récupérer la configuration GitHub
+    const branch = config.githubBranch || 'develop'
     const githubToken = config.githubToken || process.env.GITHUB_TOKEN
     const githubRepo = config.githubRepo || process.env.GITHUB_REPO || 'ebouther/un-gout-de-liberte'
 
@@ -35,30 +18,23 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Récupérer la liste des fichiers dans content/articles depuis GitHub
-    const response = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/content/articles?ref=develop`, {
+    const response = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/content/articles?ref=${branch}`, {
       headers: {
         'Authorization': `token ${githubToken}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     }).catch(() => ({ message: 'Not Found' }))
 
-    // Si le dossier n'existe pas ou est vide
     if (response.message === 'Not Found' || !Array.isArray(response)) {
-      return {
-        success: true,
-        articles: []
-      }
+      return { success: true, articles: [] }
     }
 
-    // Filtrer les fichiers markdown
     const markdownFiles = response.filter(file => file.name.endsWith('.md') && file.type === 'file')
 
-    // Récupérer le contenu de chaque fichier
     const articles = await Promise.all(
       markdownFiles.map(async (file) => {
         try {
-          const fileResponse = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${file.path}?ref=develop`, {
+          const fileResponse = await $fetch(`https://api.github.com/repos/${githubRepo}/contents/${file.path}?ref=${branch}`, {
             headers: {
               'Authorization': `token ${githubToken}`,
               'Accept': 'application/vnd.github.v3+json'
@@ -87,8 +63,7 @@ export default defineEventHandler(async (event) => {
             sha: fileResponse.sha,
             content: articleContent
           }
-        } catch (error) {
-          console.error(`Erreur lors de la récupération du fichier ${file.name}:`, error)
+        } catch {
           return null
         }
       })
@@ -103,11 +78,7 @@ export default defineEventHandler(async (event) => {
       articles: sortedArticles
     }
 
-  } catch (error) {
-    console.error('Erreur lors de la récupération des articles:', error)
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Erreur lors de la récupération des articles'
-    })
+  } catch {
+    throw createError({ statusCode: 500, statusMessage: 'Erreur lors de la récupération des articles' })
   }
 })

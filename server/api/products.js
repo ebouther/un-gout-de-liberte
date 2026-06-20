@@ -1,5 +1,5 @@
 import Stripe from 'stripe'
-import { defineEventHandler, getMethod, createError, setHeader } from 'h3'
+import { defineEventHandler, getMethod, createError, setHeader, getRequestHost, getRequestProtocol } from 'h3'
 
 const stripe = new Stripe(process.env.STRIPE_SK, {
   apiVersion: '2023-10-16',
@@ -23,11 +23,9 @@ export default defineEventHandler(async (event) => {
     // Check cache first
     const now = Date.now()
     if (productsCache && (now - cacheTimestamp) < CACHE_DURATION) {
-      // Set cache headers
-      setHeader(event, 'Cache-Control', 'public, max-age=300') // 5 minutes
-      return productsCache
+      setHeader(event, 'Cache-Control', 'public, max-age=300')
+      return mapImages(productsCache, event)
     }
-
 
     const { data: products } = await stripe.products.list({
       limit: 100,
@@ -41,9 +39,8 @@ export default defineEventHandler(async (event) => {
     })
 
     const result = products
-      .filter(p => p.active && !p.metadata?.hidden) // Hide products with hidden metadata
+      .filter(p => p.active && !p.metadata?.hidden)
       .map(p => {
-        // Get all prices for this product
         const productPrices = prices.filter(price => price.product === p.id)
         const mainPrice = productPrices[0] || null
         return {
@@ -52,22 +49,20 @@ export default defineEventHandler(async (event) => {
           description: p.description,
           images: p.images,
           metadata: p.metadata,
-          active: p.active, // Ajout du statut actif
-          price: mainPrice ? { ...mainPrice } : null, // Inclut toutes les propriétés du Stripe Price
-          prices: productPrices.map(price => ({ ...price })) // All prices for variants, full objects
+          active: p.active,
+          price: mainPrice ? { ...mainPrice } : null,
+          prices: productPrices.map(price => ({ ...price }))
         }
       })
-      .filter(p => p.prices.length > 0) // Only return products with valid prices
+      .filter(p => p.prices.length > 0)
 
-    // Update cache
     productsCache = result
     cacheTimestamp = now
 
-    // Set security and cache headers
     setHeader(event, 'Cache-Control', 'public, max-age=300')
     setHeader(event, 'X-Content-Type-Options', 'nosniff')
 
-    return result
+    return mapImages(result, event)
   } catch (error) {
     console.error('Products API error:', error)
     throw createError({
@@ -76,3 +71,18 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
+
+function mapImages(products, event) {
+  const host = getRequestHost(event)
+  const protocol = getRequestProtocol(event)
+  const isStripeFile = (url) => url && url.startsWith('https://files.stripe.com/')
+
+  return products.map(p => ({
+    ...p,
+    images: p.images.map(img =>
+      isStripeFile(img)
+        ? `${protocol}://${host}/api/image-proxy?url=${encodeURIComponent(img)}`
+        : img
+    )
+  }))
+}

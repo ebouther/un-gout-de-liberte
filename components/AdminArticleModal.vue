@@ -55,127 +55,127 @@
                     v-model="form.title"
                     type="text"
                     required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    placeholder="Entrez le titre de l'article"
-                  />
-                </div>
-
-                <!-- Slug -->
-                <div>
-                  <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">
-                    Slug (URL) *
-                  </label>
-                  <input
-                    id="slug"
-                    v-model="form.slug"
-                    type="text"
-                    required
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    placeholder="slug-de-l-article"
-                  />
-                  <p class="text-sm text-gray-500 mt-1">
-                    L'URL sera : /blog/{{ form.slug || 'slug-de-l-article' }}
-                  </p>
-                </div>
-
-                <!-- Description -->
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
-                    Description (résumé) *
-                  </label>
-                  <textarea
-                    id="description"
-                    v-model="form.description"
-                    required
-                    rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    placeholder="Résumé de l'article qui apparaîtra dans la liste"
-                  ></textarea>
-                </div>
-
-                <!-- Métadonnées sur une ligne -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <!-- Catégorie -->
-                  <div>
-                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
-                      Catégorie
-                    </label>
-                    <select
-                      id="category"
-                      v-model="form.category"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    >
-                      <option value="">Choisir une catégorie</option>
-                      <option value="recettes">Recettes</option>
-                      <option value="actualites">Actualités</option>
-                      <option value="evenements">Événements</option>
-                      <option value="conseils">Conseils</option>
-                      <option value="general">Général</option>
-                    </select>
-                  </div>
-
-                  <!-- Statut -->
-                  <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                      Statut *
-                    </label>
-                    <select
-                      id="status"
-                      v-model="form.status"
-                      required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    >
-                      <option value="draft">Brouillon</option>
-                      <option value="published">Publié</option>
-                    </select>
-                  </div>
-
-                  <!-- Date -->
-                  <div>
-                    <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
-                      Date de publication *
-                    </label>
-                    <input
-                      id="date"
-                      v-model="form.date"
-                      type="datetime-local"
-                      required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      placeholder="Entrez le titre de l'article"
                     />
                   </div>
-                </div>
 
-                <!-- Image -->
-                <div>
-                  <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                    Image de couverture (URL)
-                  </label>
-                  <input
-                    id="image"
-                    v-model="form.image"
-                    type="url"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                </div>
+                  <!-- Slug -->
+                  <div>
+                    <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">
+                      Slug (URL) *
+                    </label>
+                    <input
+                      id="slug"
+                      v-model="form.slug"
+                      type="text"
+                      required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      placeholder="slug-de-l-article"
+                    />
+                    <p class="text-sm text-gray-500 mt-1">
+                      L'URL sera : /blog/{{ form.slug || 'slug-de-l-article' }}
+                    </p>
+                  </div>
 
-                <!-- Contenu -->
-                <div>
-                  <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
-                    Contenu (Markdown) *
-                  </label>
-                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <!-- Éditeur -->
+                  <!-- Description -->
+                  <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                      Description (résumé) *
+                    </label>
+                    <textarea
+                      id="description"
+                      v-model="form.description"
+                      required
+                      rows="3"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      placeholder="Résumé de l'article qui apparaîtra dans la liste"
+                    ></textarea>
+                  </div>
+
+                  <!-- Métadonnées sur une ligne -->
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Catégorie -->
                     <div>
-                      <textarea
-                        id="content"
-                        v-model="form.content"
-                        required
-                        rows="20"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-mono text-sm"
-                        placeholder="Contenu de l'article en Markdown..."
-                      ></textarea>
+                      <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                        Catégorie
+                      </label>
+                      <select
+                        id="category"
+                        v-model="form.category"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      >
+                        <option value="">Choisir une catégorie</option>
+                        <option value="recettes">Recettes</option>
+                        <option value="actualites">Actualités</option>
+                        <option value="evenements">Événements</option>
+                        <option value="conseils">Conseils</option>
+                        <option value="general">Général</option>
+                      </select>
                     </div>
+
+                    <!-- Statut -->
+                    <div>
+                      <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                        Statut *
+                      </label>
+                      <select
+                        id="status"
+                        v-model="form.status"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      >
+                        <option value="draft">Brouillon</option>
+                        <option value="published">Publié</option>
+                      </select>
+                    </div>
+
+                    <!-- Date -->
+                    <div>
+                      <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+                        Date de publication *
+                      </label>
+                      <input
+                        id="date"
+                        v-model="form.date"
+                        type="datetime-local"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Image -->
+                  <div>
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
+                      Image de couverture (URL)
+                    </label>
+                    <input
+                      id="image"
+                      v-model="form.image"
+                      type="url"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold"
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+
+                  <!-- Contenu -->
+                  <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                      Contenu (Markdown) *
+                    </label>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <!-- Éditeur -->
+                      <div>
+                        <textarea
+                          id="content"
+                          v-model="form.content"
+                          required
+                          rows="20"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gold focus:border-gold font-mono text-sm"
+                          placeholder="Contenu de l'article en Markdown..."
+                        ></textarea>
+                      </div>
                     
                     <!-- Prévisualisation -->
                     <div class="hidden lg:block">
@@ -194,14 +194,14 @@
                     <button
                       type="button"
                       @click="$emit('close')"
-                      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold"
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
                       :disabled="saving"
-                      class="px-4 py-2 text-sm font-medium text-white bg-amber-600 border border-transparent rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      class="px-4 py-2 text-sm font-medium text-white bg-gold border border-transparent rounded-md hover:bg-gold-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       <svg v-if="saving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -263,8 +263,12 @@ const errorMessage = ref('')
 
 // Computed pour la prévisualisation markdown (simple)
 const markdownPreview = computed(() => {
-  // Conversion markdown basique pour la prévisualisation
-  return form.value.content
+  let html = form.value.content
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+  html = html
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
@@ -273,6 +277,7 @@ const markdownPreview = computed(() => {
     .replace(/\n\n/g, '</p><p>')
     .replace(/^(.+)$/gm, '<p>$1</p>')
     .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto" />')
+  return html
 })
 
 // Générer le slug automatiquement depuis le titre

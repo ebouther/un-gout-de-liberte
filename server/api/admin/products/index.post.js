@@ -1,5 +1,4 @@
 import Stripe from 'stripe'
-import jwt from 'jsonwebtoken'
 
 const stripe = new Stripe(process.env.STRIPE_SK, {
     apiVersion: '2023-10-16',
@@ -7,26 +6,8 @@ const stripe = new Stripe(process.env.STRIPE_SK, {
 
 export default defineEventHandler(async (event) => {
     try {
-        // Vérification de l'authentification
-        const token = getCookie(event, 'admin-auth')
-        if (!token) {
-            throw createError({
-                statusCode: 401,
-                statusMessage: 'Non autorisé'
-            })
-        }
-
-        const config = useRuntimeConfig()
-        const secret = config.jwtSecret || process.env.JWT_SECRET || 'fallback-secret'
-
-        try {
-            jwt.verify(token, secret)
-        } catch {
-            throw createError({
-                statusCode: 401,
-                statusMessage: 'Token invalide'
-            })
-        }
+        const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+        verifyAdmin(event)
 
         const method = getMethod(event)
 

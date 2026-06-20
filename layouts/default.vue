@@ -6,7 +6,6 @@
           <navbar-2/>
           <slot class="flex-grow  pt-10 md:pt-0"/>
         </div>
-        <!-- <BottomBar class="border-t-4 border-opacity-60 border-yellow-500 shadow-xl fixed bottom-0 w-full md:hidden"/> -->
         <Footer class="mb-10 md:mb-0 mt-10 " />
       </div>
     </div>
@@ -22,17 +21,6 @@ export default {
 </script>
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  font-size: 20px;
-  word-spacing: 1px;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -moz-osx-font-smoothing: grayscale;
