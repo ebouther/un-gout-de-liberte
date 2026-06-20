@@ -1,55 +1,41 @@
 import Stripe from 'stripe'
-import { stripeRetry, getStripeLimiter } from '~/server/utils/stripe-retry.js'
 
 const stripe = new Stripe(process.env.STRIPE_SK || process.env.STRIPE_SECRET_KEY)
 
 export default defineEventHandler(async (event) => {
     try {
-        const rateLimiter = getStripeLimiter(stripe)
+        console.time('Load products and prices (2 queries)')
 
-        // Récupérer tous les produits avec retry automatique
-        const products = await rateLimiter.execute(() =>
-            stripe.products.list({
-                limit: 100,
-                active: true
-            })
-        )
+        // 1. Charger tous les produits (avec le prix principal)
+        const productsRes = await stripe.products.list({
+            limit: 100,
+            active: true,
+            expand: ['data.default_price']
+        })
+        const products = productsRes.data
 
-        console.log(`📦 Récupération des prix pour ${products.data.length} produits...`)
+        // 2. Charger tous les prix (jusqu'à 100 par page) - ADMIN voit tout
+        const pricesRes = await stripe.prices.list({
+            limit: 100
+            // Pas de filtre active: true pour l'admin
+        })
+        const prices = pricesRes.data
 
-        // Pour chaque produit, récupérer ses prix avec rate limiting
-        const productsWithPrices = []
-
-        for (const product of products.data) {
-            try {
-                const prices = await rateLimiter.execute(() =>
-                    stripe.prices.list({
-                        product: product.id,
-                        limit: 100
-                    })
-                )
-
-                productsWithPrices.push({
-                    ...product,
-                    prices: prices.data
-                })
-
-                // Log de progression
-                if (productsWithPrices.length % 10 === 0) {
-                    console.log(`✅ Traité ${productsWithPrices.length}/${products.data.length} produits`)
-                }
-
-            } catch (error) {
-                console.warn(`⚠️ Erreur pour le produit ${product.id}:`, error.message)
-                // Ajouter le produit sans prix plutôt que d'échouer complètement
-                productsWithPrices.push({
-                    ...product,
-                    prices: []
-                })
-            }
+        // 3. Mapping local : associer les prix aux produits
+        const pricesByProduct = {}
+        for (const price of prices) {
+            if (!pricesByProduct[price.product]) pricesByProduct[price.product] = []
+            pricesByProduct[price.product].push(price)
         }
 
-        console.log(`✅ Récupération terminée : ${productsWithPrices.length} produits`)
+        const productsWithPrices = products.map(product => ({
+            ...product,
+            prices: pricesByProduct[product.id] || [],
+            default_price: product.default_price || null
+        }))
+
+        console.timeEnd('Load products and prices (2 queries)')
+        console.log(`✅ Récupération terminée : ${productsWithPrices.length} produits, ${prices.length} prix`)
 
         return {
             success: true,
@@ -57,15 +43,6 @@ export default defineEventHandler(async (event) => {
         }
     } catch (error) {
         console.error('Erreur lors de la récupération des produits:', error)
-
-        // Message d'erreur spécifique pour les rate limits
-        if (error.type === 'StripeError' && error.code === 'rate_limit') {
-            throw createError({
-                statusCode: 429,
-                statusMessage: 'Trop de requêtes à Stripe. Veuillez patienter quelques secondes et réessayer.'
-            })
-        }
-
         throw createError({
             statusCode: 500,
             statusMessage: 'Erreur lors de la récupération des produits: ' + (error.message || 'Erreur inconnue')

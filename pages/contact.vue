@@ -7,162 +7,128 @@
       </p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      <!-- Informations de contact -->
-      <div class="space-y-8">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Un Goût de Liberté</h2>
-          
-          <div class="space-y-4">
-            <div class="flex items-start space-x-3">
-              <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <div>
-                <p class="font-semibold text-gray-900">Adresse</p>
-                <p class="text-gray-600">43380 CHILHAC<br>Haute-Loire, Auvergne-Rhône-Alpes</p>
-              </div>
-            </div>
+    <div class="max-w-2xl mx-auto space-y-8">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Un Goût de Liberté</h2>
 
-            <div class="flex items-start space-x-3">
-              <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <div>
-                <p class="font-semibold text-gray-900">Pâtissière</p>
-                <p class="text-gray-600">Justine DUMESNIL</p>
-              </div>
+        <div class="space-y-4">
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-900">Adresse</p>
+              <p class="text-gray-600">43380 CHILHAC<br>Haute-Loire, Auvergne-Rhône-Alpes</p>
             </div>
+          </div>
 
-            <div class="flex items-start space-x-3">
-              <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <p class="font-semibold text-gray-900">Horaires</p>
-                <p class="text-gray-600">Sur commande uniquement</p>
-              </div>
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-900">Email</p>
+              <a href="mailto:ungoutdeliberte@protonmail.com" class="text-amber-600 hover:text-amber-700 underline">
+                ungoutdeliberte@protonmail.com
+              </a>
             </div>
+          </div>
 
-            <div class="flex items-start space-x-3">
-              <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <div>
-                <p class="font-semibold text-gray-900">Spécialités</p>
-                <p class="text-gray-600">Pâtisserie & Biscuiterie artisanale<br>Créations au gré des saisons</p>
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-900">Pâtissière</p>
+              <p class="text-gray-600">Justine DUMESNIL</p>
+            </div>
+          </div>
+
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="flex-1 min-w-0">
+              <p class="text-lg mb-3" style="font-family: 'DM Serif Display', Georgia, serif; font-style: italic; color: #1c1917;">Horaires</p>
+
+              <div class="flex gap-[3px] mb-5">
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                    <div class="absolute bottom-0 w-full rounded-t-[3px]" style="height:55%;background:#fbbf24"></div>
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-400">Sam</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-300">Dim</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-300">Lun</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                    <div class="absolute bottom-0 w-full rounded-t-[3px]" style="height:85%;background:#fbbf24"></div>
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-400">Mar</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                    <div class="absolute bottom-0 w-full rounded-t-[3px]" style="height:55%;background:#fbbf24"></div>
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-400">Mer</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                    <div class="absolute bottom-0 w-full rounded-t-[3px]" style="height:85%;background:#fbbf24"></div>
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-400">Jeu</span>
+                </div>
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="w-full h-10 bg-stone-100 rounded-[3px] relative overflow-hidden">
+                    <div class="absolute bottom-0 w-full rounded-t-[3px]" style="height:85%;background:#fbbf24"></div>
+                  </div>
+                  <span class="text-[10px] font-semibold uppercase tracking-widest text-stone-400">Ven</span>
+                </div>
+              </div>
+
+              <div class="text-sm -mt-1">
+                <div class="flex justify-between items-baseline py-2 border-t border-stone-200">
+                  <span class="text-[11px] uppercase tracking-widest text-stone-400 font-medium">Mar · Jeu · Ven</span>
+                  <span class="font-medium text-stone-800 text-right text-[13px] leading-snug">11h–12h30<span class="text-stone-300 mx-1">·</span>14h–17h</span>
+                </div>
+                <div class="flex justify-between items-baseline py-2 border-t border-stone-200">
+                  <span class="text-[11px] uppercase tracking-widest text-stone-400 font-medium">Mer · Sam</span>
+                  <span class="font-medium text-stone-800 text-[13px]">14h–17h</span>
+                </div>
+                <div class="flex justify-between items-baseline py-2 border-t border-stone-200">
+                  <span class="text-[11px] uppercase tracking-widest text-stone-400 font-medium">Dim · Lun</span>
+                  <span class="text-stone-400 italic text-[13px]">Fermé</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Zone de livraison -->
-        <div class="bg-amber-50 p-6 rounded-lg">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Zone de livraison</h3>
-          <p class="text-gray-700">
-            Nous livrons principalement dans la région de la Haute-Loire et les départements limitrophes.
-            <strong>Livraison possible dans toute la France</strong> pour vos commandes spéciales.
-          </p>
+          <div class="flex items-start space-x-3">
+            <svg class="w-6 h-6 text-amber-600 mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-900">Spécialités</p>
+              <p class="text-gray-600">Pâtisserie & Biscuiterie artisanale<br>Créations au gré des saisons</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Formulaire de contact -->
-      <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-        <h3 class="text-xl font-bold text-gray-900 mb-6">Demande de renseignements</h3>
-        
-        <form @submit.prevent="submitForm" class="space-y-6">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-              Nom complet *
-            </label>
-            <input
-              type="text"
-              id="name"
-              v-model="form.name"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-              placeholder="Votre nom"
-            />
-          </div>
-
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              Email *
-            </label>
-            <input
-              type="email"
-              id="email"
-              v-model="form.email"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-              placeholder="votre@email.fr"
-            />
-          </div>
-
-          <div>
-            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-              Téléphone
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              v-model="form.phone"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-              placeholder="06 XX XX XX XX"
-            />
-          </div>
-
-          <div>
-            <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
-              Sujet *
-            </label>
-            <select
-              id="subject"
-              v-model="form.subject"
-              required
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-            >
-              <option value="">Choisissez un sujet</option>
-              <option value="commande">Commande personnalisée</option>
-              <option value="renseignement">Renseignement produit</option>
-              <option value="livraison">Question livraison</option>
-              <option value="autre">Autre demande</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
-              Message *
-            </label>
-            <textarea
-              id="message"
-              v-model="form.message"
-              required
-              rows="5"
-              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors resize-none"
-              placeholder="Décrivez votre demande..."
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="isSubmitting"
-            class="w-full bg-amber-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <span v-if="!isSubmitting">Envoyer ma demande</span>
-            <span v-else class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Envoi en cours...
-            </span>
-          </button>
-        </form>
-
-        <p class="text-sm text-gray-500 mt-4">
-          * Champs obligatoires. Vos données sont traitées confidentiellement.
+      <div class="bg-amber-50 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold text-gray-900 mb-3">Zone de livraison</h3>
+        <p class="text-gray-700">
+          Nous livrons principalement dans la région de la Haute-Loire et les départements limitrophes.
+          <strong>Livraison possible dans toute la France</strong> pour vos commandes spéciales.
         </p>
       </div>
     </div>
@@ -170,17 +136,6 @@
 </template>
 
 <script setup>
-const form = ref({
-  name: '',
-  email: '',
-  phone: '',
-  subject: '',
-  message: ''
-})
-
-const isSubmitting = ref(false)
-
-// Métadonnées SEO
 useHead({
   title: 'Contact - Un Goût de Liberté - Pâtisserie artisanale CHILHAC',
   meta: [
@@ -195,7 +150,10 @@ useHead({
     { name: 'twitter:description', content: 'Contactez Un Goût de Liberté pour vos commandes de pâtisserie artisanale' }
   ],
   link: [
-    { rel: 'canonical', href: 'https://un-gout-de-liberte.fr/contact' }
+    { rel: 'canonical', href: 'https://un-gout-de-liberte.fr/contact' },
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap' }
   ],
   script: [
     {
@@ -225,42 +183,30 @@ useHead({
           "founder": {
             "@type": "Person",
             "name": "Justine DUMESNIL"
-          }
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Saturday", "Wednesday"],
+              "opens": "14:00",
+              "closes": "17:00"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Tuesday", "Thursday", "Friday"],
+              "opens": "11:00",
+              "closes": "12:30"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Tuesday", "Thursday", "Friday"],
+              "opens": "14:00",
+              "closes": "17:00"
+            }
+          ]
         }
       })
     }
   ]
 })
-
-async function submitForm() {
-  if (isSubmitting.value) return
-  
-  isSubmitting.value = true
-  
-  try {
-    // Ici vous pouvez implémenter l'envoi du formulaire
-    // Par exemple via une API route ou un service d'email
-    console.log('Formulaire soumis:', form.value)
-    
-    // Simuler un délai d'envoi
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Réinitialiser le formulaire
-    form.value = {
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    }
-    
-    alert('Votre message a été envoyé avec succès !')
-    
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi:', error)
-    alert('Une erreur est survenue. Veuillez réessayer.')
-  } finally {
-    isSubmitting.value = false
-  }
-}
 </script>

@@ -1,6 +1,8 @@
 export default defineEventHandler(async (event) => {
     try {
-        // Supprimer le cookie d'authentification
+        const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+        verifyAdmin(event)
+
         deleteCookie(event, 'admin-auth')
 
         return {
@@ -10,6 +12,10 @@ export default defineEventHandler(async (event) => {
 
     } catch (error) {
         console.error('Erreur lors de la déconnexion:', error)
+
+        if (error.statusCode) {
+            throw error
+        }
 
         throw createError({
             statusCode: 500,

@@ -33,32 +33,31 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
         <article
           v-for="product in filteredProducts"
-          :key="product.id || Math.random()"
-          class="group rounded-xl bg-white shadow-md hover:shadow-xl border border-gray-100 hover:border-amber-200 flex flex-col transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          :key="product.id"
+          class="group border border-line bg-white hover:shadow-lg flex flex-col transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
           @click="openProductModal(product)"
         >
           <!-- Lien SEO-friendly vers la page produit - remplacé par modal -->
           <div class="w-full h-full flex flex-col">
-            <div class="relative rounded-t-xl bg-gray-50 overflow-hidden aspect-square">
+            <div class="relative bg-gray-50 overflow-hidden aspect-square">
               <nuxt-img
                 v-if="product.images && product.images[0]"
-                class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                class="object-cover w-full h-full group-hover:scale-[1.02] transition-transform duration-700"
                 :src="product.images[0]"
-                :alt="product.name || 'Product'"
+                :alt="product.name || 'Produit'"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
               <!-- Category badge -->
               <div v-if="product.metadata?.category" class="absolute top-3 left-3">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 shadow-sm">
+                <span class="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-cream text-sage border border-line">
                   {{ formatCategoryName(product.metadata.category) }}
                 </span>
               </div>
             </div>
             <div class="p-6 flex-1 flex flex-col justify-between">
               <div>
-                <h3 class="font-semibold text-lg leading-tight text-gray-900 mb-2 group-hover:text-amber-700 transition-colors">
+                <h3 class="font-semibold text-lg leading-tight text-gray-900 mb-2 group-hover:text-gold transition-colors font-display">
                   {{ product.name || 'Produit' }}
                 </h3>
                 <p class="text-sm text-gray-600 line-clamp-2">
@@ -66,13 +65,13 @@
                 </p>
               </div>
               <div class="mt-4 flex items-center justify-between">
-                <div class="text-xl font-bold text-amber-600">
-                  {{ getCheapestPrice(product) }}
-                  <span v-if="hasMultiplePrices(product)" class="text-sm font-normal text-gray-500 ml-1">
-                    à partir de
+                <div class="text-xl font-bold text-gold">
+                  <span v-if="hasMultiplePrices(product)" class="text-sm font-normal text-gray-500 mr-1">
+                    À partir de
                   </span>
+                  {{ getCheapestPrice(product) }}
                 </div>
-                <div class="flex items-center text-amber-600 group-hover:text-amber-700 transition-colors">
+                <div class="flex items-center text-gold group-hover:text-gold-dark transition-colors">
                   <span class="text-sm font-medium mr-1">Voir</span>
                   <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -100,7 +99,7 @@
     <Product 
       :open="!!selectedProduct"
       :product="selectedProduct" 
-      @close="selectedProduct = null" 
+      @close="closeProductModal" 
     />
   </div>
 </template>
@@ -209,6 +208,10 @@ const formatCategoryName = (category) => {
 
 function openProductModal(product) {
   selectedProduct.value = product
+}
+
+function closeProductModal() {
+  selectedProduct.value = null
 }
 
 function clearAllFilters() {

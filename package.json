@@ -8,7 +8,8 @@
     "build": "nuxi build",
     "dev": "nuxi dev",
     "generate": "nuxi generate",
-    "preview": "nuxi preview"
+    "preview": "nuxi preview",
+    "test": "playwright test --project=firefox"
   },
   "dependencies": {
     "@headlessui/vue": "^1.6.7",
@@ -23,8 +24,10 @@
     "core-js": "^2.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "gray-matter": "^4.0.3",
     "heroicons-vue3": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
+    "marked": "^16.1.1",
     "pinia": "^2.0.17",
     "stripe": "^10.0.0",
     "swiper": "^8.3.2",
@@ -37,6 +40,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.4.2",
+    "@playwright/test": "^1.55.1",
     "@vueuse/core": "^9.1.0",
     "@vueuse/nuxt": "^9.1.0",
     "nuxt": "^3.17.7",

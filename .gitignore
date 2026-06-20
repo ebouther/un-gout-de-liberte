@@ -95,3 +95,6 @@ backup-products-*
 
 exports/
 backups/
+
+# Playwright test results
+test-results/

@@ -1,10 +1,12 @@
 import Stripe from 'stripe'
-import { stripeRetry, getStripeLimiter } from '~/server/utils/stripe-retry.js'
 
 const stripe = new Stripe(process.env.STRIPE_SK || process.env.STRIPE_SECRET_KEY)
 
 export default defineEventHandler(async (event) => {
     try {
+        const { verifyAdmin } = await import('~/server/utils/adminAuth.js')
+        verifyAdmin(event)
+
         const body = await readBody(event)
         const { productId, active } = body
 
@@ -15,14 +17,10 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const rateLimiter = getStripeLimiter(stripe)
-
-        // Mettre à jour le statut du produit avec retry
-        const product = await rateLimiter.execute(() =>
-            stripe.products.update(productId, {
-                active: active
-            })
-        )
+        // Mettre à jour le statut du produit directement
+        const product = await stripe.products.update(productId, {
+            active: active
+        })
 
         console.log(`✅ Statut du produit ${productId} mis à jour: ${active ? 'actif' : 'inactif'}`)
 

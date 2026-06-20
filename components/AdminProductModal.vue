@@ -185,8 +185,14 @@
                     <div
                       v-for="(price, index) in form.prices"
                       :key="index"
-                      class="border border-gray-200 rounded-lg p-4"
+                      :class="{
+                        'border border-gray-200 rounded-lg p-4': price.active,
+                        'border border-red-200 bg-red-50 rounded-lg p-4 opacity-75': !price.active
+                      }"
                     >
+                      <div class="flex justify-between items-center mb-2" v-if="!price.active">
+                        <span class="text-sm text-red-600 font-medium">⚠️ Prix inactif</span>
+                      </div>
                       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -414,12 +420,23 @@ const saveProduct = async () => {
     
     const method = props.product ? 'PUT' : 'POST'
 
-    await $fetch(endpoint, {
+    const response = await $fetch(endpoint, {
       method,
       body: productData
     })
 
-    emit('saved')
+    // Construire l'objet produit complet à retourner
+    const savedProduct = {
+      id: response.data.product.id,
+      name: response.data.product.name,
+      description: response.data.product.description,
+      active: response.data.product.active,
+      images: response.data.product.images,
+      metadata: response.data.product.metadata,
+      prices: response.data.prices || []
+    }
+
+    emit('saved', savedProduct)
   } catch (error) {
     console.error('Erreur lors de la sauvegarde:', error)
     // Ici tu peux ajouter une notification d'erreur

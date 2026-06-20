@@ -1,239 +1,607 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-8">
+  <div class="min-h-screen bg-[var(--stone,#F4EFE8)] py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- En-tête -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Administration des Produits</h1>
-        <p class="mt-2 text-gray-600">Gérez vos produits, prix et informations facilement</p>
+        <h1 class="text-3xl font-bold text-[var(--espresso,#3A2C24)]">Administration</h1>
+        <p class="mt-2 text-[var(--textbody,#5C4E3D)]">Gérez vos produits, articles et contenus</p>
       </div>
 
-      <!-- Actions principales -->
-      <div class="mb-6 flex flex-wrap gap-4">
-        <button
-          @click="showCreateForm = true"
-          class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-          </svg>
-          Nouveau Produit
-        </button>
-        
-        <button
-          @click="refreshProducts"
-          class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-          Actualiser
-        </button>
-
-        <div class="flex-1"></div>
-
-        <div class="relative">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Rechercher un produit..."
-            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+      <!-- Navigation par onglets -->
+      <div class="mb-8">
+        <nav class="flex space-x-8">
+          <button
+            @click="activeTab = 'products'"
+            :class="{
+              'border-[var(--gold,#B88645)] text-[var(--gold,#B88645)]': activeTab === 'products',
+              'border-transparent text-[var(--textbody,#5C4E3D)] hover:text-[var(--espresso,#3A2C24)] hover:border-[var(--line,#D6CEC2)]': activeTab !== 'products'
+            }"
+            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
           >
-          <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
-        </div>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"></path>
+            </svg>
+            Produits
+          </button>
+          <button
+            @click="activeTab = 'blog'"
+            :class="{
+              'border-[var(--gold,#B88645)] text-[var(--gold,#B88645)]': activeTab === 'blog',
+              'border-transparent text-[var(--textbody,#5C4E3D)] hover:text-[var(--espresso,#3A2C24)] hover:border-[var(--line,#D6CEC2)]': activeTab !== 'blog'
+            }"
+            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+            </svg>
+            Blog
+          </button>
+          <button
+            @click="activeTab = 'orders'"
+            :class="{
+              'border-[var(--gold,#B88645)] text-[var(--gold,#B88645)]': activeTab === 'orders',
+              'border-transparent text-[var(--textbody,#5C4E3D)] hover:text-[var(--espresso,#3A2C24)] hover:border-[var(--line,#D6CEC2)]': activeTab !== 'orders'
+            }"
+            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+            </svg>
+            Commandes
+          </button>
+          <button
+            @click="activeTab = 'gallery'"
+            :class="{
+              'border-[var(--gold,#B88645)] text-[var(--gold,#B88645)]': activeTab === 'gallery',
+              'border-transparent text-[var(--textbody,#5C4E3D)] hover:text-[var(--espresso,#3A2C24)] hover:border-[var(--line,#D6CEC2)]': activeTab !== 'gallery'
+            }"
+            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Galerie
+          </button>
+        </nav>
       </div>
-
-      <!-- Filtres -->
-      <div class="mb-6 bg-white p-4 rounded-lg shadow">
-        <div class="flex flex-wrap gap-4 items-center">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie</label>
-            <select v-model="selectedCategory" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <option value="">Toutes les catégories</option>
-              <option v-for="category in categories" :key="category" :value="category">
-                {{ category }}
-              </option>
-            </select>
-          </div>
+      
+      <!-- Contenu de l'onglet Produits -->
+      <div v-if="activeTab === 'products'">
+        <!-- Buttons container -->
+        <div class="flex flex-wrap gap-4 items-center mb-6">
+          <button
+            @click="createNewProduct"
+            class="bg-[var(--gold,#B88645)] hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nouveau Produit
+          </button>
           
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
-            <select v-model="selectedStatus" class="border border-gray-300 rounded-md px-3 py-2 text-sm">
-              <option value="">Tous</option>
-              <option value="active">Actifs</option>
-              <option value="inactive">Inactifs</option>
-            </select>
-          </div>
+          <button
+            @click="refreshProducts"
+            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Actualiser
+          </button>
 
           <div class="flex-1"></div>
-          
-          <div class="text-sm text-gray-600">
-            {{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }}
+
+          <!-- Search -->
+          <div class="relative">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Rechercher un produit..."
+              class="pl-10 pr-4 py-2 border border-[var(--line,#D6CEC2)] rounded-lg focus:ring-2 focus:ring-[var(--gold,#B88645)] focus:border-[var(--gold,#B88645)]"
+            >
+            <svg class="w-5 h-5 text-[var(--line,#D6CEC2)] absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
           </div>
         </div>
-      </div>
 
-      <!-- Message de statut -->
-      <div v-if="statusMessage" class="mb-4 p-4 rounded-lg" 
-           :class="{
-             'bg-green-100 text-green-700': statusType === 'success',
-             'bg-red-100 text-red-700': statusType === 'error',
-             'bg-yellow-100 text-yellow-700': statusType === 'warning',
-             'bg-blue-100 text-blue-700': statusType === 'info'
-           }">
-        <div class="flex items-center">
-          <!-- Icône de succès -->
-          <svg v-if="statusType === 'success'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'erreur -->
-          <svg v-else-if="statusType === 'error'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'avertissement -->
-          <svg v-else-if="statusType === 'warning'" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-          </svg>
-          <!-- Icône d'info -->
-          <svg v-else class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-          </svg>
-          
+        <!-- Filters -->
+        <div class="mb-6 bg-white p-4 rounded-lg shadow">
+          <div class="flex flex-wrap gap-4 items-center">
+            <div>
+              <label class="block text-sm font-medium text-[var(--espresso,#3A2C24)] mb-1">Catégorie</label>
+              <select v-model="selectedCategory" class="border border-[var(--line,#D6CEC2)] rounded-md px-3 py-2 text-sm">
+                <option value="">Toutes les catégories</option>
+                <option v-for="category in categories" :key="category" :value="category">
+                  {{ category }}
+                </option>
+              </select>
+            </div>
+            
+            <div class="flex-1"></div>
+            
+            <div class="text-sm text-[var(--textbody,#5C4E3D)]">
+              {{ filteredProducts.length }} produit{{ filteredProducts.length > 1 ? 's' : '' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Message -->
+        <div v-if="statusMessage" class="mb-4 p-4 rounded-lg" 
+             :class="{
+               'bg-green-100 text-green-700': statusType === 'success',
+               'bg-red-100 text-red-700': statusType === 'error',
+               'bg-yellow-100 text-yellow-700': statusType === 'warning',
+               'bg-blue-100 text-blue-700': statusType === 'info'
+             }">
           {{ statusMessage }}
         </div>
-      </div>
 
-      <!-- Loading -->
-      <div v-if="loading" class="flex justify-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
-      </div>
+        <!-- Loading -->
+        <div v-if="loading" class="flex justify-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
+        </div>
 
-      <!-- Liste des produits -->
-      <div v-else class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-        >
-          <!-- Image -->
-          <div class="h-48 bg-gray-200 relative">
-            <img
-              v-if="product.images && product.images[0]"
-              :src="product.images[0]"
-              :alt="product.name"
-              class="w-full h-full object-cover"
-            >
-            <div v-else class="flex items-center justify-center h-full text-gray-400">
-              <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            
-            <!-- Badge statut -->
-            <div class="absolute top-2 right-2">
-              <span
-                class="px-2 py-1 text-xs font-medium rounded-full"
-                :class="product.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+        <!-- Product List -->
+        <div v-else-if="filteredProducts.length > 0" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="product in filteredProducts"
+            :key="product.id"
+            class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+          >
+            <!-- Image -->
+            <div class="h-48 bg-gray-200 relative">
+              <img
+                v-if="product.images && product.images[0]"
+                :src="product.images[0]"
+                :alt="product.name"
+                class="w-full h-full object-cover"
               >
-                {{ product.active ? 'Actif' : 'Inactif' }}
-              </span>
+              <div v-else class="flex items-center justify-center h-full text-[var(--line,#D6CEC2)]">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              
+              <!-- Badge statut -->
+              <div class="absolute top-2 right-2">
+                <span
+                  class="px-2 py-1 text-xs font-medium rounded-full"
+                  :class="product.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                >
+                  {{ product.active ? 'Actif' : 'Inactif' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-4">
+              <h3 class="font-semibold text-lg text-[var(--espresso,#3A2C24)] mb-2">{{ product.name }}</h3>
+              
+              <p v-if="product.description" class="text-[var(--textbody,#5C4E3D)] text-sm mb-3 line-clamp-2">
+                {{ product.description }}
+              </p>
+
+              <!-- Prix -->
+              <div class="mb-3">
+                <div v-if="product.prices && product.prices.length > 0" class="space-y-1">
+                  <div v-for="price in product.prices.slice(0, 2)" :key="price.id" class="flex justify-between items-center text-sm">
+                    <span class="text-[var(--textbody,#5C4E3D)]">
+                      <template v-if="price.nickname">{{ price.nickname }} – </template>{{ formatPrice(price.unit_amount) }}
+                    </span>
+                  </div>
+                  <div v-if="product.prices.length > 2" class="text-xs text-[var(--textbody,#5C4E3D)]">
+                    +{{ product.prices.length - 2 }} autre{{ product.prices.length > 3 ? 's' : '' }} prix
+                  </div>
+                </div>
+                <div v-else class="text-sm text-[var(--textbody,#5C4E3D)]">Aucun prix défini</div>
+              </div>
+
+              <!-- Métadonnées importantes -->
+              <div class="space-y-1 text-xs text-[var(--textbody,#5C4E3D)] mb-4">
+                <div v-if="product.metadata?.category" class="flex items-center gap-1">
+                  <span class="font-medium">Catégorie:</span>
+                  <span>{{ product.metadata.category }}</span>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex gap-2">
+                <button
+                  @click="editProduct(product)"
+                  class="flex-1 bg-[var(--gold,#B88645)] hover:opacity-90 text-white text-sm py-2 px-3 rounded-md font-medium"
+                >
+                  Modifier
+                </button>
+                
+                <button
+                  @click="toggleProductStatus(product)"
+                  class="px-3 py-2 text-sm rounded-md font-medium border"
+                  :class="product.active 
+                    ? 'border-red-300 text-red-700 hover:bg-red-50' 
+                    : 'border-green-300 text-green-700 hover:bg-green-50'"
+                >
+                  {{ product.active ? 'Désactiver' : 'Activer' }}
+                </button>
+              </div>
             </div>
           </div>
+        </div>
 
-          <!-- Contenu -->
-          <div class="p-4">
-            <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ product.name }}</h3>
-            
-            <p v-if="product.description" class="text-gray-600 text-sm mb-3 line-clamp-2">
-              {{ product.description }}
-            </p>
+        <!-- No Products Message -->
+        <div v-else-if="filteredProducts.length === 0" class="text-center py-12">
+          <svg class="w-16 h-16 text-[var(--line,#D6CEC2)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m-2 0v-2a2 2 0 012-2h2m0 0V9a2 2 0 012-2h2M9 3v2m6-2v2"></path>
+          </svg>
+          <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)] mb-2">Aucun produit trouvé</h3>
+          <p class="text-[var(--textbody,#5C4E3D)]">
+            {{ products.length === 0 ? 
+              'Aucun produit chargé depuis Stripe. Vérifiez votre configuration.' : 
+              'Essayez de modifier vos filtres ou créez un nouveau produit.' 
+            }}
+          </p>
+        </div>
+      </div>
 
-            <!-- Prix -->
-            <div class="mb-3">
-              <div v-if="product.prices && product.prices.length > 0" class="space-y-1">
-                <div v-for="price in product.prices.slice(0, 2)" :key="price.id" class="flex justify-between items-center text-sm">
-                  <span class="text-gray-600">{{ price.nickname || formatPrice(price.unit_amount) }}</span>
-                  <span class="font-medium">{{ formatPrice(price.unit_amount) }}</span>
-                </div>
-                <div v-if="product.prices.length > 2" class="text-xs text-gray-500">
-                  +{{ product.prices.length - 2 }} autre{{ product.prices.length > 3 ? 's' : '' }} prix
-                </div>
-              </div>
-              <div v-else class="text-sm text-gray-500">Aucun prix défini</div>
-            </div>
-
-            <!-- Métadonnées importantes -->
-            <div class="space-y-1 text-xs text-gray-500 mb-4">
-              <div v-if="product.metadata?.category" class="flex items-center gap-1">
-                <span class="font-medium">Catégorie:</span>
-                <span>{{ product.metadata.category }}</span>
-              </div>
-              <div v-if="getProductWeight(product)" class="flex items-center gap-1">
-                <span class="font-medium">Poids:</span>
-                <span>{{ getProductWeight(product) }}</span>
-              </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex gap-2">
+      <!-- Contenu de l'onglet Blog -->
+      <div v-if="activeTab === 'blog'">
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)]">Articles du Blog</h3>
               <button
-                @click="editProduct(product)"
-                class="flex-1 bg-amber-600 hover:bg-amber-700 text-white text-sm py-2 px-3 rounded-md font-medium"
+                @click="createNewArticle"
+                class="bg-[var(--gold,#B88645)] hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
               >
-                Modifier
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Nouvel Article
               </button>
-              
-              <button
-                @click="toggleProductStatus(product)"
-                class="px-3 py-2 text-sm rounded-md font-medium border"
-                :class="product.active 
-                  ? 'border-red-300 text-red-700 hover:bg-red-50' 
-                  : 'border-green-300 text-green-700 hover:bg-green-50'"
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <!-- Loading -->
+            <div v-if="blogLoading" class="text-center py-12">
+              <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-[var(--gold,#B88645)] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-[var(--textbody,#5C4E3D)] mt-2">Chargement des articles...</p>
+            </div>
+
+            <!-- Liste des articles -->
+            <div v-else-if="articles.length > 0" class="space-y-4">
+              <div
+                v-for="article in articles"
+                :key="article.slug"
+                class="border border-gray-200 rounded-lg p-4 hover:bg-[var(--stone,#F4EFE8)] transition-colors"
               >
-                {{ product.active ? 'Désactiver' : 'Activer' }}
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="text-lg font-medium text-[var(--espresso,#3A2C24)] mb-2">{{ article.title }}</h4>
+                    <p class="text-[var(--textbody,#5C4E3D)] text-sm mb-3">{{ article.summary }}</p>
+                    <div class="flex items-center gap-4 text-sm text-[var(--textbody,#5C4E3D)]">
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        {{ new Date(article.date).toLocaleDateString('fr-FR') }}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 713 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        {{ article.category }}
+                      </span>
+                      <span class="flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        {{ article.readingTime }} min
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span 
+                      :class="{
+                        'bg-green-100 text-green-800': article.status === 'published',
+                        'bg-yellow-100 text-yellow-800': article.status === 'draft'
+                      }"
+                      class="px-2 py-1 rounded-full text-xs font-medium"
+                    >
+                      {{ article.status === 'published' ? 'Publié' : 'Brouillon' }}
+                    </span>
+                    <button 
+                      @click="editArticle(article)"
+                      class="text-[var(--gold,#B88645)] hover:text-amber-700 p-1 rounded"
+                      title="Modifier l'article"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message aucun article -->
+            <div v-else class="text-center py-12">
+              <svg class="w-16 h-16 text-[var(--line,#D6CEC2)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+              </svg>
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)] mb-2">Aucun article pour le moment</h3>
+              <p class="text-[var(--textbody,#5C4E3D)] mb-4">
+                Créez votre premier article de blog pour partager vos actualités, recettes et événements.
+              </p>
+              <button
+                @click="createNewArticle"
+                class="bg-[var(--gold,#B88645)] hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium"
+              >
+                Créer mon premier article
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Message si aucun produit -->
-      <div v-if="!loading && filteredProducts.length === 0" class="text-center py-12">
-        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2M4 13h2m-2 0v-2a2 2 0 012-2h2m0 0V9a2 2 0 012-2h2M9 3v2m6-2v2"></path>
-        </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun produit trouvé</h3>
-        <p class="text-gray-600">Essayez de modifier vos filtres ou créez un nouveau produit.</p>
-      </div>
-    </div>
+      <!-- Contenu de l'onglet Commandes -->
+      <div v-if="activeTab === 'orders'">
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-[var(--line,#D6CEC2)]">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)]">Commandes</h3>
+              <select
+                v-model="ordersFilter"
+                class="border border-[var(--line,#D6CEC2)] rounded-md px-3 py-1.5 text-sm text-[var(--espresso,#3A2C24)]"
+              >
+                <option value="paid">Payées</option>
+                <option value="all">Toutes</option>
+                <option value="open">En attente</option>
+                <option value="expired">Expirées</option>
+              </select>
+            </div>
+          </div>
 
-    <!-- Modal de création/édition -->
-    <AdminProductModal
-      :show="showCreateForm || !!editingProduct"
-      :product="editingProduct"
-      @close="closeModal"
-      @saved="onProductSaved"
-    />
+          <div class="p-6">
+            <!-- Loading -->
+            <div v-if="ordersLoading" class="text-center py-12">
+              <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-[var(--gold,#B88645)] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-[var(--textbody,#5C4E3D)] mt-2">Chargement des commandes...</p>
+            </div>
+
+            <!-- Tableau -->
+            <div v-else-if="orders.length > 0" class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-left text-[var(--textbody,#5C4E3D)] border-b border-[var(--line,#D6CEC2)]">
+                    <th class="pb-3 pr-4 font-medium">Date</th>
+                    <th class="pb-3 pr-4 font-medium">Client</th>
+                    <th class="pb-3 pr-4 font-medium text-right">Montant</th>
+                    <th class="pb-3 pr-4 font-medium">Statut</th>
+                    <th class="pb-3 font-medium">Paiement</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="order in orders"
+                    :key="order.id"
+                    class="border-b border-[var(--line,#D6CEC2)] hover:bg-[var(--stone,#F4EFE8)] transition-colors"
+                  >
+                    <td class="py-3 pr-4 text-[var(--espresso,#3A2C24)] whitespace-nowrap">
+                      {{ new Date(order.created * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}
+                    </td>
+                    <td class="py-3 pr-4">
+                      <div class="text-[var(--espresso,#3A2C24)]">{{ order.customer.name || '—' }}</div>
+                      <div class="text-[var(--textbody,#5C4E3D)] text-xs">{{ order.customer.email }}</div>
+                    </td>
+                    <td class="py-3 pr-4 text-right text-[var(--espresso,#3A2C24)] font-medium whitespace-nowrap">
+                      {{ formatPrice(order.amountTotal) }}
+                    </td>
+                    <td class="py-3 pr-4">
+                      <span
+                        class="px-2 py-1 rounded-full text-xs font-medium"
+                        :class="{
+                          'bg-green-100 text-green-800': order.status === 'complete',
+                          'bg-yellow-100 text-yellow-800': order.status === 'open',
+                          'bg-red-100 text-red-800': order.status === 'expired',
+                        }"
+                      >
+                        {{ order.status === 'complete' ? 'Finalisée' : order.status === 'open' ? 'En attente' : 'Expirée' }}
+                      </span>
+                    </td>
+                    <td class="py-3 whitespace-nowrap">
+                      <span
+                        class="px-2 py-1 rounded-full text-xs font-medium"
+                        :class="{
+                          'bg-green-100 text-green-800': order.paymentStatus === 'paid',
+                          'bg-yellow-100 text-yellow-800': order.paymentStatus === 'unpaid',
+                          'bg-gray-100 text-gray-600': order.paymentStatus === 'no_payment_required',
+                        }"
+                      >
+                        {{ order.paymentStatus === 'paid' ? 'Payé' : order.paymentStatus === 'unpaid' ? 'Impayé' : 'Gratuit' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Aucune commande -->
+            <div v-else class="text-center py-12">
+              <svg class="w-16 h-16 text-[var(--line,#D6CEC2)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+              </svg>
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)] mb-2">Aucune commande</h3>
+              <p class="text-[var(--textbody,#5C4E3D)]">
+                Aucune commande trouvée pour le filtre sélectionné.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu de l'onglet Galerie -->
+      <div v-if="activeTab === 'gallery'">
+        <div class="bg-white rounded-lg shadow">
+          <div class="px-6 py-4 border-b border-[var(--line,#D6CEC2)]">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)]">Galerie photos</h3>
+              <label class="cursor-pointer bg-[var(--gold,#B88645)] hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Ajouter une photo
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" @change="onGalleryUpload" />
+              </label>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <!-- Loading -->
+            <div v-if="galleryLoading" class="text-center py-12">
+              <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-[var(--gold,#B88645)] mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-[var(--textbody,#5C4E3D)] mt-2">Chargement...</p>
+            </div>
+
+            <!-- Grille -->
+            <div v-else-if="galleryImages.length > 0" class="space-y-2">
+              <p class="text-xs text-[var(--textbody,#5C4E3D)]">Glissez-déposez pour réorganiser</p>
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div
+                  v-for="(img, idx) in galleryImages"
+                  :key="img.filename"
+                  :draggable="!galleryUploading"
+                  @dragstart="onDragStart($event, idx)"
+                  @dragover.prevent="onDragOver($event, idx)"
+                  @drop="onDrop($event, idx)"
+                  @dragend="onDragEnd"
+                  class="relative group border border-[var(--line,#D6CEC2)] rounded-lg overflow-hidden cursor-grab active:cursor-grabbing"
+                  :class="{ 'opacity-50': dragIndex === idx }"
+                >
+                  <div class="absolute top-1 left-1 z-10 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded">
+                    {{ idx + 1 }}
+                  </div>
+                  <img
+                    :src="img.url"
+                    :alt="img.filename"
+                    class="w-full h-40 object-cover pointer-events-none"
+                  />
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                    <button
+                      @click="deleteGalleryImage(img.filename)"
+                      class="opacity-0 group-hover:opacity-100 bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition-all"
+                      title="Supprimer"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="px-2 py-1 text-xs text-[var(--textbody,#5C4E3D)] truncate">{{ img.filename }}</div>
+                </div>
+              </div>
+              <button
+                v-if="galleryOrderChanged"
+                @click="saveGalleryOrder"
+                :disabled="galleryUploading"
+                class="mt-4 bg-[var(--gold,#B88645)] hover:opacity-90 text-white px-4 py-2 rounded-lg font-medium text-sm disabled:opacity-50"
+              >
+                {{ galleryUploading ? 'Enregistrement...' : 'Enregistrer l\'ordre' }}
+              </button>
+            </div>
+
+            <!-- Aucune photo -->
+            <div v-else class="text-center py-12">
+              <svg class="w-16 h-16 text-[var(--line,#D6CEC2)] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <h3 class="text-lg font-medium text-[var(--espresso,#3A2C24)] mb-2">Aucune photo</h3>
+              <p class="text-[var(--textbody,#5C4E3D)]">Ajoutez vos premières photos de créations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de création/édition produit -->
+      <AdminProductModal
+        :show="showCreateForm || !!editingProduct"
+        :product="editingProduct"
+        @close="closeModal"
+        @saved="onProductSaved"
+      />
+
+      <!-- Modal de création/édition article -->
+      <AdminArticleModal
+        :show="showArticleForm || !!editingArticle"
+        :article="editingArticle"
+        @close="closeModal"
+        @saved="onArticleSaved"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
 definePageMeta({
   layout: 'admin',
-  middleware: 'admin-auth'
+  title: 'Administration'
+})
+
+// Authentication check
+onMounted(async () => {
+  if (process.client) {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    const token = useCookie('admin-auth')
+    try {
+      const response = await $fetch('/api/admin/auth/check')
+      if (!response.authenticated) {
+        await navigateTo('/admin/login')
+        return
+      }
+      await loadProducts()
+      if (activeTab.value === 'blog') loadArticles()
+      if (activeTab.value === 'orders') loadOrders()
+      if (activeTab.value === 'gallery') loadGallery()
+    } catch (error) {
+      console.error('Auth check failed:', error)
+      await navigateTo('/admin/login')
+      return
+    }
+  }
 })
 
 // État réactif
+const route = useRoute()
+const activeTab = ref(route.query.tab === 'gallery' ? 'gallery' : route.query.tab === 'blog' ? 'blog' : route.query.tab === 'orders' ? 'orders' : 'products')
 const products = ref([])
+const articles = ref([])
 const loading = ref(true)
+const blogLoading = ref(false)
 const showCreateForm = ref(false)
+const showArticleForm = ref(false)
 const editingProduct = ref(null)
+const editingArticle = ref(null)
 const searchQuery = ref('')
 const selectedCategory = ref('')
-const selectedStatus = ref('')
 const statusMessage = ref('')
 const statusType = ref('success')
+const orders = ref([])
+const ordersLoading = ref(false)
+const ordersFilter = ref('paid')
+const galleryImages = ref([])
+const galleryLoading = ref(false)
+const galleryUploading = ref(false)
+const dragIndex = ref(null)
+const galleryOrderChanged = ref(false)
 
 // Computed
 const categories = computed(() => {
@@ -265,136 +633,294 @@ const filteredProducts = computed(() => {
     )
   }
 
-  // Filtre par statut
-  if (selectedStatus.value) {
-    const isActive = selectedStatus.value === 'active'
-    filtered = filtered.filter(product => product.active === isActive)
-  }
-
   return filtered
 })
 
-// Méthodes
+// Fonctions
 const loadProducts = async () => {
   try {
     loading.value = true
-    showStatus('Chargement des produits...', 'info')
+    const data = await $fetch('/api/products')
     
-    const { data } = await $fetch('/api/admin/products')
-    products.value = data || []
-    
-    showStatus(`${products.value.length} produits chargés`, 'success')
+    // L'API renvoie directement un tableau de produits
+    products.value = Array.isArray(data) ? data : []
   } catch (error) {
-    if (error.statusCode === 429) {
-      showStatus('Trop de requêtes. Nouvelle tentative dans 5 secondes...', 'warning')
-      // Retry automatique après 5 secondes
-      setTimeout(() => {
-        loadProducts()
-      }, 5000)
-    } else {
-      showStatus('Erreur lors du chargement des produits', 'error')
-      console.error('Erreur:', error)
-    }
+    console.error('Erreur lors du chargement des produits:', error)
+    showStatus('Erreur lors du chargement des produits', 'error')
+    products.value = []
   } finally {
     loading.value = false
   }
 }
 
-const refreshProducts = () => {
-  showStatus('Actualisation...', 'info')
-  loadProducts()
+const refreshProducts = async () => {
+  await loadProducts()
+  showStatus('Produits actualisés', 'success')
 }
+
+const createNewProduct = () => {
+  editingProduct.value = null
+  showCreateForm.value = true
+}
+
+const createNewArticle = () => {
+  editingArticle.value = null
+  showArticleForm.value = true
+}
+
+const loadArticles = async () => {
+  try {
+    blogLoading.value = true
+    const response = await $fetch('/api/admin/blog/articles')
+    articles.value = response.articles || []
+  } catch (error) {
+    console.error('Erreur lors du chargement des articles:', error)
+    showStatus('Erreur lors du chargement des articles', 'error')
+    articles.value = []
+  } finally {
+    blogLoading.value = false
+  }
+}
+
+// Surveiller le changement d'onglet pour charger les données
+watch(activeTab, (newTab) => {
+  if (newTab === 'blog' && articles.value.length === 0) {
+    loadArticles()
+  }
+  if (newTab === 'orders' && orders.value.length === 0) {
+    loadOrders()
+  }
+  if (newTab === 'gallery' && galleryImages.value.length === 0) {
+    loadGallery()
+  }
+})
+
+watch(ordersFilter, () => {
+  if (activeTab.value === 'orders') {
+    loadOrders()
+  }
+})
 
 const editProduct = (product) => {
   editingProduct.value = product
+  showCreateForm.value = true
 }
 
 const closeModal = () => {
   showCreateForm.value = false
+  showArticleForm.value = false
   editingProduct.value = null
+  editingArticle.value = null
 }
 
-const onProductSaved = () => {
+const editArticle = (article) => {
+  editingArticle.value = article
+  showArticleForm.value = true
+}
+
+const onArticleSaved = (savedArticle) => {
+  if (savedArticle === null) {
+    // Suppression : recharger la liste
+    loadArticles()
+    showStatus('Article supprimé avec succès', 'success')
+  } else if (editingArticle.value) {
+    // Mode édition : mettre à jour l'article dans la liste
+    const index = articles.value.findIndex(a => a.slug === editingArticle.value.slug)
+    if (index !== -1) {
+      articles.value[index] = { ...savedArticle }
+    }
+    showStatus('Article modifié avec succès', 'success')
+  } else {
+    // Mode création : ajouter le nouvel article à la liste
+    articles.value.unshift(savedArticle)
+    showStatus('Article créé avec succès', 'success')
+  }
+  
   closeModal()
-  loadProducts()
-  showStatus('Produit sauvegardé avec succès', 'success')
+}
+
+const onProductSaved = (savedProduct) => {
+  if (!savedProduct || !savedProduct.id) {
+    console.error('Produit sauvegardé invalide:', savedProduct)
+    showStatus('Erreur: produit invalide reçu', 'error')
+    return
+  }
+
+  if (editingProduct.value) {
+    // Mode édition : mettre à jour le produit dans la liste
+    const index = products.value.findIndex(p => p.id === savedProduct.id)
+    if (index !== -1) {
+      products.value[index] = { ...savedProduct }
+      showStatus('Produit modifié avec succès', 'success')
+    }
+  } else {
+    // Mode création : ajouter le nouveau produit à la liste
+    products.value.unshift(savedProduct)
+    showStatus('Produit créé avec succès', 'success')
+  }
+  
+  closeModal()
 }
 
 const toggleProductStatus = async (product) => {
   try {
-    const newStatus = !product.active
-    showStatus(`${newStatus ? 'Activation' : 'Désactivation'} en cours...`, 'info')
-    
-    await $fetch('/api/admin/products/toggle-status', {
-      method: 'POST',
+    const response = await $fetch(`/api/admin/products/${product.id}`, {
+      method: 'PATCH',
       body: {
-        productId: product.id,
-        active: newStatus
+        active: !product.active
       }
     })
     
-    product.active = newStatus
-    showStatus(
-      `Produit ${newStatus ? 'activé' : 'désactivé'} avec succès`, 
-      'success'
-    )
-  } catch (error) {
-    if (error.statusCode === 429) {
-      showStatus('Trop de requêtes. Veuillez patienter...', 'warning')
-      // Retry automatique après 3 secondes
-      setTimeout(() => {
-        toggleProductStatus(product)
-      }, 3000)
+    if (response.success) {
+      // Mettre à jour localement
+      product.active = !product.active
+      showStatus(`Produit ${product.active ? 'activé' : 'désactivé'}`, 'success')
     } else {
       showStatus('Erreur lors de la modification du statut', 'error')
-      console.error('Erreur:', error)
     }
+  } catch (error) {
+    console.error('Erreur lors de la modification du statut:', error)
+    showStatus('Erreur lors de la modification du statut', 'error')
   }
 }
 
-const formatPrice = (amountCents) => {
-  if (!amountCents) return '0,00 €'
+const loadOrders = async () => {
+  try {
+    ordersLoading.value = true
+    const response = await $fetch(`/api/admin/orders?status=${ordersFilter.value}`)
+    orders.value = response.orders || []
+  } catch (error) {
+    console.error('Erreur lors du chargement des commandes:', error)
+    showStatus('Erreur lors du chargement des commandes', 'error')
+    orders.value = []
+  } finally {
+    ordersLoading.value = false
+  }
+}
+
+const loadGallery = async () => {
+  try {
+    galleryLoading.value = true
+    const response = await $fetch('/api/gallery')
+    galleryImages.value = response.images || []
+  } catch (error) {
+    console.error('Erreur chargement galerie:', error)
+    showStatus('Erreur lors du chargement de la galerie', 'error')
+    galleryImages.value = []
+  } finally {
+    galleryLoading.value = false
+  }
+}
+
+const onGalleryUpload = async (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (file.size > 10 * 1024 * 1024) {
+    showStatus('Le fichier est trop volumineux (max 10 Mo)', 'error')
+    return
+  }
+
+  try {
+    galleryUploading.value = true
+    const reader = new FileReader()
+    const base64 = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result.split(',')[1])
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+
+    const filename = file.name.toLowerCase().replace(/[^a-z0-9.-]/g, '-')
+
+    const response = await $fetch('/api/admin/gallery/upload', {
+      method: 'POST',
+      body: { filename, content: base64 },
+    })
+
+    if (response.success) {
+      galleryImages.value.push(response.image)
+      showStatus(`Photo "${filename}" ajoutée`, 'success')
+    }
+  } catch (error) {
+    console.error('Erreur upload:', error)
+    showStatus("Erreur lors de l'upload", 'error')
+  } finally {
+    galleryUploading.value = false
+    event.target.value = ''
+  }
+}
+
+const deleteGalleryImage = async (filename) => {
+  if (!confirm(`Supprimer "${filename}" ?`)) return
+
+  try {
+    await $fetch(`/api/admin/gallery/${filename}`, { method: 'DELETE' })
+    galleryImages.value = galleryImages.value.filter((img) => img.filename !== filename)
+    showStatus(`Photo "${filename}" supprimée`, 'success')
+  } catch (error) {
+    console.error('Erreur suppression:', error)
+    showStatus('Erreur lors de la suppression', 'error')
+  }
+}
+
+const onDragStart = (event, index) => {
+  dragIndex.value = index
+  event.dataTransfer.effectAllowed = 'move'
+}
+
+const onDragOver = (event, index) => {
+  event.dataTransfer.dropEffect = 'move'
+}
+
+const onDrop = (event, index) => {
+  if (dragIndex.value === null || dragIndex.value === index) {
+    dragIndex.value = null
+    return
+  }
+  const items = [...galleryImages.value]
+  const [moved] = items.splice(dragIndex.value, 1)
+  items.splice(index, 0, moved)
+  galleryImages.value = items
+  dragIndex.value = null
+  galleryOrderChanged.value = true
+}
+
+const onDragEnd = () => {
+  dragIndex.value = null
+}
+
+const saveGalleryOrder = async () => {
+  try {
+    galleryUploading.value = true
+    const order = galleryImages.value.map((img) => img.filename)
+    await $fetch('/api/admin/gallery/order', {
+      method: 'POST',
+      body: { order },
+    })
+    galleryOrderChanged.value = false
+    showStatus('Ordre de la galerie mis à jour', 'success')
+  } catch (error) {
+    console.error('Erreur sauvegarde ordre:', error)
+    showStatus('Erreur lors de la sauvegarde de l\'ordre', 'error')
+  } finally {
+    galleryUploading.value = false
+  }
+}
+
+const formatPrice = (amount) => {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
     currency: 'EUR'
-  }).format(amountCents / 100)
+  }).format(amount / 100)
 }
 
-const getProductWeight = (product) => {
-  // Chercher le poids dans les prix d'abord
-  if (product.prices && product.prices.length > 0) {
-    for (const price of product.prices) {
-      if (price.metadata?.weight) {
-        return price.metadata.weight
-      }
-    }
-  }
-  
-  // Puis dans les métadonnées du produit
-  return product.metadata?.Poids || product.metadata?.weight || null
-}
-
-const showStatus = (message, type = 'success') => {
+const showStatus = (message, type = 'success', duration = 3000) => {
   statusMessage.value = message
   statusType.value = type
-  
-  // Durée d'affichage selon le type
-  const duration = {
-    'success': 3000,
-    'error': 7000,
-    'warning': 5000,
-    'info': 2000
-  }[type] || 5000
-  
   setTimeout(() => {
     statusMessage.value = ''
   }, duration)
 }
-
-// Chargement initial
-onMounted(() => {
-  loadProducts()
-})
 </script>
 
 <style scoped>

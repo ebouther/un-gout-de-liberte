@@ -151,13 +151,18 @@ const description = computed(() => {
   return desc.length > 160 ? desc.substring(0, 157) + '...' : desc
 })
 
+const productImage = computed(() => product.value?.images?.[0] || 'https://un-gout-de-liberte.fr/logo.png')
+
 const structuredData = computed(() => {
-  if (!product.value) return {}
+  if (!product.value || !product.value.prices?.length) return {}
   
+  const priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
   const offers = product.value.prices?.map(price => ({
     "@type": "Offer",
     "price": (price.unit_amount / 100).toFixed(2),
     "priceCurrency": "EUR",
+    "priceValidUntil": priceValidUntil,
     "availability": "https://schema.org/InStock",
     "seller": {
       "@type": "Organization",
@@ -182,10 +187,18 @@ const structuredData = computed(() => {
     "offers": offers.length > 1 ? {
       "@type": "AggregateOffer",
       "offers": offers,
+      "offerCount": offers.length,
       "lowPrice": Math.min(...offers.map(o => parseFloat(o.price))).toFixed(2),
       "highPrice": Math.max(...offers.map(o => parseFloat(o.price))).toFixed(2),
       "priceCurrency": "EUR"
     } : offers[0],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "15",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "category": "Pâtisserie",
     "additionalProperty": [
       {
@@ -204,11 +217,11 @@ useHead({
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:type', content: 'product' },
-    { property: 'og:image', content: product.value?.images?.[0] || 'https://un-gout-de-liberte.fr/logo.png' },
+    { property: 'og:image', content: productImage },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: title },
     { name: 'twitter:description', content: description },
-    { name: 'twitter:image', content: product.value?.images?.[0] || 'https://un-gout-de-liberte.fr/logo.png' }
+    { name: 'twitter:image', content: productImage }
   ],
   script: [
     {

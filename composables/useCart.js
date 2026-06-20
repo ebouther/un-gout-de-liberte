@@ -19,10 +19,12 @@ export const useCart = () => {
                 : product.id
 
             // Préparer le prix dans le format attendu par le panier existant
-            const priceObj = product.variant?.price || {
-                unit_amount: Math.round(product.price * 100), // Convertir en centimes
-                currency: 'eur'
-            }
+            const priceObj = product.variant?.price
+                || (product.price?.unit_amount ? product.price : null)
+                || {
+                    unit_amount: Math.round(product.price * 100),
+                    currency: 'eur'
+                }
 
             // Préparer l'objet pour le store avec la structure exacte attendue
             const itemToAdd = {

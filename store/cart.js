@@ -50,8 +50,8 @@ export const useStore = defineStore({
         const product = this.products.find(p => p.id === productId)
         if (product) {
           if (!this.items[productId]) {
-            this.items[productId] = { 
-              ...product, 
+            this.items[productId] = {
+              ...product,
               quantity: 1,
               // Assurer que price existe
               price: product.price || product.prices?.[0]
@@ -66,7 +66,7 @@ export const useStore = defineStore({
       // Convertir la quantité en nombre pour éviter les erreurs avec l'API
       const numQuantity = Number(quantity)
       if (numQuantity && numQuantity > 0 && numQuantity <= 99) {
-        this.items[id] = {...this.items[id], quantity: numQuantity}
+        this.items[id] = { ...this.items[id], quantity: numQuantity }
       }
     },
     removeItem(id) {
@@ -76,7 +76,7 @@ export const useStore = defineStore({
   getters: {
     nbOfItems: (state) => Object.keys(state.items).reduce(
       (acc, curr) => acc + Number(state.items[curr].quantity)
-    , 0),
+      , 0),
     getProduct(state, id) {
       return state.products.find(p => p.id === id)
     }
